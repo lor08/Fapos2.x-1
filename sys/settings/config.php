@@ -145,6 +145,7 @@ $set = array (
     'warnings_by_ban' => 5,
     'autoban_interval' => 2000000,
     'use_gravatar' => '1',
+    'use_md5_salt' => '1',
     'fields' => 
     array (
       0 => 'pol',

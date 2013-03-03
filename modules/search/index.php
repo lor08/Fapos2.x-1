@@ -62,7 +62,7 @@ class SearchModule extends Module {
 		$this->__checkIndex();
 
 		
-		$minInput = Config::read('min_lenght', $this->module);
+		$minInput = $this->Register['Config']->read('min_lenght', $this->module);
 		if (!empty($minInput)) $this->minInputStr = (int)$minInput;
 		
 		$html = null;
@@ -206,7 +206,7 @@ class SearchModule extends Module {
 			$this->__createIndex();
 		}
 		
-		$index_interval = intval(Config::read('index_interval', $this->module));
+		$index_interval = intval($this->Register['Config']->read('index_interval', $this->module));
 		if ($index_interval < 1) $index_interval = 1;
 		$meta['expire'] = (time() + ($index_interval * 84000));
 		file_put_contents($meta_file, serialize($meta));
@@ -235,7 +235,7 @@ class SearchModule extends Module {
 		$string = resc(implode('* ', $_words) . '*');
 		
 		//query
-		$limit = Config::read('per_page', $this->module);
+		$limit = $this->Register['Config']->read('per_page', $this->module);
 		$results = $this->Model->getSearchResults($string, $limit);
 		return $results;
 	}

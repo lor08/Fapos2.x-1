@@ -67,7 +67,7 @@ Class FotoModule extends Module {
 		
 		//Узнаем кол-во материалов в БД
 		$total = $this->Model->getTotal(array());
-		list ($pages, $page) = pagination( $total, Config::read('per_page', $this->module), $this->getModuleURL());
+		list ($pages, $page) = pagination( $total, $this->Register['Config']->read('per_page', $this->module), $this->getModuleURL());
 		$this->Register['pages'] = $pages;
 		$this->Register['page'] = $page;
 		$this->page_title .= ' (' . $page . ')';
@@ -90,7 +90,7 @@ Class FotoModule extends Module {
 		
 		$params = array(
 			'page' => $page,
-			'limit' => Config::read('per_page', $this->module),
+			'limit' => $this->Register['Config']->read('per_page', $this->module),
 			'order' => getOrderParam(__CLASS__),
 		);
 		$where = array();
@@ -181,7 +181,7 @@ Class FotoModule extends Module {
 		
 
 		$total = $this->Model->getTotal($query_params);
-		list ($pages, $page) = pagination( $total, Config::read('per_page', $this->module), $this->getModuleURL());
+		list ($pages, $page) = pagination( $total, $this->Register['Config']->read('per_page', $this->module), $this->getModuleURL());
 		$this->Register['pages'] = $pages;
 		$this->Register['page'] = $page;
 		$this->page_title .= ' (' . $page . ')';
@@ -206,7 +206,7 @@ Class FotoModule extends Module {
 	  
 		$params = array(
 			'page' => $page,
-			'limit' => Config::read('per_page', $this->module),
+			'limit' => $this->Register['Config']->read('per_page', $this->module),
 			'order' => getOrderParam(__CLASS__),
 		);
 		$where = $query_params['cond'];
@@ -288,7 +288,7 @@ Class FotoModule extends Module {
 		$this->_getCatsTree($entity->getCategory()->getId());
 
 		/* COMMENT BLOCK */
-		if (Config::read('comment_active', $this->module) == 1 
+		if ($this->Register['Config']->read('comment_active', $this->module) == 1 
 		&& $this->ACL->turn(array($this->module, 'view_comments'), false) 
 		&& $entity->getCommented() == 1) {
 			if ($this->ACL->turn(array($this->module, 'add_comments'), false)) 
@@ -455,11 +455,11 @@ Class FotoModule extends Module {
 			$errors = $errors.'<li>'.__('Empty field "title"').'</li>'."\n";
 		elseif (!$valobj->cha_val($title, V_TITLE))  
 			$errors = $errors.'<li>'.__('Wrong chars in "title"').'</li>'."\n";
-		$foto_fields = Config::read('fields', $this->module);
+		$foto_fields = $this->Register['Config']->read('fields', $this->module);
 		if (empty($description) && !empty($foto_fields['description'])) 
 			$errors = $errors.'<li>'.__('Empty field "description"').'</li>'."\n";
-		if (mb_strlen($description) > Config::read('description_lenght', $this->module))
-			$errors = $errors .'<li>'.sprintf(__('Wery big "description"'), Config::read('description_lenght', $this->module)).'</li>'."\n";
+		if (mb_strlen($description) > $this->Register['Config']->read('description_lenght', $this->module))
+			$errors = $errors .'<li>'.sprintf(__('Wery big "description"'), $this->Register['Config']->read('description_lenght', $this->module)).'</li>'."\n";
 		
 		
 		
@@ -510,7 +510,7 @@ Class FotoModule extends Module {
 		// Формируем SQL-запрос на добавление темы	
 		$res = array(
 			'title'        => $title,
-			'description'  => mb_substr($description, 0, Config::read('description_lenght', $this->module)),
+			'description'  => mb_substr($description, 0, $this->Register['Config']->read('description_lenght', $this->module)),
 			'date'         => new Expr('NOW()'),
 			'author_id'    => $_SESSION['user']['id'],
 			'category_id'  => $in_cat,
@@ -551,8 +551,8 @@ Class FotoModule extends Module {
 		
 		
 		// Create watermark and resample image
-		$watermark_path = ROOT . '/sys/img/' . (Config::read('watermark_type') == '1' ? 'watermark_text.png' : Config::read('watermark_img'));
-		if (Config::read('use_watermarks') && !empty($watermark_path) && file_exists($watermark_path)) {
+		$watermark_path = ROOT . '/sys/img/' . ($this->Register['Config']->read('watermark_type') == '1' ? 'watermark_text.png' : $this->Register['Config']->read('watermark_img'));
+		if ($this->Register['Config']->read('use_watermarks') && !empty($watermark_path) && file_exists($watermark_path)) {
 			$waterObj = new FpsImg;
 			$waterObj->createWaterMark($save_path, $watermark_path);
 		}
@@ -695,11 +695,11 @@ Class FotoModule extends Module {
 			$errors = $errors.'<li>'.__('Empty field "title"').'</li>'."\n";
 		if (!$Validate->cha_val($title, V_TITLE))  
 			$errors = $errors.'<li>'.__('Wrong chars in "title"').'</li>'."\n";
-		$foto_fields = Config::read('fields', $this->module);
+		$foto_fields = $this->Register['Config']->read('fields', $this->module);
 		if (empty($description) && !empty($foto_fields['description'])) 
 			$errors = $errors.'<li>'.__('Empty field "description"').'</li>'."\n";
-		if (mb_strlen($description) > Config::read('description_lenght', $this->module))
-			$errors = $errors.'<li>'.sprintf(__('Wery big "description"'), Config::read('description_lenght', $this->module)).'</li>'."\n";
+		if (mb_strlen($description) > $this->Register['Config']->read('description_lenght', $this->module))
+			$errors = $errors.'<li>'.sprintf(__('Wery big "description"'), $this->Register['Config']->read('description_lenght', $this->module)).'</li>'."\n";
 			
 			
 		$catsModel = $this->Register['ModManager']->getModelInstance($this->module . 'Sections');
@@ -725,7 +725,7 @@ Class FotoModule extends Module {
 		if (!$this->ACL->turn(array($this->module, 'record_comments_management'), false)) $commented = '1';
 
 		$entity->setTitle($title);
-		$entity->setDescription(mb_substr($description, 0, Config::read('description_lenght', $this->module)));
+		$entity->setDescription(mb_substr($description, 0, $this->Register['Config']->read('description_lenght', $this->module)));
 		$entity->setCategory_id($in_cat);
 		$entity->setCommented($commented);
 		$entity->save();

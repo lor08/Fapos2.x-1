@@ -154,15 +154,19 @@ class UsersModel extends FpsModel
 	public function getByNamePass($name, $password)
 	{
         $Register = Register::getInstance();
-		$entity = $Register['DB']->query("SELECT *, UNIX_TIMESTAMP(last_visit) as unix_last_visit
+		$entities = $Register['DB']->query("SELECT *, UNIX_TIMESTAMP(last_visit) as unix_last_visit
 			FROM `" . $Register['DB']->getFullTableName('users') . "`  WHERE name='"
-			.mysql_real_escape_string( $name )."' AND passw='".mysql_real_escape_string( md5( $password ) )
-			."' LIMIT 1");
+			.mysql_real_escape_string( $name )."' LIMIT 1");
 
-		if (!empty($entity[0])) {
-            $entity = $this->getAllAssigned($entity);
+		$check_password = false;
+		if (count($entities) > 0 && !empty($entities[0])) {
+			$check_password = checkPassword($entities[0]['passw'], $password);
+		}
+
+		if (count($entities) > 0 && !empty($entities[0]) && $check_password) {
+            $entities = $this->getAllAssigned($entities);
 			$entityClassName = $Register['ModManager']->getEntityNameFromModel(get_class($this));
-			$entity = new $entityClassName($entity[0]);
+			$entity = new $entityClassName($entities[0]);
 			return (!empty($entity)) ? $entity : false;
 		}
 		return false;
@@ -177,5 +181,29 @@ class UsersModel extends FpsModel
 				AND `viewed` = 0 AND `id_rmv` <> ".$uid);
 
 		return (!empty($res[0]) && !empty($res[0]['cnt'])) ? (string)$res[0]['cnt'] : 0;
+	}
+
+	function getUserStatistic($user_id) {
+		$comments_tables = array('foto_comments', 'loads_comments', 'news_comments', 'stat_comments');
+		$cnt = 0;
+		$error = true;
+		foreach($comments_tables as $table) {
+			$result = $this->getDbDriver()->select($table, DB_FIRST, array('cond' => array('`user_id`' => $user_id), 'fields' => array('COUNT(*) as cnt'), 'limit' => 1));
+			if (is_array($result) && count($result) > 0) {
+				$error = false;
+				$cnt += $result[0]['cnt'];
+			}
+		}
+		if (!$error && $cnt > 0) {
+			$res = array(
+				array(
+					'text' => 'Комментариев',
+					'count' => $cnt,
+					'url' => get_url('/'),
+				),
+			);
+			return $res;
+		}
+		return false;
 	}
 }

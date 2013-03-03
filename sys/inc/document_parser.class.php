@@ -7,8 +7,8 @@
 ## Project:      CMS                            ##
 ## package       CMS Fapos                      ##
 ## subpackege    Document parser library        ##
-## copyright     ©Andrey Brykin 2010-2012       ##
-## last mod.     2012/09/17                     ##
+## copyright     В©Andrey Brykin 2010-2013       ##
+## last mod.     2013/02/17                     ##
 ##################################################
 
 
@@ -238,7 +238,7 @@ class Document_Parser {
 		}
 		
 		
-		$markers['counter'] = get_url('/sys/img/counter.png');
+		$markers['counter'] = get_url('/sys/img/counter.png?rand=' . rand(0,999999));
 		$markers['template_path'] = get_url('/template/' . getTemplateName());
 		$markers['www_root'] = WWW_ROOT;
 		

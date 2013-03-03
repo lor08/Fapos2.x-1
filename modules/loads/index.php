@@ -4,12 +4,12 @@
 | @Author:       Andrey Brykin (Drunya)        |
 | @Email:        drunyacoder@gmail.com         |
 | @Site:         http://fapos.net              |
-| @Version:      1.7.96                        |
+| @Version:      1.8.02                        |
 | @Project:      CMS                           |
 | @package       CMS Fapos                     |
 | @subpackege    Loads Module                  |
-| @copyright     ©Andrey Brykin 2010-20113     |
-| @last mod.     2013/01/21                    |
+| @copyright     В©Andrey Brykin 2010-2013      |
+| @last mod.     2013/02/23                    |
 |----------------------------------------------|
 |											   |
 | any partial or not partial extension         |
@@ -86,7 +86,7 @@ Class LoadsModule extends Module {
 
 
         $total = $this->Model->getTotal($query_params);
-		list ($pages, $page) = pagination( $total, Config::read('per_page', $this->module), $this->getModuleURL());
+		list ($pages, $page) = pagination( $total, $this->Register['Config']->read('per_page', $this->module), $this->getModuleURL());
         $this->Register['pages'] = $pages;
         $this->Register['page'] = $page;
         $this->page_title .= ' (' . $page . ')';
@@ -109,7 +109,7 @@ Class LoadsModule extends Module {
 
         $params = array(
             'page' => $page,
-			'limit' => Config::read('per_page', $this->module),
+			'limit' => $this->Register['Config']->read('per_page', $this->module),
             'order' => getOrderParam(__CLASS__),
         );
         $where = array();
@@ -140,7 +140,7 @@ Class LoadsModule extends Module {
 			
 			
             $announce = $this->Textarier->getAnnounce($announce, $entry_url, 0,
-                Config::read('announce_lenght', $this->module), $entity);
+                $this->Register['Config']->read('announce_lenght', $this->module), $entity);
 			
 			
             $rec_attaches = $entity->getAttaches();
@@ -229,7 +229,7 @@ Class LoadsModule extends Module {
 
 
         $total = $this->Model->getTotal($query_params);
-		list ($pages, $page) = pagination( $total, Config::read('per_page', $this->module), $this->getModuleURL('category/' . $id));
+		list ($pages, $page) = pagination( $total, $this->Register['Config']->read('per_page', $this->module), $this->getModuleURL('category/' . $id));
         $this->Register['pages'] = $pages;
         $this->Register['page'] = $page;
         $this->page_title .= ' (' . $page . ')';
@@ -254,7 +254,7 @@ Class LoadsModule extends Module {
 
         $params = array(
             'page' => $page,
-			'limit' => Config::read('per_page', $this->module),
+			'limit' => $this->Register['Config']->read('per_page', $this->module),
             'order' => getOrderParam(__CLASS__),
         );
         $where = $query_params['cond'];
@@ -290,7 +290,7 @@ Class LoadsModule extends Module {
             $announce = $this->Textarier->getAnnounce($announce
                 , $entry_url
                 , 0
-                , Config::read('announce_lenght', $this->module)
+                , $this->Register['Config']->read('announce_lenght', $this->module)
                 , $result
             );
 			
@@ -372,14 +372,14 @@ Class LoadsModule extends Module {
         }
 
 
-		$max_attaches = Config::read('max_attaches', $this->module);
+		$max_attaches = $this->Register['Config']->read('max_attaches', $this->module);
         if (empty($max_attaches) || !is_numeric($max_attaches)) $max_attaches = 5;
 
 
         //category block
         $this->_getCatsTree($entity->getCategory()->getId());
         /* COMMENT BLOCK */
-		if (Config::read('comment_active', $this->module) == 1
+		if ($this->Register['Config']->read('comment_active', $this->module) == 1
 			&& $this->ACL->turn(array($this->module, 'view_comments'), false)
             && $entity->getCommented() == 1) {
 			if ($this->ACL->turn(array($this->module, 'add_comments'), false))
@@ -516,7 +516,7 @@ Class LoadsModule extends Module {
 
 
 		$markers['action'] = get_url($this->getModuleURL('add/'));
-		$markes['max_attaches'] = Config::read('max_attaches', $this->module);
+		$markes['max_attaches'] = $this->Register['Config']->read('max_attaches', $this->module);
 		if (empty($markers['max_attaches']) || !is_numeric($markers['max_attaches']))
 			$markers['max_attaches'] = 5;
         $data = array_merge($data, $markers);
@@ -561,7 +561,7 @@ Class LoadsModule extends Module {
 
 
 		$fields = array('description', 'tags', 'sourse', 'sourse_email', 'sourse_site', 'download_url', 'download_url_size');
-		$fields_settings = Config::read('fields', $this->module);
+		$fields_settings = $this->Register['Config']->read('fields', $this->module);
 		foreach ($fields as $field) {
 			if (empty($_POST[$field]) && in_array($field, $fields_settings)) {
 				$error = $error.'<li>' . __('Empty field') . '"' . $field . '"</li>'."\n";
@@ -599,14 +599,14 @@ Class LoadsModule extends Module {
 		if (empty($addLoad))                    
 			$error = $error . '<li>' . __('Empty field "material"') . '</li>' ."\n";
 		
-		if (mb_strlen($addLoad) > Config::read('max_lenght', $this->module))
+		if (mb_strlen($addLoad) > $this->Register['Config']->read('max_lenght', $this->module))
 			$error = $error .'<li>'. sprintf(__('Wery big "material"')
-			, Config::read('max_lenght', $this->module)) .'</li>'."\n";
-		if (mb_strlen($addLoad) < Config::read('min_lenght', $this->module))
+			, $this->Register['Config']->read('max_lenght', $this->module)) .'</li>'."\n";
+		if (mb_strlen($addLoad) < $this->Register['Config']->read('min_lenght', $this->module))
 			$error = $error .'<li>'. sprintf(__('Wery small "material"')
-			, Config::read('min_lenght', $this->module)) .'</li>'."\n";
+			, $this->Register['Config']->read('min_lenght', $this->module)) .'</li>'."\n";
 		
-		if (Config::read('require_file', $this->module) == 1) {
+		if ($this->Register['Config']->read('require_file', $this->module) == 1) {
 			if (empty($_FILES['attach']['name'])) 
 				$error = $error . '<li>' . __('Not attaches') . '</li>' . "\n";	
 		}
@@ -636,7 +636,7 @@ Class LoadsModule extends Module {
 
 
         // Check attaches size and format
-		$max_attach = Config::read('max_attaches', $this->module);
+		$max_attach = $this->Register['Config']->read('max_attaches', $this->module);
         if (empty($max_attach) || !is_numeric($max_attach)) $max_attach = 5;
 		$max_attach_size = $this->getMaxSize('max_attaches_size');
 		if (empty($max_attach_size) || !is_numeric($max_attach_size)) $max_attach_size = 1048576;
@@ -694,7 +694,7 @@ Class LoadsModule extends Module {
 		
 		
 		// Формируем SQL-запрос на добавление темы
-		$addLoad = mb_substr($addLoad, 0, Config::read('max_lenght', $this->module));
+		$addLoad = mb_substr($addLoad, 0, $this->Register['Config']->read('max_lenght', $this->module));
         $data = array(
 			'title'             => $title,
 			'main'              => $addLoad,
@@ -836,7 +836,7 @@ Class LoadsModule extends Module {
 
 		$data->setCats_selector($cats_change);
         $data->setAttaches_delete($attDelButtons);
-		$data->setMax_attaches(Config::read('max_attaches', $this->module));
+		$data->setMax_attaches($this->Register['Config']->read('max_attaches', $this->module));
 
 
 		//navigation panel
@@ -901,7 +901,7 @@ Class LoadsModule extends Module {
 		
 		$valobj = $this->Register['Validate'];
 		$fields = array('description', 'tags', 'sourse', 'sourse_email', 'sourse_site', 'download_url', 'download_url_size');
-		$fields_settings = Config::read('fields', $this->module);
+		$fields_settings = $this->Register['Config']->read('fields', $this->module);
 		foreach ($fields as $field) {
 			if (empty($_POST[$field]) && in_array($field, $fields_settings)) {
 				$error = $error.'<li>' . __('Empty field') . ' "' . $field . '"</li>'."\n";
@@ -931,14 +931,14 @@ Class LoadsModule extends Module {
 		}
 
 
-		if (mb_strlen($editLoad) > Config::read('max_lenght', $this->module))
+		if (mb_strlen($editLoad) > $this->Register['Config']->read('max_lenght', $this->module))
 			$error = $error . '<li>' . sprintf(__('Wery big "material"')
-			, Config::read('max_lenght', $this->module)).'</li>'."\n";
-		if (mb_strlen($editLoad) < Config::read('min_lenght', $this->module))
+			, $this->Register['Config']->read('max_lenght', $this->module)).'</li>'."\n";
+		if (mb_strlen($editLoad) < $this->Register['Config']->read('min_lenght', $this->module))
 			$error = $error .'<li>' . sprintf(__('Wery small "material"')
-			, Config::read('min_lenght', $this->module)).'</li>'."\n";
+			, $this->Register['Config']->read('min_lenght', $this->module)).'</li>'."\n";
 
-		if (Config::read('require_file', $this->module) == 1) {
+		if ($this->Register['Config']->read('require_file', $this->module) == 1) {
 			if (empty($_FILES['attach']['name'])) 
 				$error = $error . '<li>' . __('Not attaches') . '</li>' . "\n";	
 		}
@@ -993,7 +993,7 @@ Class LoadsModule extends Module {
 		}
 
         // Check attaches size and format
-		$max_attach = Config::read('max_attaches', $this->module);
+		$max_attach = $this->Register['Config']->read('max_attaches', $this->module);
         if (empty($max_attach) || !is_numeric($max_attach)) $max_attach = 5;
 		$max_attach_size = $this->getMaxSize('max_attaches_size');
 		if (empty($max_attach_size) || !is_numeric($max_attach_size)) $max_attach_size = 1048576;
@@ -1299,30 +1299,30 @@ Class LoadsModule extends Module {
         $entity->save();
         $this->Register['DB']->cleanSqlCache();
 
-		if (Config::read('filename_from_title', $this->module)) {
+		if ($this->Register['Config']->read('filename_from_title', $this->module)) {
 			$ext = strrchr($entity->getDownload(), ".");
-			$name = $entity->getTitle() . Config::read('filename_postfix', $this->module) . (empty($ext) ? '' : $ext);
+			$name = $entity->getTitle() . $this->Register['Config']->read('filename_postfix', $this->module) . (empty($ext) ? '' : $ext);
 		} else {
 			$name = $entity->getFilename();
 			if (!empty($name)) {
-				if (Config::read('filename_postfix', $this->module)) {
+				if ($this->Register['Config']->read('filename_postfix', $this->module)) {
 					$pos = strrpos($entity->getFilename(), ".");
 					if ($pos === false) {
-						$name = $name . Config::read('filename_postfix', $this->module);
+						$name = $name . $this->Register['Config']->read('filename_postfix', $this->module);
 					} else {
 						$ext = strrchr($name, ".");
-						$name = substr($name, 0, $pos) . Config::read('filename_postfix', $this->module) . $ext;
+						$name = substr($name, 0, $pos) . $this->Register['Config']->read('filename_postfix', $this->module) . $ext;
 					}
 				}
 			} else {
 				$name = $entity->getDownload();
-				if (Config::read('filename_postfix', $this->module)) {
+				if ($this->Register['Config']->read('filename_postfix', $this->module)) {
 					$pos = strrpos($name, ".");
 					if ($pos === false) {
-						$name = $name . Config::read('filename_postfix', $this->module);
+						$name = $name . $this->Register['Config']->read('filename_postfix', $this->module);
 					} else {
 						$ext = strrchr($name, ".");
-						$name = substr($name, 0, $pos) . Config::read('filename_postfix', $this->module) . $ext;
+						$name = substr($name, 0, $pos) . $this->Register['Config']->read('filename_postfix', $this->module) . $ext;
 					}
 				}
 			}

@@ -54,7 +54,7 @@ if (empty($html)) {
 				'title' => h($comment->getName()),
 				'class' => 'ava',
 			);
-			$markers['avatar'] = getAvatar($comment->getUser_id());
+			$markers['avatar'] = '<img class="ava" src="' . getAvatar($comment->getUser_id()) . '" alt="User avatar" />';
 			
 			
 			if ($comment->getUser_id()) {

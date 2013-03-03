@@ -97,8 +97,8 @@ Class PagesModule extends Module {
 			
 		//may be need view latest materials	
 		} else {
-			$this->page_title = Config::read('title');
-			$latest_on_home = Config::read('latest_on_home');
+			$this->page_title = $this->Register['Config']->read('title');
+			$latest_on_home = $this->Register['Config']->read('latest_on_home');
 			$navi = null; //vsyakiy sluchay:)
 			
 			
@@ -226,7 +226,7 @@ Class PagesModule extends Module {
 
 						
                         $announce = $this->Textarier->getAnnounce($announce, $entry_url, 0,
-                            Config::read('announce_lenght'), $result);
+                            $this->Register['Config']->read('announce_lenght'), $result);
 						
 						
                         if (count($matattaches) > 0) {
@@ -241,7 +241,7 @@ Class PagesModule extends Module {
 
 						$markers['profile_url'] = get_url('/users/info/' . $result->getAuthor_id());
 
-                        $markers['module_title'] = Config::read('title', $result->getSkey());
+                        $markers['module_title'] = $this->Register['Config']->read('title', $result->getSkey());
                         $result->setAdd_markers($markers);
 
 

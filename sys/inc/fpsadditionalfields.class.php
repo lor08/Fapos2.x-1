@@ -2,12 +2,12 @@
 /*-----------------------------------------------\
 | 												 |
 |  @Author:       Andrey Brykin (Drunya)         |
-|  @Version:      0.4                            |
+|  @Version:      0.5                            |
 |  @Project:      CMS                            |
 |  @package       CMS Fapos                      |
 |  @subpackege    Additional Fields              |
 |  @copyright     ©Andrey Brykin 2010-2013       |
-|  @last mod.     2012/03/02                     |
+|  @last mod.     2013/02/22                     |
 \-----------------------------------------------*/
 
 /*-----------------------------------------------\
@@ -78,10 +78,12 @@ class FpsAdditionalFields {
 				
 					$viewData = '';
 					if (!empty($addContents)) {
-						foreach($addContents as $addContent) {
-							if ($addContent->getField_id() == $addField->getId() && 
-								$entity->getId() === $addContent->getEntity_id()) {
-                                $viewData = $addContent->getContent();
+						foreach($addContents as $addCon) {
+						
+							// Get current field contents
+							if ($addCon->getField_id() == $addField->getId()
+							&& $entity->getId() === $addCon->getEntity_id()) {
+								$viewData = $addCon->getContent();
 								break;
 							}
 						}

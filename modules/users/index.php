@@ -2,12 +2,12 @@
 /*---------------------------------------------\
 |											   |
 | @Author:       Andrey Brykin (Drunya)        |
-| @Version:      1.5.4                         |
+| @Version:      1.5.5                         |
 | @Project:      CMS                           |
 | @package       CMS Fapos                     |
 | @subpackege    Users Module                  |
 | @copyright     ©Andrey Brykin 2010-2013      |
-| @last mod      2013/01/07                    |
+| @last mod      2013/02/22                    |
 |----------------------------------------------|
 |											   |
 | any partial or not partial extension         |
@@ -56,7 +56,7 @@ Class UsersModule extends Module {
 		// Выбираем из БД количество пользователей - это нужно для
 		// построения постраничной навигации
 		$total = $this->Model->getTotal(array());
-		list($pages, $page) = pagination($total, Config::read('users_per_page', $this->module), $this->getModuleURL());
+		list($pages, $page) = pagination($total, $this->Register['Config']->read('users_per_page', $this->module), $this->getModuleURL());
 
 
 		// Navigation Panel
@@ -76,7 +76,7 @@ Class UsersModule extends Module {
 		$queryParams = array(
 			'order' => mysql_real_escape_string($order),
 			'page' => $page,
-			'limit' => Config::read('users_per_page', $this->module)
+			'limit' => $this->Register['Config']->read('users_per_page', $this->module)
 		);
 		$records = $this->Model->getCollection(array(), $queryParams);
 
@@ -146,7 +146,7 @@ Class UsersModule extends Module {
 		if (!empty($_SESSION['user']['id'])) redirect('/');
 	
 		// Registration denied
-		if (!Config::read('open_reg')) {
+		if (!$this->Register['Config']->read('open_reg')) {
 			return $this->showInfoMessage(__('Registration denied'), '/');
 		}
 		
@@ -283,7 +283,7 @@ Class UsersModule extends Module {
 			'keystring'
 		);
 		
-		$fields_settings = (array)Config::read('fields', $this->module);
+		$fields_settings = (array)$this->Register['Config']->read('fields', $this->module);
 		$fields_settings = array_merge($fields_settings, array('email', 'login', 'password', 'confirm'));
 
 		
@@ -350,8 +350,8 @@ Class UsersModule extends Module {
 			$error = $error.'<li>' . __('Wrong "name" lenght') . '</li>'."\n";
 			
 		// Проверяем, не слишком ли короткий пароль
-		if (!empty($password) and mb_strlen($password) < Config::read('min_password_lenght'))
-			$error = $error.'<li>' . sprintf(__('Wery short pass'), Config::read('min_password_lenght')) . '</li>'."\n";
+		if (!empty($password) and mb_strlen($password) < $this->Register['Config']->read('min_password_lenght'))
+			$error = $error.'<li>' . sprintf(__('Wery short pass'), $this->Register['Config']->read('min_password_lenght')) . '</li>'."\n";
 		// Проверяем, совпадают ли пароли
 		if (!empty($password) and !empty($confirm) and $password != $confirm)
 			$error = $error.'<li>' . __('Passwords is diferend') . '</li>'."\n";
@@ -425,9 +425,9 @@ Class UsersModule extends Module {
 				$error = $error.'<li>' . __('Wrong avatar') . '</li>'."\n";
 				$check_image = true;
 			}
-			if ($_FILES['avatar']['size'] > Config::read('max_avatar_size', $this->module)) {
+			if ($_FILES['avatar']['size'] > $this->Register['Config']->read('max_avatar_size', $this->module)) {
 				$error = $error.'<li>'. sprintf(__('Avatar is wery big')
-				, round(Config::read('max_avatar_size', $this->module) / 1024, 2)) .'</li>'."\n";
+				, round($this->Register['Config']->read('max_avatar_size', $this->module) / 1024, 2)) .'</li>'."\n";
 				$check_image = true;
 			}
 			if (!isset($check_image) && move_uploaded_file($_FILES['avatar']['tmp_name'], $path)) {
@@ -453,15 +453,15 @@ Class UsersModule extends Module {
 			redirect($this->getModuleURL('add_form/yes'));
 		}
 
-		if (!empty($url) and substr($url, 0, 7) != 'http://') $url = 'http://' . $url;
+		if (!empty($url) && mb_substr($url, 0, mb_strlen('http://')) !== 'http://') $url = 'http://' . $url;
 
 		// Уникальный код для активации учетной записи
-		$email_activate = Config::read('email_activate');
+		$email_activate = $this->Register['Config']->read('email_activate');
 		$code = (!empty($email_activate)) ? md5(uniqid(rand(), true)) : '';
 		// Все поля заполнены правильно - продолжаем регистрацию
 		$data = array(
 			'name'  	=> $name,
-			'passw' 	=> md5( $password ),
+			'passw' 	=> md5crypt( $password ),
 			'email' 	=> $email,
 			'timezone' 	=> $timezone,
 			'url' 		=> $url,
@@ -508,9 +508,9 @@ Class UsersModule extends Module {
 		// Activate by Email
 		if (!empty($email_activate)) {
 			// Посылаем письмо пользователю с просьбой активировать учетную запись
-			$headers = "From: ".$_SERVER['SERVER_NAME']." <" . Config::read('admin_email') . ">\n";
+			$headers = "From: ".$_SERVER['SERVER_NAME']." <" . $this->Register['Config']->read('admin_email') . ">\n";
 			$headers = $headers."Content-type: text/html; charset=\"utf-8\"\n";
-			$headers = $headers."Return-path: <" . Config::read('admin_email') . ">\n";
+			$headers = $headers."Return-path: <" . $this->Register['Config']->read('admin_email') . ">\n";
 			$message = '<p>Добро пожаловать на форум '.$_SERVER['SERVER_NAME'].'!</p>'."\n";
 			$message = $message.'<p>Пожалуйста сохраните это сообщение. Параметры вашей учётной записи таковы:</p>'."\n";
 			$message = $message.'<p>Логин: '.$name.'<br/>Пароль: '.$password.'</p>'."\n";
@@ -660,8 +660,8 @@ Class UsersModule extends Module {
 				// Как происходит процедура восстановления пароля? Пользователь ввел свой логин
 				// и e-mail, мы проверяем существование такого пользователя в таблице БД. Потом
 				// генерируем с помощью функции getNewPassword() новый пароль, создаем файл с именем
-				// md5( $newPassword ) в директории activate. Файл содержит ID пользователя.
-				// В качестве кода активации выступает хэш пароля - md5( $newPassword ).
+				// хэша пароля в директории activate. Файл содержит ID пользователя.
+				// В качестве кода активации выступает хэш пароля.
 				// Когда пользователь перейдет по ссылке в письме для активации своего нового пароля,
 				// мы проверяем наличие в директории activatePassword файла с именем кода активации,
 				// и если он существует, активируем новый пароль.
@@ -670,17 +670,17 @@ Class UsersModule extends Module {
 				$name = $user->getName();
 				$email = $user->getEmail();
 				$newPassword = $this->_getNewPassword();
-				$code = md5($newPassword);
-				// file_put_contents(ROOT . '/sys/tmp/activate/'.$code, $id );
-				$fp = fopen( ROOT . '/sys/tmp/activate/' . $code, "w" );
-				fwrite($fp, $id);
+				$code = md5crypt($newPassword);
+				$filename = md5($code);
+				$fp = fopen( ROOT . '/sys/tmp/activate/' . $filename, "w" );
+				fwrite($fp, $id . "\n" . $code);
 				fclose($fp);
 
 
 				// Посылаем письмо пользователю с просьбой активировать пароль
-				$headers = "From: " . $_SERVER['SERVER_NAME'] . " <" . Config::read('admin_email') . ">\n";
+				$headers = "From: " . $_SERVER['SERVER_NAME'] . " <" . $this->Register['Config']->read('admin_email') . ">\n";
 				$headers = $headers."Content-type: text/html; charset=\"utf-8\"\n";
-				$headers = $headers."Return-path: <" . Config::read('admin_email') . ">\n";
+				$headers = $headers."Return-path: <" . $this->Register['Config']->read('admin_email') . ">\n";
 				$message = '<p>Добрый день, '.$name.'!</p>'."\n";
 				$message = $message.'<p>Вы получили это письмо потому, что вы (либо кто-то, выдающий себя
 						 за вас) попросили выслать новый пароль к вашей учётной записи на форуме '.
@@ -689,7 +689,7 @@ Class UsersModule extends Module {
 						 обратитесь к администратору форума</p>'."\n";
 				$message = $message.'<p>Прежде чем использовать новый пароль, вы должны его активировать.
 						 Для этого перейдите по ссылке:</p>'."\n";
-				$link = 'http://'.$_SERVER['SERVER_NAME'] . $this->getModuleURL('activate_password/' . $code);
+				$link = 'http://'.$_SERVER['SERVER_NAME'] . $this->getModuleURL('activate_password/' . $filename);
 				$message = $message.'<p><a href="'.$link.'">Активировать пароль</a></p>'."\n";
 				$message = $message.'<p>В случае успешной активации вы сможете входить в систему, используя
 						 следующий пароль: '.$newPassword.'</p>'."\n";
@@ -744,7 +744,7 @@ Class UsersModule extends Module {
 			unlink($f_path);
 			$id_user = (int)trim($file[0]);
 			$user = $this->Model->getById($id_user);
-			$user->setPassw($code);
+			$user->setPassw(count($file) > 1 ? trim($file[1]) : $code);
 			$user->save();
 			$message = __('New pass is ready');
 			if ($this->Log) $this->Log->write('activate new passw', 'user id(' . $id_user . ')');
@@ -916,7 +916,7 @@ Class UsersModule extends Module {
 			'template'
 		);
 		
-		$fields_settings = (array)Config::read('fields', $this->module);
+		$fields_settings = (array)$this->Register['Config']->read('fields', $this->module);
 		$fields_settings = array_merge($fields_settings, array('email'));
 		
 		
@@ -974,7 +974,7 @@ Class UsersModule extends Module {
 		$changePassword = false;
 		$changeEmail = false;
 		if (!empty($password)) {
-			if ( md5($password) != $_SESSION['user']['passw'] ) 
+			if (!checkPassword($_SESSION['user']['passw'], $password)) 
 				$error = $error.'<li>' . __('Wrong current pass') . '</li>'."\n";
 			// Надо выяснить, что хочет сделать пользователь:
 			// поменять свой e-mail, изменить пароль или и то и другое
@@ -982,8 +982,8 @@ Class UsersModule extends Module {
 				$changePassword = true;
 				if (empty($confirm)) 	
 					$error = $error.'<li>' . __('Empty field "confirm"') . '</li>'."\n";
-				if (strlen($newpassword) < Config::read('min_password_lenght'))
-					$error = $error.'<li>'. sprintf(__('Wery short pass'), Config::read('min_password_lenght')) . '</li>'."\n";
+				if (strlen($newpassword) < $this->Register['Config']->read('min_password_lenght'))
+					$error = $error.'<li>'. sprintf(__('Wery short pass'), $this->Register['Config']->read('min_password_lenght')) . '</li>'."\n";
 				if (!empty($confirm) and $newpassword != $confirm)
 					$error = $error.'<li>' . __('Passwords is diferend') . '</li>'."\n";
 				if (!$valobj->cha_val($newpassword, V_LOGIN))
@@ -1032,8 +1032,8 @@ Class UsersModule extends Module {
 				$error = $error.'<li>' . __('Wrong avatar') . '</li>'."\n";
 				$check_image = true;
 			}
-			if ($_FILES['avatar']['size'] > Config::read('max_avatar_size', $this->module)) {
-				$error = $error.'<li>'. sprintf(__('Avatar is wery big'), Config::read('max_avatar_size', $this->module)).'</li>'."\n";
+			if ($_FILES['avatar']['size'] > $this->Register['Config']->read('max_avatar_size', $this->module)) {
+				$error = $error.'<li>'. sprintf(__('Avatar is wery big'), $this->Register['Config']->read('max_avatar_size', $this->module)).'</li>'."\n";
 				$check_image = true;
 			}
 			if (!isset($check_image) && move_uploaded_file($_FILES['avatar']['tmp_name'], $path)) {
@@ -1080,15 +1080,16 @@ Class UsersModule extends Module {
 		}
 
 		// Все поля заполнены правильно - записываем изменения в БД
-		if (mb_substr($url, 0, mb_strlen('http://')) !== 'http://') $url = 'http://' . $url;
+		if (!empty($url) && mb_substr($url, 0, mb_strlen('http://')) !== 'http://') $url = 'http://' . $url;
 
 
 		$user = $this->Model->getById($_SESSION['user']['id']);
 
 		$user_data = array();
 		if ( $changePassword ) {
-			$user->setPassw(md5($newpassword));
-			$_SESSION['user']['passw'] = md5( $newpassword );
+			$npass = md5crypt($newpassword);
+			$user->setPassw($npass);
+			$_SESSION['user']['passw'] = $npass;
 		}
 		if ( $changeEmail ) {
 			$user->setEmail($email);
@@ -1115,18 +1116,12 @@ Class UsersModule extends Module {
 		}
 		
 		
-		// Теперь надо обновить данные о пользователе в массиве $_SESSION['user']
-		if ( $changePassword ) $_SESSION['user']['passw'] = md5( $newpassword );
-		if ( $changeEmail ) $_SESSION['user']['email'] = $email;
-		//$_SESSION['user'] = array_merge($_SESSION['user'], $user_data);
-		
-		
 		// ... и в массиве $_COOKIE
 		if ( isset( $_COOKIE['autologin'] ) ) {
 			$path   = "/";
-			setcookie( 'autologin', 'yes', time() + 3600 * 24 * Config::read('cookie_time'), $path );
-			setcookie( 'userid', $_SESSION['user']['id'], time() + 3600 * 24 * Config::read('cookie_time'), $path );
-			setcookie( 'password', $_SESSION['user']['passw'], time() + 3600 * 24 * Config::read('cookie_time'), $path );
+			setcookie( 'autologin', 'yes', time() + 3600 * 24 * $this->Register['Config']->read('cookie_time'), $path );
+			setcookie( 'userid', $_SESSION['user']['id'], time() + 3600 * 24 * $this->Register['Config']->read('cookie_time'), $path );
+			setcookie( 'password', $_SESSION['user']['passw'], time() + 3600 * 24 * $this->Register['Config']->read('cookie_time'), $path );
 		}
 		if ($this->Log) $this->Log->write('editing user', 'user id(' . $_SESSION['user']['id'] . ')');
 		return $this->showInfoMessage(__('Your profile has been changed'), $this->getModuleURL('info/' . $_SESSION['user']['id']));
@@ -1319,7 +1314,7 @@ Class UsersModule extends Module {
 			'template'
 		);
 		
-		$fields_settings = (array)Config::read('fields', $this->module);
+		$fields_settings = (array)$this->Register['Config']->read('fields', $this->module);
 		$fields_settings = array_merge($fields_settings, array('email'));
 		
 		foreach ($fields as $field) {
@@ -1380,8 +1375,8 @@ Class UsersModule extends Module {
 			$changePassword = true;
 			if ( empty( $confirm ) )	
 				$error = $error.'<li>' . __('Empty field "confirm"') . '</li>'."\n";
-			if (strlen($newpassword) < Config::read('min_password_lenght'))
-				$error = $error.'<li>' . sprintf(__('Wery short pass'), Config::read('min_password_lenght')).'</li>'."\n";
+			if (strlen($newpassword) < $this->Register['Config']->read('min_password_lenght'))
+				$error = $error.'<li>' . sprintf(__('Wery short pass'), $this->Register['Config']->read('min_password_lenght')).'</li>'."\n";
 			if (!empty($confirm) and $newpassword != $confirm)
 				$error = $error.'<li>' . __('Passwords is diferend') . '</li>'."\n";
 			if ( !$valobj->cha_val($newpassword, V_LOGIN))
@@ -1434,8 +1429,8 @@ Class UsersModule extends Module {
 				$error = $error.'<li>' . __('Wrong avatar') . '</li>'."\n";
 				$check_image = true;
 			}
-			if ($_FILES['avatar']['size'] > Config::read('max_avatar_size', $this->module)) {
-				$error = $error.'<li>'. sprintf(__('Avatar is wery big'), Config::read('max_avatar_size', $this->module)).'</li>'."\n";
+			if ($_FILES['avatar']['size'] > $this->Register['Config']->read('max_avatar_size', $this->module)) {
+				$error = $error.'<li>'. sprintf(__('Avatar is wery big'), $this->Register['Config']->read('max_avatar_size', $this->module)).'</li>'."\n";
 				$check_image = true;
 			}
 			if (!isset($check_image) && move_uploaded_file($_FILES['avatar']['tmp_name'], $path)) {
@@ -1500,7 +1495,7 @@ Class UsersModule extends Module {
 
 		// Все поля заполнены правильно - записываем изменения в БД
 		if ( $changePassword ) {
-			$user->setPassw(md5($newpassword));
+			$user->setPassw(md5crypt($newpassword));
 		}
 		if ( $changeEmail ) {
 			$user->setEmail($email);
@@ -1633,6 +1628,28 @@ Class UsersModule extends Module {
 			. get_link(h($this->module_title), $this->getModuleURL()) . __('Separator') . __('Profile');
 		$this->_globalize($nav);
 
+		$stat = array();
+		$modules = glob(ROOT . '/modules/*', GLOB_ONLYDIR);
+		if (count($modules)) {
+			foreach ($modules as $path) {
+				$title = substr(strrchr($path, '/'), 1);
+				$classname = $this->Register['ModManager']->getModelName($title);
+				if ($this->Register['Config']->read($title) && class_exists($classname)) {
+					@$mod = new $classname;
+					if (isset($mod)) {
+						if (method_exists($mod, 'getUserStatistic')) {
+							$stats = $mod->getUserStatistic($id);
+							if (!empty($stats) && is_array($stats)) {
+								$stat = array_merge($stat, $stats);
+							}
+						}
+						unset($mod);
+					}
+				}
+			}
+		}
+		uasort($stat, 'cmpText');
+		$markers['stat'] = $stat;
 
 		foreach($markers as $k => $v) {
 			$setter = 'set' . ucfirst($k);
@@ -1747,7 +1764,7 @@ Class UsersModule extends Module {
 		// Обрезаем переменные до длины, указанной в параметре maxlength тега input
 		$toUser  = mb_substr($_POST['toUser'], 0, 30);
 		$subject = mb_substr($_POST['subject'], 0, 60);
-		$message = mb_substr($_POST['mainText'], 0, Config::read('max_message_lenght', $this->module) );
+		$message = mb_substr($_POST['mainText'], 0, $this->Register['Config']->read('max_message_lenght', $this->module) );
 		// Обрезаем лишние пробелы
 		$toUser  = trim($toUser);
 		$subject = trim($subject);
@@ -1771,8 +1788,8 @@ Class UsersModule extends Module {
 			$error = $error.'<li>' . __('Empty field "message title"') . '</li>'."\n";
 		if (empty($message))	 	
 			$error = $error.'<li>' . __('Empty field "text"') . '</li>'."\n";
-		if ($msgLen > Config::read('max_message_lenght', $this->module) )
-			$error = $error.'<li>' . sprintf(__('Very big message'), Config::read('max_message_lenght', $this->module)) . '</li>'."\n";
+		if ($msgLen > $this->Register['Config']->read('max_message_lenght', $this->module) )
+			$error = $error.'<li>' . sprintf(__('Very big message'), $this->Register['Config']->read('max_message_lenght', $this->module)) . '</li>'."\n";
 			
 			
 		// Проверяем поля формы на недопустимые символы
@@ -1821,10 +1838,10 @@ Class UsersModule extends Module {
 				));
 
 
-				if (!empty($cnt_to) && $cnt_to >= Config::read('max_count_mess', $this->module)) {
+				if (!empty($cnt_to) && $cnt_to >= $this->Register['Config']->read('max_count_mess', $this->module)) {
 					$error = $error.'<li>' . __('This user hav full  messagebox') . '</li>'."\n";
 				}
-				if (!empty($cnt_from) && $cnt_from >= Config::read('max_count_mess', $this->module)) {
+				if (!empty($cnt_from) && $cnt_from >= $this->Register['Config']->read('max_count_mess', $this->module)) {
 					$error = $error.'<li>' . __('You hav full  messagebox') . '</li>'."\n";
 				}
 			}
@@ -2198,7 +2215,7 @@ Class UsersModule extends Module {
 		// Обрезаем переменные до длины, указанной в параметре maxlength тега input
 		$toUser  = mb_substr( $_POST['toUser'], 0, 30 );
 		$subject = mb_substr( $_POST['subject'], 0, 60 );
-		$message = mb_substr( $_POST['message'], 0, Config::read('max_mail_lenght', $this->module));
+		$message = mb_substr( $_POST['message'], 0, $this->Register['Config']->read('max_mail_lenght', $this->module));
 		// Обрезаем лишние пробелы
 		$toUser  = trim( $toUser );
 		$subject = trim( $subject );
@@ -2250,9 +2267,9 @@ Class UsersModule extends Module {
 		/* clean DB cache */
 		$this->Register['DB']->cleanSqlCache();
 		// формируем заголовки письма
-		$headers = "From: ".$_SERVER['SERVER_NAME']." <" . Config::read('admin_email') . ">\n";
+		$headers = "From: ".$_SERVER['SERVER_NAME']." <" . $this->Register['Config']->read('admin_email') . ">\n";
 		$headers = $headers."Content-type: text/plain; charset=\"utf-8\"\n";
-		$headers = $headers."Return-path: <" . Config::read('admin_email') . ">\n";
+		$headers = $headers."Return-path: <" . $this->Register['Config']->read('admin_email') . ">\n";
 		$subject = 'Письмо с форума '.$_SERVER['SERVER_NAME'].' от '.$fromUser;
 		if (mail($toUser->getEmail(), $subject, $message, $headers))
 			return $this->showInfoMessage(__('Operation is successful'), '/');
@@ -2295,7 +2312,7 @@ Class UsersModule extends Module {
 			'new_password' => get_link('Забыли пароль?', $this->getModuleURL('new_password_form/')),
 			'error' => (!empty($error)) ? $error : '',
 		);
-		if (Config::read('autorization_protected_key', 'secure') === 1) {
+		if ($this->Register['Config']->read('autorization_protected_key', 'secure') === 1) {
 			$_SESSION['form_key_mine'] = rand(1000, 9999);
 			$form_key = rand(1000, 9999);
 			$_SESSION['form_hash'] = md5($form_key . $_SESSION['form_key_mine']);
@@ -2328,7 +2345,7 @@ Class UsersModule extends Module {
 		$error = '';
 		
 		
-		if (Config::read('autorization_protected_key', 'secure') === 1) {
+		if ($this->Register['Config']->read('autorization_protected_key', 'secure') === 1) {
 			if (empty($_SESSION['form_key_mine'])
 			|| empty($_POST['form_key'])		
 			|| md5(substr($_POST['form_key'], 0, 10) . $_SESSION['form_key_mine']) != $_SESSION['form_hash']) {
@@ -2403,9 +2420,9 @@ Class UsersModule extends Module {
 		// Выставляем cookie, если пользователь хочет входить на форум автоматически
 		if ( isset ( $_POST['autologin'] ) ) {
 			$path = '/';
-			setcookie('autologin', 'yes', time() + 3600 * 24 * Config::read('cookie_time'), $path);
-			setcookie('userid', $_SESSION['user']['id'], time() + 3600 * 24 * Config::read('cookie_time'), $path);
-			setcookie('password', $_SESSION['user']['passw'], time() + 3600 * 24 * Config::read('cookie_time'), $path);
+			setcookie('autologin', 'yes', time() + 3600 * 24 * $this->Register['Config']->read('cookie_time'), $path);
+			setcookie('userid', $_SESSION['user']['id'], time() + 3600 * 24 * $this->Register['Config']->read('cookie_time'), $path);
+			setcookie('password', $_SESSION['user']['passw'], time() + 3600 * 24 * $this->Register['Config']->read('cookie_time'), $path);
 		}
 		
 		
@@ -2524,9 +2541,9 @@ Class UsersModule extends Module {
 		$comment = '';
 		if (isset($_POST['comment'])) {
 			$comment = trim($_POST['comment']);
-			if (mb_strlen($comment) > Config::read('rating_comment_lenght', $this->module)) 
-				die(sprintf(__('Very long comment', Config::read('rating_comment_lenght', $this->module))));
-			$comment = substr($comment, 0, Config::read('rating_comment_lenght', $this->module));
+			if (mb_strlen($comment) > $this->Register['Config']->read('rating_comment_lenght', $this->module)) 
+				die(sprintf(__('Very long comment', $this->Register['Config']->read('rating_comment_lenght', $this->module))));
+			$comment = substr($comment, 0, $this->Register['Config']->read('rating_comment_lenght', $this->module));
 		}
 		
 		
@@ -2721,10 +2738,10 @@ Class UsersModule extends Module {
 		if ($adm_id == $uid) die(__('Some error occurred'));
 		
 		if (!$ban) {
-			$max_warnings = Config::read('warnings_by_ban', $this->module);
+			$max_warnings = $this->Register['Config']->read('warnings_by_ban', $this->module);
 			if ($intruder->getWarnings() > 0 && $intruder->getWarnings() + $points >= $max_warnings) {
 				$ban = 1;
-				$interval = Config::read('autoban_interval', $this->module);
+				$interval = $this->Register['Config']->read('autoban_interval', $this->module);
 				$interval = time() + intval($interval);
 				$interval = date("Y-m-d H:i:s", $interval);
 				
@@ -2819,7 +2836,7 @@ Class UsersModule extends Module {
 		
 		
 		
-		$max_warnings_by_ban = Config::read('warnings_by_ban', $this->module);
+		$max_warnings_by_ban = $this->Register['Config']->read('warnings_by_ban', $this->module);
 		$user_procent_warnings = (100 / $max_warnings_by_ban) * $to_user->getWarnings();
 		foreach ($warnings as $warning) {
 			$panel = get_img('/sys/img/delete_16x16.png', 
@@ -2865,7 +2882,7 @@ Class UsersModule extends Module {
 				
 				$ban = 1;
 				if (!empty($user_warnings)) {
-					if ($user_warnings->getWarnings() < Config::read('warnings_by_ban', $this->module)) {
+					if ($user_warnings->getWarnings() < $this->Register['Config']->read('warnings_by_ban', $this->module)) {
 						$ban = 0;
 					}
 				}
@@ -2932,4 +2949,3 @@ Class UsersModule extends Module {
 		die('ok');
 	}
 }
-

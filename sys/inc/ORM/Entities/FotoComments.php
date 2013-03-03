@@ -35,6 +35,7 @@ class FotoCommentsEntity extends FpsEntity
 	protected $ip;
 	protected $mail;
 	protected $date;
+	protected $editdate;
 
 
 	public function save()

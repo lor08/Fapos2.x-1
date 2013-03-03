@@ -215,13 +215,14 @@ class FpsDataBase {
 			$query['values'] = implode(', ', $valueInsert);
 			$query = $this->__renderQuery('insert', $query);
 			
-			if (Config::read('debug_mode') == 1) $_SESSION['db_querys'][] = $query;
+			if ($Register['Config']->read('debug_mode') == 1) $_SESSION['db_querys'][] = $query;
+			
 			mysql_query($query);
 			
 			return mysql_insert_id();
 		}
-		if (Config::read('debug_mode') == 1) $_SESSION['db_querys'][] = $query;
-
+		if ($Register['Config']->read('debug_mode') == 1) $_SESSION['db_querys'][] = $query;
+		
 		return mysql_query($query);
 	}
 	

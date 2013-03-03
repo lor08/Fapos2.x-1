@@ -404,8 +404,8 @@ class PrintText {
 		
 		
 		if (!empty($_SESSION['module'])) {
-			$sizex = Config::read('img_size_x', $Register['dispath_params'][0]);
-			$sizey = Config::read('img_size_y', $Register['dispath_params'][0]);
+			$sizex = $Register['Config']->read('img_size_x', $Register['dispath_params'][0]);
+			$sizey = $Register['Config']->read('img_size_y', $Register['dispath_params'][0]);
 			$sizex = intval($sizex);
 			$sizey = intval($sizey);
 			if (!empty($sizex) && !empty($sizey)) {

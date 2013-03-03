@@ -67,12 +67,18 @@ if (!isset($_SESSION['adm_panel_authorize']) || $_SESSION['adm_panel_authorize']
 			if ($login != strtolower($_SESSION['user']['name']) || md5($pass) != $_SESSION['user']['passw']) 
 				$errors .= '<li>Не верный Пароль или Логин</li>';
 			*/
-			$user = $FpsDB->select('users', DB_FIRST, array('cond' => array('name' => $login, 'passw' => md5($pass))));
-			if (!count($user)) {
+			$users = $FpsDB->select('users', DB_FIRST, array('cond' => array('name' => $login)));
+			
+			$check_password = false;
+			if (count($users) > 0 && !empty($users[0])) {
+				$check_password = checkPassword($users[0]['passw'], $pass);
+			}
+			
+			if (count($users) < 1 || !$check_password) {
 				$errors .= '<li>Не верный Пароль или Логин</li>';
 			} else {
 				//turn access
-				$ACL->turn(array('panel', 'entry'), true, $user[0]['status']);
+				$ACL->turn(array('panel', 'entry'), true, $users[0]['status']);
 			}
 			
 			if (empty($errors)) {

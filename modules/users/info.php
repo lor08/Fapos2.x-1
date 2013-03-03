@@ -206,6 +206,15 @@ $settingsInfo = array(
 			'0' => 'Запрещено',
 		),
 	),
+	'use_md5_salt' => array(
+		'type' => 'select',
+		'title' => 'Использование паролей MD5 с солью',
+		'description' => 'Рекомендуется включить для большей защиты паролей.',
+		'options' => array(
+			'1' => 'Разрешено',
+			'0' => 'Запрещено',
+		),
+	),
     'active' => array(
         'type' => 'checkbox',
         'title' => 'Статус',

@@ -4,12 +4,12 @@
 | @Author:       Andrey Brykin (Drunya)        |
 | @Email:        drunyacoder@gmail.com         |
 | @Site:         http://fapos.net              |
-| @Version:      1.7.5                         |
+| @Version:      1.7.8                         |
 | @Project:      CMS                           |
 | @Package       CMS Fapos                     |
 | @Subpackege    Stats Module                  |
 | @Copyright     ©Andrey Brykin 2010-2013      |
-| @Last mod      2013/01/21                    |
+| @Last mod      2013/02/22                    |
 |----------------------------------------------|
 |											   |
 | any partial or not partial extension         |
@@ -67,7 +67,7 @@ Class StatModule extends Module {
 		
 
 		$total = $this->Model->getTotal($query_params);
-		list ($pages, $page) = pagination( $total, Config::read('per_page', $this->module), $this->getModuleURL());
+		list ($pages, $page) = pagination( $total, $this->Register['Config']->read('per_page', $this->module), $this->getModuleURL());
 		$this->Register['pages'] = $pages;
 		$this->Register['page'] = $page;
 		$this->page_title .= ' (' . $page . ')';
@@ -91,7 +91,7 @@ Class StatModule extends Module {
 	  
 		$params = array(
 			'page' => $page,
-			'limit' => Config::read('per_page', $this->module),
+			'limit' => $this->Register['Config']->read('per_page', $this->module),
 			'order' => getOrderParam(__CLASS__),
 		);
 		$where = array();
@@ -129,7 +129,7 @@ Class StatModule extends Module {
 			$announce = $this->Textarier->getAnnounce($announce
 				, $entry_url
 				, 0 
-				, Config::read('announce_lenght', $this->module)
+				, $this->Register['Config']->read('announce_lenght', $this->module)
 				, $result
 			);
 			
@@ -221,7 +221,7 @@ Class StatModule extends Module {
 		
 
 		$total = $this->Model->getTotal($query_params);
-		list ($pages, $page) = pagination( $total, Config::read('per_page', $this->module), $this->getModuleURL());
+		list ($pages, $page) = pagination( $total, $this->Register['Config']->read('per_page', $this->module), $this->getModuleURL());
 		$this->Register['pages'] = $pages;
 		$this->Register['page'] = $page;
 		$this->page_title .= ' (' . $page . ')';
@@ -246,7 +246,7 @@ Class StatModule extends Module {
 	  
 		$params = array(
 			'page' => $page,
-			'limit' => Config::read('per_page', $this->module),
+			'limit' => $this->Register['Config']->read('per_page', $this->module),
 			'order' => getOrderParam(__CLASS__),
 		);
 		$where = $query_params['cond'];
@@ -282,7 +282,7 @@ Class StatModule extends Module {
 			$announce = $this->Textarier->getAnnounce($announce
 				, $entry_url
 				, 0 
-				, Config::read('announce_lenght', $this->module)
+				, $this->Register['Config']->read('announce_lenght', $this->module)
 				, $result
 			);
 			
@@ -357,14 +357,14 @@ Class StatModule extends Module {
 		}
 		
 		
-		$max_attaches = Config::read('max_attaches', $this->module);
+		$max_attaches = $this->Register['Config']->read('max_attaches', $this->module);
 		if (empty($max_attaches) || !is_numeric($max_attaches)) $max_attaches = 5;
 		
 		
 		//category block
 		$this->_getCatsTree($entity->getCategory()->getId());
 		/* COMMENT BLOCK */
-		if (Config::read('comment_active', $this->module) == 1 
+		if ($this->Register['Config']->read('comment_active', $this->module) == 1 
 		&& $this->ACL->turn(array($this->module, 'view_comments'), false) 
 		&& $entity->getCommented() == 1) {
 			if ($this->ACL->turn(array($this->module, 'add_comments'), false)) 
@@ -486,7 +486,7 @@ Class StatModule extends Module {
 		
 		
 		$data['action'] = get_url($this->getModuleURL('add/'));
-		$data['max_attaches'] = Config::read('max_attaches', $this->module);
+		$data['max_attaches'] = $this->Register['Config']->read('max_attaches', $this->module);
 		if (empty($data['max_attaches']) || !is_numeric($data['max_attaches'])) $data['max_attaches'] = 5;
 			
 			
@@ -532,7 +532,7 @@ Class StatModule extends Module {
 		
 		
 		$fields = array('description', 'tags', 'sourse', 'sourse_email', 'sourse_site');
-		$fields_settings = Config::read('fields', $this->module);
+		$fields_settings = $this->Register['Config']->read('fields', $this->module);
 		foreach ($fields as $field) {
 			if (empty($_POST[$field]) && in_array($field, $fields_settings)) {
 				$error = $error.'<li>' . __('Empty field') . ' "' . $field . '"</li>'."\n";
@@ -567,8 +567,8 @@ Class StatModule extends Module {
 			$error = $error.'<li>' . __('Wrong chars in "title"') . '</li>'."\n";
 		if (empty($add))                    		 
 			$error = $error.'<li>' . __('Empty field "material"') . '</li>'."\n";
-		else if (mb_strlen($add) > Config::read('max_lenght', $this->module))
-			$error = $error .'<li>'. sprintf(__('Wery big "material"'), Config::read('max_lenght', $this->module)) .'</li>'."\n";
+		else if (mb_strlen($add) > $this->Register['Config']->read('max_lenght', $this->module))
+			$error = $error .'<li>'. sprintf(__('Wery big "material"'), $this->Register['Config']->read('max_lenght', $this->module)) .'</li>'."\n";
 		if (!empty($tags) && !$valobj->cha_val($tags, V_TITLE)) 
 			$error = $error.'<li>' . __('Wrong chars in "tags"') . '</li>'."\n";
 		if (!empty($sourse) && !$valobj->cha_val($sourse, V_TITLE)) 
@@ -580,7 +580,7 @@ Class StatModule extends Module {
 
 			
 		// Check attaches size and format
-		$max_attach = Config::read('max_attaches', $this->module);
+		$max_attach = $this->Register['Config']->read('max_attaches', $this->module);
 		if (empty($max_attach) || !is_numeric($max_attach)) $max_attach = 5;
 		$max_attach_size = $this->getMaxSize('max_attaches_size');
 		if (empty($max_attach_size) || !is_numeric($max_attach_size)) $max_attach_size = 1048576;
@@ -640,7 +640,7 @@ Class StatModule extends Module {
 		$this->Register['Cache']->clean(CACHE_MATCHING_ANY_TAG, array('module_' . $this->module));
 		$this->Register['DB']->cleanSqlCache();
 		// Формируем SQL-запрос на добавление темы	
-		$add = mb_substr($add, 0, Config::read('max_lenght', $this->module));
+		$add = mb_substr($add, 0, $this->Register['Config']->read('max_lenght', $this->module));
 		$res = array(
 			'title'        => $title,
 			'main'         => $add,
@@ -785,7 +785,7 @@ Class StatModule extends Module {
 		$markers->setAction($action);
 		$markers->setCats_selector($cats_change);
 		$markers->setAttaches_delete($attDelButtons);
-		$markers->setMax_attaches(Config::read('max_attaches', $this->module));
+		$markers->setMax_attaches($this->Register['Config']->read('max_attaches', $this->module));
 
 
 		//navigation panel
@@ -843,7 +843,7 @@ Class StatModule extends Module {
 		
 		$valobj = $this->Register['Validate'];
 		$fields = array('description', 'tags', 'sourse', 'sourse_email', 'sourse_site');
-		$fields_settings = Config::read('fields', $this->module);
+		$fields_settings = $this->Register['Config']->read('fields', $this->module);
 		foreach ($fields as $field) {
 			if (empty($_POST[$field]) && in_array($field, $fields_settings)) {
 				$error = $error.'<li>' . __('Empty field') . '"' . $field . '"</li>'."\n";
@@ -877,8 +877,8 @@ Class StatModule extends Module {
 			$error = $error.'<li>' . __('Wrong chars in "title"') . '</li>'."\n";
 		if (empty($edit))                 		
 			$error = $error.'<li>' . __('Empty field "material"') . '</li>'."\n";
-		else if (mb_strlen($edit) > Config::read('max_lenght', $this->module))
-			$error = $error . '<li>' . sprintf(__('Wery big "material"'), Config::read('max_lenght', $this->module)) .'</li>'."\n";
+		else if (mb_strlen($edit) > $this->Register['Config']->read('max_lenght', $this->module))
+			$error = $error . '<li>' . sprintf(__('Wery big "material"'), $this->Register['Config']->read('max_lenght', $this->module)) .'</li>'."\n";
 		if (!empty($tags) && !$valobj->cha_val($tags, V_TITLE)) 
 			$error = $error.'<li>' . __('Wrong chars in "tags"') . '</li>'."\n";
 		if (!empty($sourse) && !$valobj->cha_val($sourse, V_TITLE)) 
@@ -897,7 +897,7 @@ Class StatModule extends Module {
 		
 
         // Check attaches size and format
-		$max_attach = Config::read('max_attaches', $this->module);
+		$max_attach = $this->Register['Config']->read('max_attaches', $this->module);
         if (empty($max_attach) || !is_numeric($max_attach)) $max_attach = 5;
 		$max_attach_size = $this->getMaxSize('max_attaches_size');
 		if (empty($max_attach_size) || !is_numeric($max_attach_size)) $max_attach_size = 1048576;
@@ -952,7 +952,7 @@ Class StatModule extends Module {
 		$this->Cache->clean(CACHE_MATCHING_TAG, array('module_stat', 'record_id_' . $id));
 		$this->Register['DB']->cleanSqlCache();
 		
-		$edit = mb_substr($edit, 0, Config::read('max_lenght', $this->module));
+		$edit = mb_substr($edit, 0, $this->Register['Config']->read('max_lenght', $this->module));
 		$data = array(
 			'title' 	   => $title,
 			'main' 		   => $edit,

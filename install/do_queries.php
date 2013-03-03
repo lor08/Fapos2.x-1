@@ -2,12 +2,12 @@
 ##################################################
 ##												##
 ## Author:       Andrey Brykin (Drunya)         ##
-## Version:      1.3                            ##
+## Version:      1.4                            ##
 ## Project:      CMS                            ##
 ## package       CMS Fapos                      ##
 ## subpackege    Install                        ##
 ## copyright     ©Andrey Brykin 2010-2013       ##
-## last mod.     2013/01/30                     ##
+## last mod.     2013/02/23                     ##
 ##################################################
 
 
@@ -595,8 +595,8 @@ foreach ($array as $key => $query) {
 }
 if (empty($errors['query'])) {
 	if (!mysql_query("INSERT INTO `{$set['db']['prefix']}users` (`id`, `name`, `passw`, `status`, `puttime`) 
-	VALUES (1, '" . $_SESSION['adm_name'] . "', '" . md5($_SESSION['adm_pass']) . "', '3', NOW())")) 
-		$errors['query'] = 'При формировании базы данных произошел збой! <br /> Начните  пожалуйста заново.<br /><br />' . mysql_error();
+	VALUES (1, '" . $_SESSION['adm_name'] . "', '" . crypt($_SESSION['adm_pass'], '$1$' . substr($_SERVER['HTTP_HOST'], 4) . '$') . "', '3', NOW())")) 
+		$errors['query'] = 'При формировании базы данных произошел сбой! <br /> Начните пожалуйста заново.<br /><br />' . mysql_error();
 }
 if (empty($errors)) :
 ?>

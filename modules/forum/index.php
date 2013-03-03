@@ -2,12 +2,12 @@
 /*-----------------------------------------------\
 | 												 |
 |  @Author:       Andrey Brykin (Drunya)         |
-|  @Version:      1.6.55                         |
+|  @Version:      1.6.60                         |
 |  @Project:      CMS                            |
 |  @package       CMS Fapos                      |
 |  @subpackege    Forum Module                   |
 |  @copyright     ©Andrey Brykin 2010-2013       |
-|  @last mod.     2013/01/28                     |
+|  @last mod.     2013/02/23                     |
 \-----------------------------------------------*/
 
 /*-----------------------------------------------\
@@ -52,7 +52,7 @@ Class ForumModule extends Module {
 	{
 		//turn access
 		$this->ACL->turn(array($this->module, 'view_forums_list'));
-		$this->page_title = h(Config::read('title', $this->module)) . __('Forums list');
+		$this->page_title = h($this->Register['Config']->read('title', $this->module)) . __('Forums list');
 		
 		
 		// navigation block
@@ -313,7 +313,7 @@ Class ForumModule extends Module {
 			
             list($pages, $page) = pagination(
 				$total, 
-				Config::read('themes_per_page', $this->module), 
+				$this->Register['Config']->read('themes_per_page', $this->module), 
 				$this->getModuleURL('view_forum/' . $id_forum)
 			);
 			$this->page_title .= ' (' . $page . ')';
@@ -324,7 +324,7 @@ Class ForumModule extends Module {
 					'id_forum' => $id_forum
 				), array(
 					'page' => $page,
-					'limit' => Config::read('themes_per_page', $this->module),
+					'limit' => $this->Register['Config']->read('themes_per_page', $this->module),
 					'order' => 'important DESC, last_post DESC',
 				)
 			);
@@ -336,7 +336,7 @@ Class ForumModule extends Module {
 			. get_link(__('Forums list'), $this->getModuleURL()) . __('Separator') 
 			. get_link(h($forum->getTitle()), $this->getModuleURL('view_forum/' . $id_forum));
 
-			$perPage = Config::read('themes_per_page', $this->module);
+			$perPage = $this->Register['Config']->read('themes_per_page', $this->module);
 			$cntPages = ceil($total / $perPage);
 			$recOnPage = ($page == $cntPages) ? ($total % $perPage) : $perPage;
 
@@ -516,8 +516,8 @@ Class ForumModule extends Module {
 		
 		//NEAR PAGES
 		$near_pages = '';
-		if (($theme->getPosts() + 1) > Config::read('posts_per_page', $this->module)) {
-			$cnt_near_pages = ceil(($theme->getPosts() + 1) / Config::read('posts_per_page', $this->module));
+		if (($theme->getPosts() + 1) > $this->Register['Config']->read('posts_per_page', $this->module)) {
+			$cnt_near_pages = ceil(($theme->getPosts() + 1) / $this->Register['Config']->read('posts_per_page', $this->module));
 			if ($cnt_near_pages > 1) {
 				$near_pages .= '&nbsp;(';
 				for ($n = 1; $n < ($cnt_near_pages + 1); $n++) { 
@@ -669,7 +669,7 @@ Class ForumModule extends Module {
 				$this->__delete_theme($id_theme);
 				return $this->showInfoMessage(__('Topic not found'), $this->getModuleURL('view_forum/' . $id_forum));
 			}
-            list($pages, $page) = pagination($total, Config::read('posts_per_page', $this->module), $this->getModuleURL('view_theme/' . $id_theme));
+            list($pages, $page) = pagination($total, $this->Register['Config']->read('posts_per_page', $this->module), $this->getModuleURL('view_theme/' . $id_theme));
             $markers['pagination'] = $pages;
             $this->page_title .= ' (' . $page . ')';
 			
@@ -684,7 +684,7 @@ Class ForumModule extends Module {
 			), array(
 				'order' => 'time ASC, id ASC',
 				'page' => $page,
-				'limit' => Config::read('posts_per_page', $this->module),
+				'limit' => $this->Register['Config']->read('posts_per_page', $this->module),
 			));
 
 			
@@ -706,7 +706,7 @@ Class ForumModule extends Module {
 			$this->_globalize($markers);
 			
 			
-			$post_num = (($page - 1) * Config::read('posts_per_page', $this->module));
+			$post_num = (($page - 1) * $this->Register['Config']->read('posts_per_page', $this->module));
 			
 			
 			//serialize rating settings
@@ -1196,7 +1196,7 @@ Class ForumModule extends Module {
 		$themesModelName = $this->Register['ModManager']->getModelName('Themes');
 		$themesModel = new $themesModelName;
 		$total = $themesModel->getTotal();
-		$perPage = Config::read('themes_per_page', $this->module);
+		$perPage = $this->Register['Config']->read('themes_per_page', $this->module);
         list($pages, $page) = pagination($total, $perPage, $this->getModuleURL('last_posts/'));
         $nav['pagination'] = $pages;
      	$this->page_title .= ' (' . $page . ')';
@@ -1220,7 +1220,7 @@ Class ForumModule extends Module {
 		$themes = $themesModel->getCollection(array(), array(
 			'order' => 'last_post DESC',
 			'page' => $page,
-			'limit' => Config::read('themes_per_page', $this->module),
+			'limit' => $this->Register['Config']->read('themes_per_page', $this->module),
 		));
 		
 		
@@ -1679,9 +1679,9 @@ Class ForumModule extends Module {
 			$error = $error. '<li>' . __('Wrong chars in "theme"').'</li>'."\n";
 		if (empty($message)) 
 			$error = $error. '<li>' . __('Empty field "message"').'</li>'."\n";
-		if (mb_strlen($message) > Config::read('max_post_lenght', $this->module)) 
+		if (mb_strlen($message) > $this->Register['Config']->read('max_post_lenght', $this->module)) 
 			$error = $error . '<li>' . sprintf(__('Field "message" contains more symbols')
-			, Config::read('max_post_lenght', $this->module)) . '</li>'."\n";
+			, $this->Register['Config']->read('max_post_lenght', $this->module)) . '</li>'."\n";
 
 		for ($i = 1; $i < 6; $i++) {
 			if (!empty($_FILES['attach' . $i]['name'])) {
@@ -1703,7 +1703,7 @@ Class ForumModule extends Module {
 			redirect($this->getModuleURL('add_theme_form/' . $id_forum));
 		}
 		
-		$message = mb_substr($message, 0, Config::read('max_post_lenght', $this->module));
+		$message = mb_substr($message, 0, $this->Register['Config']->read('max_post_lenght', $this->module));
 		
 		
 		$user_id = (!empty($_SESSION['user'])) ? $_SESSION['user']['id'] : 0;
@@ -1765,8 +1765,8 @@ Class ForumModule extends Module {
 
 				if (move_uploaded_file($_FILES[$attach_name]['tmp_name'], ROOT . $this->getFilesPath($file))) {
 					if ($is_image == '1') {
-						$watermark_path = ROOT . '/sys/img/' . (Config::read('watermark_type') == '1' ? 'watermark_text.png' : Config::read('watermark_img'));
-						if (Config::read('use_watermarks') && !empty($watermark_path) && file_exists($watermark_path)) {
+						$watermark_path = ROOT . '/sys/img/' . ($this->Register['Config']->read('watermark_type') == '1' ? 'watermark_text.png' : $this->Register['Config']->read('watermark_img'));
+						if ($this->Register['Config']->read('use_watermarks') && !empty($watermark_path) && file_exists($watermark_path)) {
 							$waterObj = new FpsImg;
 							$save_path = ROOT . $this->getFilesPath($file);
 							$waterObj->createWaterMark($save_path, $watermark_path);
@@ -2337,9 +2337,9 @@ Class ForumModule extends Module {
 		// Проверяем, правильно ли заполнены поля формы
 		$error = '';
 		if (empty($message)) $error = $error . '<li>' . __('Empty field "message"') . '</li>'."\n";
-		if (strlen($message) > Config::read('max_post_lenght', $this->module)) 
+		if (strlen($message) > $this->Register['Config']->read('max_post_lenght', $this->module)) 
 			$error = $error . '<li>' . sprintf(__('Field "message" contains more symbols')
-			, Config::read('max_post_lenght', $this->module)) . '</li>'."\n";
+			, $this->Register['Config']->read('max_post_lenght', $this->module)) . '</li>'."\n";
 		
 		
 		$gluing = true;
@@ -2364,7 +2364,7 @@ Class ForumModule extends Module {
 		}		
 
 		
-		$message = mb_substr($message, 0, Config::read('max_post_lenght', $this->module));
+		$message = mb_substr($message, 0, $this->Register['Config']->read('max_post_lenght', $this->module));
 		$id_user = (!empty($_SESSION['user'])) ? $_SESSION['user']['id'] : 0;
 		// Защита от того, чтобы один пользователь не добавил
 		// 100 сообщений за одну минуту
@@ -2387,7 +2387,7 @@ Class ForumModule extends Module {
 			}
 			
 			if (empty($prev_post_author)) $gluing = false;
-			if ((mb_strlen($prev_post[0]->getMessage() . $message)) > Config::read('max_post_lenght', $this->module)) $gluing = false;
+			if ((mb_strlen($prev_post[0]->getMessage() . $message)) > $this->Register['Config']->read('max_post_lenght', $this->module)) $gluing = false;
 			if ($prev_post_author != $id_user || empty($id_user)) $gluing = false;
 		}		
 		
@@ -2443,8 +2443,8 @@ Class ForumModule extends Module {
 					// Перемещаем файл из временной директории сервера в директорию files
 					if (move_uploaded_file($_FILES[$attach_name]['tmp_name'], ROOT . $this->getFilesPath($file))) {
 						if ($is_image == '1') {
-							$watermark_path = ROOT . '/sys/img/' . (Config::read('watermark_type') == '1' ? 'watermark_text.png' : Config::read('watermark_img'));
-							if (Config::read('use_watermarks') && !empty($watermark_path) && file_exists($watermark_path)) {
+							$watermark_path = ROOT . '/sys/img/' . ($this->Register['Config']->read('watermark_type') == '1' ? 'watermark_text.png' : $this->Register['Config']->read('watermark_img'));
+							if ($this->Register['Config']->read('use_watermarks') && !empty($watermark_path) && file_exists($watermark_path)) {
 								$waterObj = new FpsImg;
 								$save_path = ROOT . $this->getFilesPath($file);
 								$waterObj->createWaterMark($save_path, $watermark_path);
@@ -2665,8 +2665,8 @@ Class ForumModule extends Module {
 		$error = '';
 		if (empty($message))   
 			$error = $error . '<li>' . __('Empty field "message"') . '</li>'."\n";
-		if (mb_strlen($message) > Config::read('max_post_lenght', $this->module)) 
-			$error = $error . '<li>' . sprintf(__('Very big message'), Config::read('max_post_lenght', $this->module)) . '</li>'."\n";
+		if (mb_strlen($message) > $this->Register['Config']->read('max_post_lenght', $this->module)) 
+			$error = $error . '<li>' . sprintf(__('Very big message'), $this->Register['Config']->read('max_post_lenght', $this->module)) . '</li>'."\n";
 		// check attach 
 		for ($i = 1; $i <= 5; $i++) {
 			if (!empty($_FILES['attach' . $i]['name'])) {
@@ -2727,8 +2727,8 @@ Class ForumModule extends Module {
 				// Перемещаем файл из временной директории сервера в директорию files
 				if (move_uploaded_file($_FILES[$attach_name]['tmp_name'], ROOT . $this->getFilesPath($file))) {
 					if ($is_image == '1') {
-						$watermark_path = ROOT . '/sys/img/' . (Config::read('watermark_type') == '1' ? 'watermark_text.png' : Config::read('watermark_img'));
-						if (Config::read('use_watermarks') && !empty($watermark_path) && file_exists($watermark_path)) {
+						$watermark_path = ROOT . '/sys/img/' . ($this->Register['Config']->read('watermark_type') == '1' ? 'watermark_text.png' : $this->Register['Config']->read('watermark_img'));
+						if ($this->Register['Config']->read('use_watermarks') && !empty($watermark_path) && file_exists($watermark_path)) {
 							$waterObj = new FpsImg;
 							$save_path = ROOT . $this->getFilesPath($file);
 							$waterObj->createWaterMark($save_path, $watermark_path);
@@ -2758,7 +2758,7 @@ Class ForumModule extends Module {
 		
 		
 		// Все поля заполнены правильно - выполняем запрос к БД
-		$message = mb_substr($message, 0, Config::read('max_post_lenght', $this->module));
+		$message = mb_substr($message, 0, $this->Register['Config']->read('max_post_lenght', $this->module));
 		$post->setMessage($message);
 		$post->setAttaches($attach_exists);
 		$post->setId_editor($user_id);
@@ -2926,7 +2926,7 @@ Class ForumModule extends Module {
 		
 		$themesModel = $this->Register['ModManager']->getModelInstance('Themes');
 		$total = $themesModel->getTotal(array('cond' => array('id_author' => $user_id)));
-		$perPage = Config::read('themes_per_page', $this->module);
+		$perPage = $this->Register['Config']->read('themes_per_page', $this->module);
         list($pages, $page) = pagination($total, $perPage, $this->getModuleURL('user_posts/' . $user_id));
 		
 		
@@ -2959,7 +2959,7 @@ Class ForumModule extends Module {
 			'order' => 'time DESC',
 			'group' => 'id',
 			'page' => $page,
-			'limit' => Config::read('themes_per_page', $this->module),
+			'limit' => $this->Register['Config']->read('themes_per_page', $this->module),
 		));
 		
 
@@ -3283,7 +3283,7 @@ Class ForumModule extends Module {
 			)
 		);
 		
-		$page = floor($post_num / Config::read('posts_per_page', $this->module)) + 1;
+		$page = floor($post_num / $this->Register['Config']->read('posts_per_page', $this->module)) + 1;
 		$post_num++;
 
 		redirect($this->getModuleURL('view_theme/' . $id_theme . '?page=' . $page . '#post' . $post_num));

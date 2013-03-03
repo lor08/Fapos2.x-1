@@ -45,10 +45,7 @@ class UserAuth
 		// Проверяем переменные cookie на недопустимые символы
 		$user_id = intval($_COOKIE['userid']);
 		if ($user_id < 1) return false;
-		// Т.к. пароль зашифрован с помощью md5, то он представляет собой
-		// 32-значное шестнадцатеричное число
-		$password = substr( $_COOKIE['password'], 0, 32 );
-		$password = preg_replace( "#[^0-9a-f]#i", '', $password );
+		$password = trim($_COOKIE['password']);
 
 
 		// Выполняем запрос на получение данных пользователя из БД

@@ -27,8 +27,8 @@ if (!empty($params[0]) && !empty($params[1])) {
 		$size_x = intval($params[2]);
 		$size_y = intval($params[2]);
 	} else {
-		$size_x = Config::read('img_size_x', $params[0]);
-		$size_y = Config::read('img_size_y', $params[0]);
+		$size_x = $Register['Config']->read('img_size_x', $params[0]);
+		$size_y = $Register['Config']->read('img_size_y', $params[0]);
 	}
 	
 	// Min allowed size

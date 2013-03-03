@@ -87,7 +87,8 @@ class Fps_Viewer_Manager
 	{
 		$template = getTemplateName();
 		if (empty($template) or !is_dir(ROOT . '/template/' . $template)) {
-			$template = Config::read('template');
+			$Register = Register::getInstance();
+			$template = $Register['Config']->read('template');
 		}
 		$path = ROOT . '/template/' . $template . '/html/' . '%s' . '/' . $fileName;
 		if (file_exists(sprintf($path, $this->moduleTitle))) $path = sprintf($path, $this->moduleTitle);

@@ -36,12 +36,14 @@
 	</td>
 </tr>
 <tr>
-  <td>Закрепить первое сообщение темы:</td>
-  <td><input type="checkbox" name="first_top" 
-    {% if context.first_top %}
-	checked="checked" 
-	{% endif %}
-  /></td>
+	<td>Закрепить первое сообщение темы:</td>
+	<td>
+		<input type="checkbox" name="first_top"
+		{% if context.first_top %}
+		checked="checked"
+		{% endif %}
+		/>
+	</td>
 </tr>
 <tr>
   <td>Автор:</td>

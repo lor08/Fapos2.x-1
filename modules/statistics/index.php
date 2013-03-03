@@ -243,33 +243,33 @@ Class StatisticsModule
 		if (empty($_SERVER['HTTP_USER_AGENT'])) $_SERVER["HTTP_USER_AGENT"] = '';
 		if (!empty($_SESSION['user']['id'])) {
 			$users[$_SESSION['user']['id']] = array(
-				'expire' => time() + (Config::read('time_on_line') * 60),
+				'expire' => time() + ($Register['Config']->read('time_on_line') * 60),
 				'name' => $_SESSION['user']['name'],
 				'status' => $_SESSION['user']['status'],
 			);
 		} else if (strstr($_SERVER["HTTP_USER_AGENT"], "StackRambler")) {
 			$users['bot_rambler'] = array(
-				'expire' => time() + (Config::read('time_on_line') * 60),
+				'expire' => time() + ($Register['Config']->read('time_on_line') * 60),
 				'name' => 'Rambler[bot]',
 			);
 		} else if (strstr($_SERVER["HTTP_USER_AGENT"], "YahooBot")) {
 			$users['bot_yahoo'] = array(
-				'expire' => time() + (Config::read('time_on_line') * 60),
+				'expire' => time() + ($Register['Config']->read('time_on_line') * 60),
 				'name' => 'Yahoo[bot]',
 			);
 		} else if (strstr($_SERVER["HTTP_USER_AGENT"], "Yandex")) {
 			$users['bot_yandex'] = array(
-				'expire' => time() + (Config::read('time_on_line') * 60),
+				'expire' => time() + ($Register['Config']->read('time_on_line') * 60),
 				'name' => 'Yandex[bot]',
 			);
 		} else if (strstr($_SERVER["HTTP_USER_AGENT"], "Googlebot")) {
 			$users['bot_google'] = array(
-				'expire' => time() + (Config::read('time_on_line') * 60),
+				'expire' => time() + ($Register['Config']->read('time_on_line') * 60),
 				'name' => 'Google[bot]',
 			);
 		} else {
 			$guests[$ip] = array(
-				'expire' => time() + (Config::read('time_on_line') * 60),
+				'expire' => time() + ($Register['Config']->read('time_on_line') * 60),
 			);
 		}
 		file_put_contents($path, serialize(array('users' => $users, 'guests' => $guests)));

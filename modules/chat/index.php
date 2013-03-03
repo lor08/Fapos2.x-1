@@ -154,7 +154,7 @@ class ChatModule extends Module {
 		/* cut and trim values */
 		$user_id    = (!empty($_SESSION['user']['id'])) ? $_SESSION['user']['id'] : '0';
 		$name    = (!empty($_SESSION['user']['name'])) ? trim($_SESSION['user']['name']) : __('Guest');
-		$message = trim(mb_substr( $_POST['message'], 0, Config::read('max_lenght', $this->module)));
+		$message = trim(mb_substr( $_POST['message'], 0, $this->Register['Config']->read('max_lenght', $this->module)));
 		$ip      = (!empty($_SERVER['REMOTE_ADDR'])) ? $_SERVER['REMOTE_ADDR'] : '';
 		$keystring = (isset($_POST['captcha_keystring'])) ? trim($_POST['captcha_keystring']) : '';
 		
