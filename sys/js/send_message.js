@@ -53,7 +53,7 @@ function getSmiles(id) {
 	var container = document.getElementById(id);
 	if (container !== 'undefined') {
 		for (i = 0; i < advsmiles.length; i++) {
-			container.innerHTML = container.innerHTML + '<div><a href="javascript://" onClick="emoticon(\':' + advsmiles[i] + ':\');"><img src="/sys/img/smiles/' 
+			container.innerHTML = container.innerHTML + '<div><a href="javascript://" onClick="emoticon(\':' + advsmiles[i] + ':\');"><img src="/sys/img/smiles/fapos/' 
 			+ advsmiles[i] + '.gif" /></a></div>';
 		}
 	}

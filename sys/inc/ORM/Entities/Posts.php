@@ -111,11 +111,12 @@ class PostsEntity extends FpsEntity
 			if (!$this->getId_author()) {
                 $Register = Register::getInstance();
 				$this->author = $Register['ModManager']->getEntityInstance('users');
-			
-			
 			} else {
-				$Model = new PostsModel('posts');
-				$this->author = $Model->getAuthorByEntity($this); // TODO (function is not exists)
+                $Register = Register::getInstance();
+				$usersModel = $Register['ModManager']->getModelInstance('Users');
+				$this->author = $usersModel->getById($this->id);
+				// $Model = new PostsModel('posts');
+				// $this->author = $Model->getAuthorByEntity($this); // TODO (function is not exists)
 			}
         }
 		return $this->author;

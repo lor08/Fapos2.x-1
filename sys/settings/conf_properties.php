@@ -233,6 +233,12 @@ $settingsInfo = array(
 			'checked' => '1',
 			'value' => '1',
 		),
+		'smiles_set' => array(
+			'type' => 'select',
+			'title' => 'Набор смайлов',
+			'description' => '',
+			'options' => $smilesSelect,
+		),
 	),
 
 	/* SECURE */

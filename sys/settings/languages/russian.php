@@ -362,6 +362,12 @@ $language = array(
 	'Recalculation forum' 			=> 'Пересчет данных форума',
 	'All done' 						=> 'Все готово.',
 	'No changing own group'         => 'Нельзя изменять свою группу',
+	'Split theme'                   => 'Разделение темы',
+	'Move posts'                    => 'Перенос сообщений',
+	'Unite themes'                  => 'Соединение тем',
+	'Not enough posts'              => 'Не достаточно сообщений в теме',
+	'Empty "posts_select"'          => 'Не выбраны сообщения для переноса',
+	'Moving into same topic'        => 'Нельзя перемещать сообщения в ту же тему',
 	
 	
 	// Templates name

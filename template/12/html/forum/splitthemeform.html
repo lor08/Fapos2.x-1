@@ -1,0 +1,85 @@
+<form name='editThemeForm' action="{{ context.action }}" method="POST">
+<table class="posts-tb" border="0" cellspacing="0" cellpadding="0" id="top">
+	<tr>
+		<td class="title">{{ theme.title }}</td>
+	</tr>
+	<tr>
+		<td class="postFirst">
+			<table class="showTable">
+			<tr>
+			  <td width="30%">Форум:</td>
+			  <td width="70%">
+			  <select name="id_forum" style="width:400px">
+			  {{ context.options }}
+			  </select>
+			  </td>
+			</tr>
+			<tr>
+			  <td>Тема:</td>
+			  <td><input type="text" name="theme" maxlength="55" value="{{ context.theme }}" style="width:400px" /></td>
+			</tr>
+
+			<tr>
+			  <td>Описание:</td>
+			  <td><input type="text" name="description" maxlength="128" value="{{ context.description }}"  style="width:400px" /></td>
+			</tr>
+			<tr>
+				<td>Закрыть доступ:</td>
+				<td>
+					{% for group in fps_users_groups %}
+					<input type="checkbox"
+						{% for curr in context.gr_access %}
+							{% if curr == group.id %}
+							 checked="checked" 
+							{% endif %}
+						{% endfor %}
+					  value="{{ group.id }}" name="gr_access_{{ group.id }}" />&nbsp;{{ group.title }}<br />
+					{% endfor %}
+				</td>
+			</tr>
+			<tr>
+				<td>Закрепить первое сообщение темы:</td>
+				<td>
+					<input type="checkbox" name="first_top"
+					{% if context.first_top %}
+					checked="checked"
+					{% endif %}
+					/>
+				</td>
+			</tr>
+			<tr>
+			  <td>&nbsp;</td>
+			  <td><input type="submit" name="sendForm" value="Разделить" /></td>
+			</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="postFirst">
+			{% for post in posts %}
+			<table cellspacing="0" cellpadding="0" class="post-tb" id="post{{ post.id }}">
+				<tr>
+					<td class="meta">
+						<b>{{ post.author_name }}</b> | Добавлено: {{ post.time }} <div style="float:right;">
+						<input type="checkbox"
+							{% for curr in context.posts_select %}
+								{% if curr == post.id %}
+								 checked="checked" 
+								{% endif %}
+							{% endfor %}
+						 value="{{ post.id }}" name="post_{{ post.id }}" /></div>
+					</td>
+				</tr>
+				<tr>
+					<td class="posttdMessage" valign="top">
+						{{ post.message }}
+					</td>
+				</tr>
+			</table>
+			{% endfor %}
+		</td>
+	</tr>
+</table>
+
+<div style=" margin:5px;">{{ pagination }}</div>
+</form>

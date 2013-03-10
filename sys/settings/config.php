@@ -207,5 +207,6 @@ $set = array (
   ),
   'auto_sitemap' => '1',
   'allow_smiles' => 1,
+  'smiles_set' => 'fapos',
 )
 ?>

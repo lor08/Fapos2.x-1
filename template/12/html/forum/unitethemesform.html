@@ -1,0 +1,21 @@
+<form name='editThemeForm' action="{{ context.action }}" method="POST">
+<table class="posts-tb" border="0" cellspacing="0" cellpadding="0" id="top">
+	<tr>
+		<td class="title">{{ theme.title }}</td>
+	</tr>
+	<tr>
+		<td class="postFirst">
+			<table class="showTable">
+			<tr>
+			  <td width="30%">Идентификатор темы:</td>
+			  <td width="70%"><input type="text" name="theme" maxlength="55" value="{{ context.theme }}" style="width:400px" /></td>
+			</tr>
+			<tr>
+			  <td>&nbsp;</td>
+			  <td><input type="submit" name="sendForm" value="Соединить" /></td>
+			</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+</form>

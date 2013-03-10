@@ -403,9 +403,9 @@ class PrintText {
 		$Register = Register::getInstance();
 		
 		
-		if (!empty($_SESSION['module'])) {
-			$sizex = $Register['Config']->read('img_size_x', $Register['dispath_params'][0]);
-			$sizey = $Register['Config']->read('img_size_y', $Register['dispath_params'][0]);
+		if (!empty($Register['module'])) {
+			$sizex = $Register['Config']->read('img_size_x', $Register['module']);
+			$sizey = $Register['Config']->read('img_size_y', $Register['module']);
 			$sizex = intval($sizex);
 			$sizey = intval($sizey);
 			if (!empty($sizex) && !empty($sizey)) {
@@ -470,40 +470,22 @@ class PrintText {
 	 */
 	public function smile($str) {
 		$str = Plugins::intercept('before_smiles_parse', $str);
+
+		$Register = Register::getInstance();
+		$path = $Register['Config']->read('smiles_set');
+		$path = ROOT . '/sys/img/smiles/' . (!empty($path) ? $path : 'fapos') . '/info.php';
+		
+		include $path;
+		
 		$from = array();
 		$to = array();
-		
-		$from[] = ':)';
-		$to[] = '<img title="smile" src="' . WWW_ROOT . '/sys/img/smiles/smile.gif" />';
-		$from[] = '=)';
-		$to[] = '<img title="smile" src="' . WWW_ROOT . '/sys/img/smiles/tongue.gif" />';
-		$from[] = '%)';
-		$to[] = '<img title="smile" src="' . WWW_ROOT . '/sys/img/smiles/nifiga.gif" />';
-		$from[] = ':D';
-		$to[] = '<img title="smile" src="' . WWW_ROOT . '/sys/img/smiles/lol.gif" />';
-		$from[] = 'gg)';
-		$to[] = '<img title="smile" src="' . WWW_ROOT . '/sys/img/smiles/gg.gif" />';
-		$from[] = ':(';
-		$to[] = '<img title="smile" src="' . WWW_ROOT . '/sys/img/smiles/plak.gif" />';
-		$from[] = '=0';
-		$to[] = '<img title="smile" src="' . WWW_ROOT . '/sys/img/smiles/glaza.gif" />';
-		$from[] = ';)';
-		$to[] = '<img title="smile" src="' . WWW_ROOT . '/sys/img/smiles/biggrin2.gif" />';
-		$from[] = ':0';
-		$to[] = '<img title="smile" src="' . WWW_ROOT . '/sys/img/smiles/biggrin.gif" />';
-		$from[] = ':|';
-		$to[] = '<img title="smile" src="' . WWW_ROOT . '/sys/img/smiles/cool.gif" />';
-		$from[] = '0_o';
-		$to[] = '<img title="smile" src="' . WWW_ROOT . '/sys/img/smiles/fing.gif" />';
-		$str = str_replace($from, $to, $str);
-		
-
-		$advanced_smiles = array('baks', 'bis', 'girl', 'gordo', 'gy', 'girlgy', 'haha', 'helpme', 'hm', 'hnyk', 'idea', 'hrap'
-		, 'ispug', 'jahu', 'girlhnyk', 'mat', 'mda', 'mdya', 'or', 'pardon', 'plak', 'plaksa', 'plaksa2', 'rzhu', 'sad', 'sarkastik'
-		, 'sorrri', 'stranno', 'tanz', 'umora', 'ura', 'vopros', 'wink', 'wutka', 'ww', 'yeh', 'zharko', 'zlaya', 'zloy', 'wall');
-		foreach ($advanced_smiles as $smile) {
-			$str = str_replace(':' . $smile . ':', '<img src="' . get_url('/sys/img/smiles/' . $smile . '.gif') . '" alt="smile" />', $str);
+		if (isset($smilesList) && is_array($smilesList)) {
+			foreach ($smilesList as $smile) {
+				$from[] = $smile['from'];
+				$to[] = '<img alt="' . $smile['from'] . '" title="' . $smile['from'] . '" src="' . WWW_ROOT . '/sys/img/smiles/fapos/' . $smile['to'] . '" />';
+			}
 		}
+		$str = str_replace($from, $to, $str);
 		
 		return $str;
 	}

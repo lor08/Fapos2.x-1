@@ -53,7 +53,7 @@ if (!empty($templates)) {
 
 
 
-// Prepare templates select list
+// Prepare fonts select list
 $fonts = glob(ROOT . '/sys/fonts/*.ttf');
 sort($fonts);
 $fontSelect = array();
@@ -65,6 +65,30 @@ if (!empty($fonts)) {
 		}
 		$fontSelect[$value] = $value;
 	}
+}
+
+
+
+// Prepare smiles select list
+$smiles = glob(ROOT . '/sys/img/smiles/*/info.php');
+sort($smiles);
+$smilesSelect = array();
+if (!empty($smiles)) {
+	foreach ($smiles as $value) {
+		if (is_file($value)) {
+			include_once $value;
+			$path = dirname($value);
+			$pos = strrpos($path, "/");
+			if ($pos >= 0) {
+				$value = substr($path, $pos + 1);
+			}
+			if (isset($smilesInfo) && isset($smilesInfo['name'])) {
+				$smilesSelect[$value] = $smilesInfo['name'];
+			};
+		}
+	}
+} else {
+	$smilesSelect['fapos'] = 'Fapos';
 }
 
 

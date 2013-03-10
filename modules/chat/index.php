@@ -88,7 +88,7 @@ class ChatModule extends Module {
 			}
 		}
 		
-		header('Refresh: 10; url=' . get_url($this->getModuleURL('view_messages/')));
+//		header('Refresh: 10; url=' . get_url($this->getModuleURL('view_messages/')));
 		echo $content;
 	}
 	
