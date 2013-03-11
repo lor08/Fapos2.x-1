@@ -294,7 +294,7 @@ endif;
 		<div style="clear:both;"></div>
 	
 		<!--
-		<script language="JavaScript" type="text/javascript" src="/sys/js/jquery-1.5.2.min.js"></script>
+		<script language="JavaScript" type="text/javascript" src="/sys/js/jquery-1.8.1.min.js"></script>
 		<script type="text/javascript">
 		
 		</script>

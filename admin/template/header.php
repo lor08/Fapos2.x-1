@@ -5,7 +5,7 @@
 	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
 	<link rel="icon" href="/sys/img/favicon.ico" type="image/x-icon">
 	<link type="text/css" rel="StyleSheet" href="template/css/style.css" />
-	<script language="JavaScript" type="text/javascript" src="../sys/js/jquery.js"></script>
+	<script language="JavaScript" type="text/javascript" src="../sys/js/jquery-1.8.1.min.js"></script>
 	
 
 	

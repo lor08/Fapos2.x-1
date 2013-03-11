@@ -1,3 +1,36 @@
+<script>
+function catchSelection()
+{
+	if (window.getSelection)
+	{
+		selection = window.getSelection().toString();
+	}
+	else if (document.getSelection)
+	{
+		selection = document.getSelection();
+	}
+	else if (document.selection)
+	{
+		selection = document.selection.createRange().text;
+	}
+}
+
+function quoteSelection(name)
+{
+	if (selection)
+	{
+		$('#editor').execCommand('quote',{author:name,seltext:selection});
+		selection = '';
+		return; 
+	}
+	else
+	{ 
+		alert(l_no_text_selected);
+		return; 
+	} 
+}
+
+</script>
 {{ admin_bar }}
 <table class="posts-tb" border="0" cellspacing="0" cellpadding="0" id="top">
 	<tr>
@@ -21,7 +54,7 @@
 				<tr>
 					<td class="meta">
 						<div style="width:140px;overflow:hidden;">
-							<a class="postUser" href="javascript://" onClick="emoticon('[b]{{ post.author.name }}[/b],');return false;">{{ post.author.name }}</a>
+							<a class="postUser" href="javascript://" onClick="$('#editor').insertAtCursor('<b>{{ post.author.name }}</b>, ', false); return false;">{{ post.author.name }}</a>
 						</div>
 					</td>
 					<td class="meta">
