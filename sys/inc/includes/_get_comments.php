@@ -2,15 +2,13 @@
 $id = (int)$entity->getId();
 if (empty($id) || $id < 1) $html = true;
 
+$commentsModel = $this->Register['ModManager']->getModelInstance($this->module . 'Comments');
 
-$modelName = ucfirst($this->module) . 'CommentsModel';
-$CommentsModel = new $modelName;
-$CommentsModel->bindModel('Users');
-
-
-if (empty($html)) {
+if (empty($html) && $commentsModel) {
+	$commentsModel->bindModel('Users');
+	
 	/* pages nav */
-	$total = $CommentsModel->getTotal(array('cond' => array('entity_id' => $id)));
+	$total = $commentsModel->getTotal(array('cond' => array('entity_id' => $id)));
 	$per_page = Config::read('comment_per_page', $this->module);
     list($pages, $page) = pagination($total, $per_page,  '/users/user_posts/' . $id);
 	$this->_globalize(array('comments_pagination' => $pages));
@@ -22,7 +20,7 @@ if (empty($html)) {
 		'limit' => $per_page,
 		'order' => 'date ' . $order_way,
 	);
-	$comments = $CommentsModel->getCollection(array('entity_id' => $id), $params);
+	$comments = $commentsModel->getCollection(array('entity_id' => $id), $params);
 	if ($comments) {
 		foreach ($comments as $comment) {
 			$markers = array();
@@ -34,13 +32,13 @@ if (empty($html)) {
 			$adm = false;
 			if ($this->ACL->turn(array($this->module, 'edit_comments'), false)) {
 				$moder_panel .= get_link(get_img('/sys/img/edit_16x16.png'), 
-				'/' . $this->module . '/edit_comment_form/' . $comment->getId()) . '&nbsp;';
+				$this->getModuleURL('/edit_comment_form/' . $comment->getId())) . '&nbsp;';
 				$adm = true;
 			}
 			
 			if ($this->ACL->turn(array($this->module, 'delete_comments'), false)) {
 				$moder_panel .= get_link(get_img('/sys/img/delete_16x16.png'), 
-				'/' . $this->module . '/delete_comment/' . $comment->getId(), array('onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+				$this->getModuleURL('/delete_comment/' . $comment->getId(), array('onClick' => "return confirm('" . __('Are you sure') . "')"))) . '&nbsp;';
 				$adm = true;
 			}
 			
@@ -85,4 +83,3 @@ if (empty($html)) {
 } else {
 	$html = '';
 }
-

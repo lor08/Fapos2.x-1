@@ -82,13 +82,10 @@ class StatEntity extends FpsEntity
 	public function delete()
 	{ 
 		$Register = Register::getInstance();
-		$attachClass = $Register['ModManager']->getModelNameFromModule('statAttaches');
-		$commentsClass = $Register['ModManager']->getModelNameFromModule('statComments');
-		$addContentClass = $Register['ModManager']->getModelNameFromModule('statAddContent');
 		
-		$attachesModel = new $attachClass;
-		$commentsModel = new $commentsClass;
-		$addContentModel = new $addContentClass;
+		$attachesModel = $Register['ModManager']->getModelInstance('StatAttaches');
+		$commentsModel = $Register['ModManager']->getModelInstance('StatComments');
+		$addContentModel = $Register['ModManager']->getModelInstance('StatAddContent');
 		
 		$attachesModel->deleteByParentId($this->id);
 		$commentsModel->deleteByParentId($this->id);

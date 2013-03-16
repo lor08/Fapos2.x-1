@@ -743,8 +743,10 @@ Class UsersModule extends Module {
 			unlink($f_path);
 			$id_user = (int)trim($file[0]);
 			$user = $this->Model->getById($id_user);
-			$user->setPassw(count($file) > 1 ? trim($file[1]) : $code);
-			$user->save();
+			if ($user) {
+				$user->setPassw(count($file) > 1 ? trim($file[1]) : $code);
+				$user->save();
+			}
 			$message = __('New pass is ready');
 			if ($this->Log) $this->Log->write('activate new passw', 'user id(' . $id_user . ')');
 		} else {
@@ -1084,30 +1086,31 @@ Class UsersModule extends Module {
 
 		$user = $this->Model->getById($_SESSION['user']['id']);
 
-		$user_data = array();
-		if ( $changePassword ) {
-			$npass = md5crypt($newpassword);
-			$user->setPassw($npass);
-			$_SESSION['user']['passw'] = $npass;
+		if ($user) {
+			if ( $changePassword ) {
+				$npass = md5crypt($newpassword);
+				$user->setPassw($npass);
+				$_SESSION['user']['passw'] = $npass;
+			}
+			if ( $changeEmail ) {
+				$user->setEmail($email);
+				$_SESSION['user']['email'] = $email;
+			}
+			$user->setTimezone($timezone);
+			$user->setUrl($url);
+			$user->setIcq($icq);
+			$user->setJabber($jabber);
+			$user->setCity($city);
+			$user->setTelephone($telephone);
+			$user->setPol($pol);
+			$user->setByear($byear);
+			$user->setBmonth($bmonth);
+			$user->setBday($bday);
+			$user->setAbout($about);
+			$user->setSignature($signature);
+			$user->setTemplate($template);
+			$user->save();
 		}
-		if ( $changeEmail ) {
-			$user->setEmail($email);
-			$_SESSION['user']['email'] = $email;
-		}
-		$user->setTimezone($timezone);
-		$user->setUrl($url);
-		$user->setIcq($icq);
-		$user->setJabber($jabber);
-		$user->setCity($city);
-		$user->setTelephone($telephone);
-		$user->setPol($pol);
-		$user->setByear($byear);
-		$user->setBmonth($bmonth);
-		$user->setBday($bday);
-		$user->setAbout($about);
-		$user->setSignature($signature);
-		$user->setTemplate($template);
-		$user->save();
 
 		// Additional fields saving
 		if (is_object($this->AddFields)) {
@@ -1676,7 +1679,7 @@ Class UsersModule extends Module {
 			if ($id > 0) {
 				$res = $this->Model->getById($id);
 				if ($res) {
-					if (count($res) > 0) $toUser = $res->getName();
+					$toUser = $res->getName();
 				}
 			}
 		}
@@ -2644,9 +2647,10 @@ Class UsersModule extends Module {
 				$user = $this->Model->getById($vote->getTo_user());
 				$action = $vote->getAction();
 				$vote->delete();
-			
-				$user->setRating($user->getRating() - (int)$action);
-				$user->save();
+				if ($user) {
+					$user->setRating($user->getRating() - (int)$action);
+					$user->save();
+				}
 				die('ok');
 			}
 		}
@@ -2803,7 +2807,7 @@ Class UsersModule extends Module {
 		
 		// Check user exists
 		$to_user = $this->Model->getById($uid);
-		if (empty($to_user) < 1) {
+		if (empty($to_user)) {
 			if ($this->wrap) redirect('/');
 			else die(__('Can not find user'));
 		}
@@ -2870,13 +2874,10 @@ Class UsersModule extends Module {
 					if ($user_warnings->getWarnings() < $this->Register['Config']->read('warnings_by_ban', $this->module)) {
 						$ban = 0;
 					}
+					$user_warnings->setLocked($ban);
+					$user_warnings->setWarnings($user_warnings->getWarnings() - $warning->getPoints());
+					$user_warnings->save();
 				}
-				
-				
-				$user_warnings->setLocked($ban);
-				$user_warnings->setWarnings($user_warnings->getWarnings() - $warning->getPoints());
-				$user_warnings->save();
-				
 				die('ok');
 			}
 		}

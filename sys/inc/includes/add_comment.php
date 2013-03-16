@@ -1,16 +1,13 @@
 <?php
 //turn access
 $this->ACL->turn(array($this->module, 'add_comments'));
-if (!isset($_POST['login']) || !isset($_POST['message'])) {
-	redirect('/' . $this->module);
-}
 $id = (int)$id;
-if ($id < 1) redirect('/' . $this->module);
+if ($id < 1) redirect($this->getModuleURL());
 
 
 $target_new = $this->Model->getById($id);
-if (!$target_new) redirect('/' . $this->module);
-if (!$target_new->getCommented()) return $this->showInfoMessage(__('Comments is denied here'), '/' . $this->module . '/view/' . $id); 
+if (!$target_new) redirect($this->getModuleURL());
+if (!$target_new->getCommented()) return $this->showInfoMessage(__('Comments is denied here'), $this->getModuleURL('/view/' . $id));
 
 
 /* cut and trim values */
@@ -71,13 +68,13 @@ if (!empty($error)) {
 		"\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
 	$_SESSION['addCommentForm']['name'] = $name;
 	$_SESSION['addCommentForm']['message'] = $message;
-	redirect('/' . $this->module . '/view/' . $id);
+	redirect($this->getModuleURL('/view/' . $id));
 }
 
 
 /* SPAM DEFENCE */
 if (isset($_SESSION['unix_last_post']) and (time()-$_SESSION['unix_last_post'] < 10)) {
-	return $this->showInfoMessage(__('Your message has been added'), '/' . $this->module . '/view/' . $id);
+	return $this->showInfoMessage(__('Your message has been added'), $this->getModuleURL('/view/' . $id));
 } else {
 	$_SESSION['unix_last_post'] = time();
 }
@@ -98,16 +95,19 @@ $data = array(
 	'date'     => new Expr('NOW()'),
 	'mail'     => $mail,
 );
-$className = ucfirst($this->module) . 'CommentsEntity';
+$className = $this->Register['ModManager']->getEntityName($this->module . 'Comments');
 $entityComm = new $className($data);
-$entityComm->save();
+if ($entityComm) {
+	$entityComm->save();
 
-$entity = $this->Model->getById($id);
-$entity->setComments($entity->getComments() + 1);
-$entity->save();
-
-
-
-if ($this->Log) $this->Log->write('adding comment to ' . $this->module, $this->module . ' id(' . $id . ')');
-return $this->showInfoMessage(__('Comments is added'), '/' . $this->module . '/view/' . $id );
+	$entity = $this->Model->getById($id);
+	if ($entity) {
+		$entity->setComments($entity->getComments() + 1);
+		$entity->save();
+		
+		if ($this->Log) $this->Log->write('adding comment to ' . $this->module, $this->module . ' id(' . $id . ')');
+		return $this->showInfoMessage(__('Comments is added'), $this->getModuleURL('/view/' . $id));
+	}
+}
+return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL('/view/' . $id));
 ?>

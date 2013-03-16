@@ -611,8 +611,7 @@ Class NewsModule extends Module {
 		}
 			
 		
-		$categoryModel = ucfirst($this->module) . 'SectionsModel';
-		$categoryModel = new $categoryModel;
+        $categoryModel = $this->Register['ModManager']->getModelInstance($this->module . 'Sections');
 		$cat = $categoryModel->getCollection(array('id' => $in_cat));
 		if (empty($cat)) $error .= '<li>' . __('Can not find category') . '</li>'."\n";
 			
@@ -666,27 +665,28 @@ Class NewsModule extends Module {
 			'available'    => $available,
 			'view_on_home' => '1',
 		);
-		$className = ucfirst($this->module) . 'Entity';
-		$new = new $className($res);
-		
-		$new->save();
-		
-		// Get last insert ID and save additional fields if an exists and activated.
-		// This must be doing only after save main(parent) material
-		$last_id = mysql_insert_id();
+		$className = $this->Register['ModManager']->getEntityName($this->module);
+		$entity = new $className($res);
+		if ($entity) {
+			$last_id = $entity->save();
 
-		if (is_object($this->AddFields)) {
-			$this->AddFields->save($last_id, $_addFields);
+			// Get last insert ID and save additional fields if an exists and activated.
+			// This must be doing only after save main(parent) material
+			if (is_object($this->AddFields)) {
+				$this->AddFields->save($last_id, $_addFields);
+			}
+
+			downloadAttaches($this->module, $last_id);
+
+
+			//clean cache
+			$this->Register['Cache']->clean(CACHE_MATCHING_TAG, array('module_' . $this->module));
+			$this->Register['DB']->cleanSqlCache();
+			if ($this->Log) $this->Log->write('adding new', 'new id(' . $last_id . ')');
+			return $this->showInfoMessage(__('Material successful added'), $this->getModuleURL('view/' . $last_id));
+		} else {
+			return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL());
 		}
-		
-		downloadAttaches($this->module, $last_id);
-		
-		
-		//clean cache
-		$this->Register['Cache']->clean(CACHE_MATCHING_TAG, array('module_' . $this->module));
-		$this->Register['DB']->cleanSqlCache();
-		if ($this->Log) $this->Log->write('adding new', 'new id(' . $last_id . ')');
-		return $this->showInfoMessage(__('Material successful added'), $this->getModuleURL('view/' . $last_id));				  
 	}
 
 
@@ -756,8 +756,7 @@ Class NewsModule extends Module {
         if (isset($_SESSION['FpsForm'])) unset($_SESSION['FpsForm']);
 
 		
-		$className = $this->Register['ModManager']->getModelNameFromModule($this->module . 'Sections');
-		$sectionModel = new $className;
+		$sectionModel = $this->Register['ModManager']->getModelInstance($this->module . 'Sections');
 		$cats = $sectionModel->getCollection();
 		$selectedCatId = ($data->getIn_cat()) ? $data->getIn_cat() : $data->getCategory_id();
 		$cats_change = $this->_buildSelector($cats, $selectedCatId);
@@ -894,8 +893,7 @@ Class NewsModule extends Module {
 		
 		
 		
-		$className = $this->Register['ModManager']->getModelNameFromModule($this->module . 'Sections');
-		$catModel = new $className;
+		$catModel = $this->Register['ModManager']->getModelInstance($this->module . 'Sections');
 		$category = $catModel->getById($in_cat);
 		if (!$category) $error = $error.'<li>' . __('Can not find category') . '</li>'."\n";
 		

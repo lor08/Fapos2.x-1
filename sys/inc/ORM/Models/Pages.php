@@ -33,22 +33,22 @@ class PagesModel extends FpsModel
 
 
 	/**
-     * @param $id
+     * @param $url
      * @return bool
      */
-	public function getByUrl($id)
+	public function getByUrl($url)
 	{
         $Register = Register::getInstance();
-		$entity = $this->getDbDriver()->select($this->Table, DB_FIRST, array(
+		$entities = $this->getDbDriver()->select($this->Table, DB_FIRST, array(
 			'cond' => array(
-				'url' => $id
+				'url' => $url
 			)
 		));
 
-		if (!empty($entity[0])) {
-            $entity = $this->getAllAssigned($entity);
+		if ($entities && count($entities)) {
+            $entities = $this->getAllAssigned($entities);
 			$entityClassName = $Register['ModManager']->getEntityNameFromModel(get_class($this));
-			$entity = new $entityClassName($entity[0]);
+			$entity = new $entityClassName($entities[0]);
 			return (!empty($entity)) ? $entity : false;
 		}
 		return false;

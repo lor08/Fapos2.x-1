@@ -629,8 +629,7 @@ Class LoadsModule extends Module {
 
 
 
-        $categoryModel = ucfirst($this->module) . 'SectionsModel';
-        $categoryModel = new $categoryModel;
+        $categoryModel = $this->Register['ModManager']->getModelInstance($this->module . 'Sections');
         $cat = $categoryModel->getById(array('id' => $in_cat));
         if (empty($cat)) $error .= '<li>' . __('Can not find category') . '</li>'."\n";
 
@@ -716,23 +715,28 @@ Class LoadsModule extends Module {
 			$data['download'] = $file;
 			$data['filename'] = $filename;
 		}
-        $entity = new LoadsEntity($data);
-		$last_id = $entity->save();
+		$className = $this->Register['ModManager']->getEntityName($this->module);
+		$entity = new $className($data);
+		if ($entity) {
+			$last_id = $entity->save();
 
 
-        // Get last insert ID and save additional fields if an exists and activated.
-        // This must be doing only after save main(parent) material
-        if (is_object($this->AddFields)) {
-            $this->AddFields->save($last_id, $_addFields);
-        }
+			// Get last insert ID and save additional fields if an exists and activated.
+			// This must be doing only after save main(parent) material
+			if (is_object($this->AddFields)) {
+				$this->AddFields->save($last_id, $_addFields);
+			}
 
-        downloadAttaches($this->module, $last_id);
+			downloadAttaches($this->module, $last_id);
 
-        //clear cache
-        $this->Cache->clean(CACHE_MATCHING_ANY_TAG, array('module_loads'));
-        $this->DB->cleanSqlCache();
-        if ($this->Log) $this->Log->write('adding load', 'load id(' . $last_id . ')');
-		return $this->showInfoMessage(__('Material successful added'), $this->getModuleURL() );
+			//clear cache
+			$this->Cache->clean(CACHE_MATCHING_ANY_TAG, array('module_loads'));
+			$this->DB->cleanSqlCache();
+			if ($this->Log) $this->Log->write('adding load', 'load id(' . $last_id . ')');
+			return $this->showInfoMessage(__('Material successful added'), $this->getModuleURL() );
+		} else {
+			return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL());
+		}
 	}
 
 
@@ -806,8 +810,7 @@ Class LoadsModule extends Module {
 
 
 
-        $className = $this->Register['ModManager']->getModelNameFromModule($this->module . 'Sections');
-        $sectionModel = new $className;
+        $sectionModel = $this->Register['ModManager']->getModelInstance($this->module . 'Sections');
         $cats = $sectionModel->getCollection();
         $selectedCatId = ($data->getIn_cat()) ? $data->getIn_cat() : $data->getCategory_id();
         $cats_change = $this->_buildSelector($cats, $selectedCatId);
@@ -967,8 +970,7 @@ Class LoadsModule extends Module {
 			$error = $error.'<li>' . __('Wrong chars in "download_url_size"') .'</li>'."\n";
 
 
-        $className = $this->Register['ModManager']->getModelNameFromModule($this->module . 'Sections');
-        $catModel = new $className;
+        $catModel = $this->Register['ModManager']->getModelInstance($this->module . 'Sections');
         $category = $catModel->getById($in_cat);
         if (!$category) $error = $error.'<li>' . __('Can not find category') . '</li>'."\n";
 		

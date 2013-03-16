@@ -2,33 +2,36 @@
 //turn access
 $this->ACL->turn(array($this->module, 'edit_comments'));
 $id = (!empty($id)) ? (int)$id : 0;
-if ($id < 1) redirect('/' . $this->module);
-$error = '';
+if ($id < 1) redirect($this->getModuleURL());
 
 
-$commClassName = ucfirst($this->module) . 'CommentsModel';
-$commModel = new $commClassName;
-$comment = $commModel->getById($id);
-if (!$comment) return $this->showInfoMessage(__('Comment not found'), $this->module);
+$commentsModel = $this->Register['ModManager']->getModelInstance($this->module . 'Comments');
+if (!$commentsModel) return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL());
+$comment = $commentsModel->getById($id);
+if (!$comment) return $this->showInfoMessage(__('Comment not found'), $this->getModuleURL());
 
 
+/* cut and trim values */
+if ($comment->getUser_id() > 0) {
+	$name = $comment->getName();
+} else {
+	$name = mb_substr($_POST['login'], 0, 70);
+	$name = trim($name);
+}
+
+
+$mail = '';
 $message = (!empty($_POST['message'])) ? $_POST['message'] : '';
 $message = mb_substr($message, 0, Config::read('comment_lenght', $this->module));
 $message = trim($message);
 
 
-$name = '';
+$error  = '';
 $valobj = $this->Register['Validate'];
-if ($comment->getUser_id()) {
-	//$name = (!empty($_POST['login'])) ? (string)$_POST['login'] : '';
-	//$name = trim(mb_substr($name, 0, 70));
-	$name = $comment->getName();
-	
-	if (empty($name)) {
-		$error = $error . '<li>' . __('Empty field "login"') . '</li>' . "\n";
-	} elseif (!$valobj->cha_val($name, V_TITLE)) {
-		$error = $error . '<li>' . __('Wrong chars in field "login"') . '</li>' . "\n";
-	}
+if (empty($name)) {
+	$error = $error . '<li>' . __('Empty field "login"') . '</li>' . "\n";
+} elseif (!$valobj->cha_val($name, V_TITLE)) {
+	$error = $error . '<li>' . __('Wrong chars in field "login"') . '</li>' . "\n";
 }
 if (empty($message))  $error = $error.'<li>' . __('Empty field "text"') . '</li>'."\n";
 
@@ -40,7 +43,7 @@ if (!empty( $error )) {
 		."\n".'<ul class="errorMsg">'."\n".$error.'</ul>'."\n";
 	$_SESSION['editCommentForm']['message'] = $message;
 	$_SESSION['editCommentForm']['name'] = $name;
-	redirect('/' . $this->module . '/edit_comment_form/' . $id );
+	redirect($this->getModuleURL('/edit_comment_form/' . $id));
 }
 
 
@@ -56,10 +59,5 @@ $comment->save();
 
 
 if ($this->Log) $this->Log->write('editing comment for ' . $this->module, $this->module . ' id(' . $comment->getEntity_id() . '), comment id(' . $id . ')');
-return $this->showInfoMessage(__('Operation is successful'), '/' . $this->module . '/view/' . $comment->getEntity_id() );
-
-
-
-
-
-
+return $this->showInfoMessage(__('Operation is successful'), $this->getModuleURL('/view/' . $comment->getEntity_id()));
+?>

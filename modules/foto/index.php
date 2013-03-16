@@ -517,55 +517,59 @@ Class FotoModule extends Module {
 			'filename'     => '',
 			'commented'    => $commented,
 		);
-		
-		$entity = new FotoEntity($res);
-		$id = $entity->save();
-		$entity->setId($id);
- 
- 
-		/* save full and resample images */
-		$ext = strtolower(strchr($_FILES['foto']['name'], '.'));
-		$save_path = ROOT . $this->getFilesPath('full/' . $id . $ext);
-		$save_sempl_path = ROOT . $this->getFilesPath('preview/' . $id . $ext);
-		
-		if (!move_uploaded_file($_FILES['foto']['tmp_name'], $save_path)) $error_flag = true;
-		elseif (!chmod($save_path, 0644)) $error_flag = true; 
-		
-		/* if an error when coping */
-		if (!empty($error_flag) && $error_flag) {
-			$entity->delete();
-			$data = array(
-				'title' => $title,
-				'description' => $description,
-				'in_cat' => $in_cat,
-				'commented' => $commented,
-			);
-			$data['error'] = '<p class="errorMsg">Произошла ошибка:</p>'
-				. "\n" . '<ul class="errorMsg">'."\n".'Неизвесная ошибка. Попробуйте начать заново.</ul>'."\n";
-			$_SESSION['FpsForm'] = $data;
-			redirect($this->getModuleURL('add_form/'));
-		} else {
-			$entity->setFilename($id . $ext);
-			$entity->save();
-		}
-		
-		
-		// Create watermark and resample image
-		$watermark_path = ROOT . '/sys/img/' . ($this->Register['Config']->read('watermark_type') == '1' ? 'watermark_text.png' : $this->Register['Config']->read('watermark_img'));
-		if ($this->Register['Config']->read('use_watermarks') && !empty($watermark_path) && file_exists($watermark_path)) {
-			$waterObj = new FpsImg;
-			$waterObj->createWaterMark($save_path, $watermark_path);
-		}
+		$className = $this->Register['ModManager']->getEntityName($this->module);
+		$entity = new $className($res);
+		if ($entity) {
+			$last_id = $entity->save();
+			$entity->setId($last_id);
 
-		
-		$resample = resampleImage($save_path, $save_sempl_path, 150, 150);
-		if ($resample) chmod($save_sempl_path, 0644);
-		
-		//clean cache
-		$this->Cache->clean(CACHE_MATCHING_TAG, array('module_foto'));
-		$this->Register['DB']->cleanSqlCache();
-		if ($this->Log) $this->Log->write('adding foto', 'foto id(' . $id . ')');
-		return $this->showInfoMessage(__('Material successful added'), $this->getModuleURL() );		  
+
+			/* save full and resample images */
+			$ext = strtolower(strchr($_FILES['foto']['name'], '.'));
+			$save_path = ROOT . $this->getFilesPath('full/' . $last_id . $ext);
+			$save_sempl_path = ROOT . $this->getFilesPath('preview/' . $last_id . $ext);
+
+			if (!move_uploaded_file($_FILES['foto']['tmp_name'], $save_path)) $error_flag = true;
+			elseif (!chmod($save_path, 0644)) $error_flag = true; 
+
+			/* if an error when coping */
+			if (!empty($error_flag) && $error_flag) {
+				$entity->delete();
+				$data = array(
+					'title' => $title,
+					'description' => $description,
+					'in_cat' => $in_cat,
+					'commented' => $commented,
+				);
+				$data['error'] = '<p class="errorMsg">Произошла ошибка:</p>'
+					. "\n" . '<ul class="errorMsg">'."\n".'Неизвесная ошибка. Попробуйте начать заново.</ul>'."\n";
+				$_SESSION['FpsForm'] = $data;
+				redirect($this->getModuleURL('add_form/'));
+			} else {
+				$entity->setFilename($last_id . $ext);
+				$entity->save();
+			}
+
+
+			// Create watermark and resample image
+			$watermark_path = ROOT . '/sys/img/' . ($this->Register['Config']->read('watermark_type') == '1' ? 'watermark_text.png' : $this->Register['Config']->read('watermark_img'));
+			if ($this->Register['Config']->read('use_watermarks') && !empty($watermark_path) && file_exists($watermark_path)) {
+				$waterObj = new FpsImg;
+				$waterObj->createWaterMark($save_path, $watermark_path);
+			}
+
+
+			$resample = resampleImage($save_path, $save_sempl_path, 150, 150);
+			if ($resample) chmod($save_sempl_path, 0644);
+
+			//clean cache
+			$this->Cache->clean(CACHE_MATCHING_TAG, array('module_foto'));
+			$this->Register['DB']->cleanSqlCache();
+			if ($this->Log) $this->Log->write('adding foto', 'foto id(' . $last_id . ')');
+			return $this->showInfoMessage(__('Material successful added'), $this->getModuleURL() );
+		} else {
+			return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL());
+		}
 	}
 
 
@@ -782,8 +786,10 @@ Class FotoModule extends Module {
 	public function upper($id) {
 		$this->ACL->turn(array($this->module, 'up_materials'));
 		$entity = $this->Model->getById($id);
-		$entity->setDate(date("Y-m-d H:i:s"));
-		$entity->save();
+		if ($entity) {
+			$entity->setDate(date("Y-m-d H:i:s"));
+			$entity->save();
+		}
 		return $this->showInfoMessage(__('Operation is successful'), $this->getModuleURL());
 	}
 	

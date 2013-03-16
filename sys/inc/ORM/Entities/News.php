@@ -82,13 +82,10 @@ class NewsEntity extends FpsEntity
 	public function delete()
 	{ 
 		$Register = Register::getInstance();
-		$attachClass = $Register['ModManager']->getModelNameFromModule('newsAttaches');
-		$commentsClass = $Register['ModManager']->getModelNameFromModule('newsComments');
-		$addContentClass = $Register['ModManager']->getModelNameFromModule('newsAddContent');
 		
-		$attachesModel = new $attachClass;
-		$commentsModel = new $commentsClass;
-		$addContentModel = new $addContentClass;
+		$attachesModel = $Register['ModManager']->getModelInstance('NewsAttaches');
+		$commentsModel = $Register['ModManager']->getModelInstance('NewsComments');
+		$addContentModel = $Register['ModManager']->getModelInstance('NewsAddContent');
 		
 		$attachesModel->deleteByParentId($this->id);
 		$commentsModel->deleteByParentId($this->id);

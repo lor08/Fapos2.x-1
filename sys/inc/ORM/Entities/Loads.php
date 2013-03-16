@@ -95,13 +95,10 @@ class LoadsEntity extends FpsEntity
 	public function delete()
 	{ 
 		$Register = Register::getInstance();
-		$attachClass = $Register['ModManager']->getModelNameFromModule('loadsAttaches');
-		$commentsClass = $Register['ModManager']->getModelNameFromModule('loadsComments');
-		$addContentClass = $Register['ModManager']->getModelNameFromModule('loadsAddContent');
 		
-		$attachesModel = new $attachClass;
-		$commentsModel = new $commentsClass;
-		$addContentModel = new $addContentClass;
+		$attachesModel = $Register['ModManager']->getModelInstance('LoadsAttaches');
+		$commentsModel = $Register['ModManager']->getModelInstance('LoadsComments');
+		$addContentModel = $Register['ModManager']->getModelInstance('LoadsAddContent');
 		
 		$attachesModel->deleteByParentId($this->id);
 		$commentsModel->deleteByParentId($this->id);

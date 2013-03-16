@@ -2,18 +2,18 @@
 //turn access
 $this->ACL->turn(array($this->module, 'edit_comments'));
 $id = (!empty($id)) ? (int)$id : 0;
-if ($id < 1) redirect('/' . $this->module);
+if ($id < 1) redirect($this->getModuleURL());
 
 
-$commClassName = ucfirst($this->module) . 'CommentsModel';
-$commModel = new $commClassName;
-$comment = $commModel->getById($id);
-if (!$comment) return $this->showInfoMessage(__('Comment not found'), $this->module);
+$commentsModel = $this->Register['ModManager']->getModelInstance($this->module . 'Comments');
+if (!$commentsModel) return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL());
+$comment = $commentsModel->getById($id);
+if (!$comment) return $this->showInfoMessage(__('Comment not found'), $this->getModuleURL());
 
 
 // Categories tree
 $entity = $this->Model->getById($comment->getEntity_id());
-if ($entity->getCategory_id()) {
+if ($entity && $entity->getCategory_id()) {
 	$this->categories = $this->_getCatsTree($entity->getCategory_id());
 } else {
 	$this->categories = $this->_getCatsTree();
@@ -37,7 +37,7 @@ if (isset($_SESSION['editCommentForm'])) {
 }
 
 
-$markers['action'] = get_url('/' . $this->module . '/update_comment/' . $id);
+$markers['action'] = get_url($this->getModuleURL('/update_comment/' . $id));
 $markers['errors'] = $errors;
 $markers['name'] = h($name);
 $markers['message'] = h($message);

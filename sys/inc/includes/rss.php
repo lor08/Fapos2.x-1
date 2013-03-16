@@ -15,7 +15,7 @@ if (!$check) {
 	if ($this->cached && $this->Cache->check($cache_key)) {
 		$html = $this->Cache->read($cache_key);
 	} else {
-		$sitename = '/';
+		$sitename = '';
 		if (!empty($_SERVER['SERVER_NAME'])) {
 			$sitename = 'http://' . $_SERVER['SERVER_NAME'] . '';
 		}
@@ -24,7 +24,7 @@ if (!$check) {
 		$html .= '<rss version="2.0">';		
 		$html .= '<channel>';
 		$html .= '<title>' . h(Config::read('title', $this->module)) . '</title>';
-		$html .= '<link>' . $sitename . get_url($this->module . '/') . '</link>';
+		$html .= '<link>' . $sitename . get_url($this->getModuleURL()) . '</link>';
 		$html .= '<description>' . h(Config::read('description', $this->module)) . '</description>';
 		$html .= '<pubDate>' . date('r') . '</pubDate>';
 		$html .= '<generator>FPS RSS Generator (Fapos CMS)</generator>';

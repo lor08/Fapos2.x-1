@@ -146,8 +146,7 @@ Class PagesModule extends Module {
 
 
                     $uids = '(' . implode(', ', $uids) . ')';
-                    $uModelClassName = $this->Register['ModManager']->getModelNameFromModule('users');
-                    $uModel = new $uModelClassName;
+                    $uModel = $this->Register['ModManager']->getModelInstance('users');
                     $authors = $uModel->getCollection(array('`id` IN ' . $uids));
 
 
@@ -171,8 +170,7 @@ Class PagesModule extends Module {
 
 
                             $ids = implode(', ', $attach_ids);
-                            $attModelClassName = $this->Register['ModManager']->getModelNameFromModule($module . 'Attaches');
-                            $attModel = new  $attModelClassName;
+                            $attModel = $this->Register['ModManager']->getModelInstance($module . 'Attaches');
                             $attaches = $attModel->getCollection(array('`entity_id` IN ('.$ids.')'));
 							
                             foreach ($mats as $mat) {
