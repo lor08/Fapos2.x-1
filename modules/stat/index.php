@@ -413,7 +413,7 @@ Class StatModule extends Module {
 
 		$markers['mainText'] = $announce;
 		$entity->setAdd_markers($markers);
-		$entity->setTags(explode(',', $entity->getTags()));
+		if ($entity->getTags()) $entity->setTags(explode(',', $entity->getTags()));
 		
 		
 		$this->setCacheTag(array(
