@@ -154,13 +154,13 @@ Class NewsModule extends Module {
 			
 			
 			$_addParams['category_url'] = get_url($this->getModuleURL('category/' . $result->getCategory_id()));
-			$_addParams['profile_url'] = getProfileUrl($result->getAuthor()->getId());
+			$_addParams['profile_url'] = getProfileUrl($result->getAuthor_id());
 			$result->setTags(explode(',', $result->getTags()));
 
 
 			//set users_id that are on this page
 			$this->setCacheTag(array(
-				'user_id_' . $result->getAuthor()->getId(),
+				'user_id_' . $result->getAuthor_id(),
 				'record_id_' . $result->getId(),
 			));
 		
@@ -307,13 +307,13 @@ Class NewsModule extends Module {
 			
 			
 			$_addParams['category_url'] = get_url($this->getModuleURL('category/' . $result->getCategory_id()));
-			$_addParams['profile_url'] = getProfileUrl($result->getAuthor()->getId());
+			$_addParams['profile_url'] = getProfileUrl($result->getAuthor_id());
 			$result->setTags(explode(',', $result->getTags()));
 
 
 			//set users_id that are on this page
 			$this->setCacheTag(array(
-				'user_id_' . $result->getAuthor()->getId(),
+				'user_id_' . $result->getAuthor_id(),
 				'record_id_' . $result->getId(),
 			));
 		
@@ -371,7 +371,7 @@ Class NewsModule extends Module {
 		
 		
 		//category block
-		$this->_getCatsTree($entity->getCategory()->getId());
+		$this->_getCatsTree($entity->getCategory_id());
 		/* COMMENT BLOCK */
 		if ($this->Register['Config']->read('comment_active', $this->module) == 1 
 		&& $this->ACL->turn(array($this->module, 'view_comments'), false) 
@@ -392,15 +392,15 @@ Class NewsModule extends Module {
 		
 		$navi = array();
 		$navi['module_url'] = get_url($this->getModuleURL());
-		$navi['category_url'] = get_url($this->getModuleURL('category/' . $entity->getCategory()->getId()));
+		$navi['category_url'] = get_url($this->getModuleURL('category/' . $entity->getCategory_id()));
 		$navi['category_name'] = h($entity->getCategory()->getTitle());
-		$navi['navigation'] = $this->_buildBreadCrumbs($entity->getCategory()->getId());
+		$navi['navigation'] = $this->_buildBreadCrumbs($entity->getCategory_id());
 		$this->_globalize($navi);
 		
 		
 		$markers = array();
 		$markers['moder_panel'] = $this->_getAdminBar($entity);
-		$markers['profile_url'] = getProfileUrl($entity->getAuthor()->getId());
+		$markers['profile_url'] = getProfileUrl($entity->getAuthor_id());
 		
 		
 		$entry_url = get_url(entryUrl($entity, $this->module));
@@ -410,7 +410,7 @@ Class NewsModule extends Module {
 		$announce = $entity->getMain();
 		
 		
-		$announce = $this->Textarier->print_page($announce, $entity->getAuthor()->getStatus(), $entity->getTitle());
+		$announce = $this->Textarier->print_page($announce, $entity->getAuthor() ? $entity->getAuthor()->getStatus() : 0, $entity->getTitle());
 		
 		
 		// replace image tags in text
@@ -708,8 +708,8 @@ Class NewsModule extends Module {
 
 		
 		$this->Model->bindModel('attaches');
-		$this->Model->bindModel('author');
-		$this->Model->bindModel('category');
+		// $this->Model->bindModel('author');
+		// $this->Model->bindModel('category');
 		$entity = $this->Model->getById($id);
 		
 		if (!$entity) redirect($this->getModuleURL());
@@ -723,7 +723,7 @@ Class NewsModule extends Module {
 		
 		//turn access
 		if (!$this->ACL->turn(array($this->module, 'edit_materials'), false) 
-		&& (!empty($_SESSION['user']['id']) && $entity->getAuthor()->getId() == $_SESSION['user']['id'] 
+		&& (!empty($_SESSION['user']['id']) && $entity->getAuthor_id() == $_SESSION['user']['id'] 
 		&& $this->ACL->turn(array($this->module, 'edit_mine_materials'), false)) === false) {
 			return $this->showInfoMessage(__('Permission denied'), $this->getModuleURL());
 		}
@@ -732,7 +732,7 @@ Class NewsModule extends Module {
 		$this->Register['current_vars'] = $entity;
 		
 		//forming categories list
-		$this->_getCatsTree($entity->getCategory()->getId());
+		$this->_getCatsTree($entity->getCategory_id());
 		
 
         $data = array(
@@ -1202,7 +1202,7 @@ Class NewsModule extends Module {
     {
 		$moder_panel = '';
 		$id = $record->getId();
-		if(isset($_SESSION['user']) and $_SESSION['user']['id'] == $record->getAuthor()->getId()) {
+		if(isset($_SESSION['user']) and $_SESSION['user']['id'] == $record->getAuthor_id()) {
 			if ($this->ACL->turn(array($this->module, 'edit_mine_materials'), false)) {
 				$moder_panel .= get_link(get_img('/sys/img/edit_16x16.png', array('title' => __('Edit'))), $this->getModuleURL('edit_form/' . $id)) . '&nbsp;';
 			}

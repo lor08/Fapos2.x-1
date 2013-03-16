@@ -67,8 +67,7 @@ class UsersModel extends FpsModel
     {
         $Register = Register::getInstance();
 
-        $messagesModel = $Register['ModManager']->getModelName('Messages');
-        $messagesModel = new $messagesModel;
+        $messagesModel = $Register['ModManager']->getModelInstance('Messages');
         $message = $messagesModel->getById($id);
 
         if ($message) {
@@ -91,8 +90,7 @@ class UsersModel extends FpsModel
         // того, как сообщение удалит второй пользователь, мы можем удалить
         // запись в таблице БД TABLE_MESSAGES
         $Register = Register::getInstance();
-        $messagesModel = $Register['ModManager']->getModelName('Messages');
-        $messagesModel = new $messagesModel;
+        $messagesModel = $Register['ModManager']->getModelInstance('Messages');
         $messagesModel->bindModel('fromuser');
         $messagesModel->bindModel('touser');
 
@@ -116,8 +114,7 @@ class UsersModel extends FpsModel
         // того, как сообщение удалит второй пользователь, мы можем удалить
         // запись в таблице БД TABLE_MESSAGES
         $Register = Register::getInstance();
-        $messagesModel = $Register['ModManager']->getModelName('Messages');
-        $messagesModel = new $messagesModel;
+        $messagesModel = $Register['ModManager']->getModelInstance('Messages');
         $messagesModel->bindModel('touser');
         $messagesModel->bindModel('fromuser');
 

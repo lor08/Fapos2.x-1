@@ -160,8 +160,7 @@ class FpsAdditionalFields {
     {
 		if (empty($module)) $module = $this->module;
 		$Register = Register::getInstance();
-        $ModelName = $Register['ModManager']->getModelName(ucfirst($module) . 'AddFields');
-        $Model = new $ModelName();
+        $Model = $Register['ModManager']->getModelInstance(ucfirst($module) . 'AddFields');
 
         $Model->bindModel(ucfirst($module) . 'AddContent');
 		if (!empty($records)) $addFields = $records;
@@ -217,8 +216,7 @@ class FpsAdditionalFields {
 	public function checkFields($module = null) {
 		if (empty($module)) $module = $this->module;
 		$Register = Register::getInstance();
-        $ModelName = $Register['ModManager']->getModelName(ucfirst($module) . 'AddFields');
-        $Model = new $ModelName();
+        $Model = $Register['ModManager']->getModelInstance(ucfirst($module) . 'AddFields');
 		
         $Model->bindModel(ucfirst($module) . 'AddContent');
         $addFields = $Model->getCollection();
@@ -283,7 +281,7 @@ class FpsAdditionalFields {
 			$classNameM = ucfirst($module) . 'AddContentModel';
 			$classNameE = ucfirst($module) . 'AddContentEntity';
 			$fieldsModel = new $classNameM;
-			$check = $fieldsModel->getCollection($where, array('limit' => 1));
+			$check = $fieldsModel->getFirst($where);
 			
 			
 			$data = array(
@@ -291,7 +289,7 @@ class FpsAdditionalFields {
 				'field_id' => $field['field_id'],
 				'content' => $field['content'],
 			);
-			if ($check) $data['id'] = $check[0]->getId();
+			if ($check) $data['id'] = $check->getId();
 			$entity = new $classNameE($data);
 			$entity->save();
 		}

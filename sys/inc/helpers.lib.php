@@ -722,7 +722,11 @@ function getAvatar($id_user = null, $email_user = null) {
 					$Register = Register::getInstance();
 					$usersModel = $Register['ModManager']->getModelInstance('Users');
 					$user = $usersModel->getById($id_user);
-					$email_user = $user->getEmail();
+					if ($user) {
+						$email_user = $user->getEmail();
+					} else {
+						return $def;
+					}
 				}
 				return getGravatar($email_user);
 			} else {

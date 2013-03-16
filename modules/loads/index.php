@@ -309,12 +309,12 @@ Class LoadsModule extends Module {
 
 
 			$_addParams['category_url'] = get_url($this->getModuleURL('category/' . $result->getCategory_id()));
-            $_addParams['profile_url'] = getProfileUrl($result->getAuthor()->getId());
+            $_addParams['profile_url'] = getProfileUrl($result->getAuthor_id());
 
 
             //set users_id that are on this page
             $this->setCacheTag(array(
-                'user_id_' . $result->getAuthor()->getId(),
+                'user_id_' . $result->getAuthor_id(),
                 'record_id_' . $result->getId(),
             ));
 
@@ -377,7 +377,7 @@ Class LoadsModule extends Module {
 
 
         //category block
-        $this->_getCatsTree($entity->getCategory()->getId());
+        $this->_getCatsTree($entity->getCategory_id());
         /* COMMENT BLOCK */
 		if ($this->Register['Config']->read('comment_active', $this->module) == 1
 			&& $this->ACL->turn(array($this->module, 'view_comments'), false)
@@ -399,9 +399,9 @@ Class LoadsModule extends Module {
 
         $navi = array();
 		$navi['module_url'] = get_url($this->getModuleURL());
-		$navi['category_url'] = get_url($this->getModuleURL('category/' . $entity->getCategory()->getId()));
+		$navi['category_url'] = get_url($this->getModuleURL('category/' . $entity->getCategory_id()));
         $navi['category_name'] = h($entity->getCategory()->getTitle());
-        $navi['navigation'] = $this->_buildBreadCrumbs($entity->getCategory()->getId());
+        $navi['navigation'] = $this->_buildBreadCrumbs($entity->getCategory_id());
         $this->_globalize($navi);
 
 
@@ -434,7 +434,7 @@ Class LoadsModule extends Module {
 
 
         $announce = $entity->getMain();
-        $announce = $this->Textarier->print_page($announce, $entity->getAuthor()->getStatus(), $entity->getTitle());
+		$announce = $this->Textarier->print_page($announce, $entity->getAuthor() ? $entity->getAuthor()->getStatus() : 0, $entity->getTitle());
 
         // replace image tags in text
         $attaches = $entity->getAttaches();
@@ -753,8 +753,8 @@ Class LoadsModule extends Module {
 
 
         $this->Model->bindModel('attaches');
-        $this->Model->bindModel('author');
-        $this->Model->bindModel('category');
+        // $this->Model->bindModel('author');
+        // $this->Model->bindModel('category');
         $entity = $this->Model->getById($id);
 
 		if (!$entity) redirect($this->getModuleURL());
@@ -768,7 +768,7 @@ Class LoadsModule extends Module {
 
         //turn access
 		if (!$this->ACL->turn(array($this->module, 'edit_materials'), false)
-            && (!empty($_SESSION['user']['id']) && $entity->getAuthor()->getId() == $_SESSION['user']['id']
+            && (!empty($_SESSION['user']['id']) && $entity->getAuthor_id() == $_SESSION['user']['id']
 				&& $this->ACL->turn(array($this->module, 'edit_mine_materials'), false)) === false) {
 			return $this->showInfoMessage(__('Permission denied'), $this->getModuleURL());
         }
@@ -777,7 +777,7 @@ Class LoadsModule extends Module {
         $this->Register['current_vars'] = $entity;
 
         //forming categories list
-        $this->_getCatsTree($entity->getCategory()->getId());
+        $this->_getCatsTree($entity->getCategory_id());
 
 		
         // Check for preview or errors

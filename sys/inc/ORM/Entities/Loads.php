@@ -176,8 +176,16 @@ class LoadsEntity extends FpsEntity
 	public function getAuthor()
 	{
         if (!$this->checkProperty('author')) {
-            $Model = new LoadsModel('loads');
-            $this->author = $Model->getAuthorByNew($this);
+			if (!$this->getAuthor_id()) {
+                $Register = Register::getInstance();
+				$this->author = $Register['ModManager']->getEntityInstance('users');
+			} else {
+                $Register = Register::getInstance();
+				$usersModel = $Register['ModManager']->getModelInstance('Users');
+				$this->author = $usersModel->getById($this->author_id);
+				// $Model = new LoadsModel('loads');
+				// $this->author = $Model->getAuthorByEntity($this); // TODO (function is not exists)
+			}
         }
 		return $this->author;
 	}
@@ -200,8 +208,16 @@ class LoadsEntity extends FpsEntity
 	public function getCategory()
 	{
         if (!$this->checkProperty($this->category)) {
-            $Model = new LoadsModel('loads');
-            $this->category = $Model->getCategoryByNew($this); // TODO (function is not exists)
+			if (!$this->getCategory_id()) {
+                $Register = Register::getInstance();
+				$this->category = $Register['ModManager']->getEntityInstance('LoadsSections');
+			} else {
+                $Register = Register::getInstance();
+				$catsModel = $Register['ModManager']->getModelInstance('LoadsSections');
+				$this->category = $catsModel->getById($this->category_id);
+				// $Model = new LoadsModel('loads');
+				// $this->category = $Model->getCategoryByEntity($this); // TODO (function is not exists)
+			}
         }
 		return $this->category;
 	}

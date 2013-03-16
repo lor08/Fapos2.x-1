@@ -301,10 +301,10 @@ Class StatisticsModule
 		$Register = Register::getInstance();
 		$Model = $Register['ModManager']->getModelInstance('Statistics');
 		
-		$res = $Model->getCollection(array(), array(
+		$res = $Model->getFirst(array(), array(
 			'fields' => array('SUM(`views`) as all_hits'),
 		));
-		$all_hits = (!empty($res)) ? $res[0]->getAll_hits() : 0;
+		$all_hits = $res ? $res->getAll_hits() : 0;
 		
 		
 		if (file_exists($overal_file)) {

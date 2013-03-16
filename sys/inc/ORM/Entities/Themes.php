@@ -76,6 +76,18 @@ class ThemesEntity extends FpsEntity
 	}
 
 	
+	public function getId_last_post()
+	{
+		if ($this->id) {
+			$Register = Register::getInstance();
+			$res = $Register['DB']->query("SELECT id FROM `" . $Register['DB']->getFullTableName('posts') . "`
+				WHERE id_theme = " . intval($this->id) . " ORDER BY time DESC, id DESC LIMIT 1;");
+			if ($res && is_array($res) && count($res) > 0 && isset($res[0]['id'])) return $res[0]['id'];
+		}
+		return null;
+	}
+
+	
 	public function delete()
 	{ 
 		$Register = Register::getInstance();

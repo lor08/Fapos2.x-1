@@ -116,12 +116,12 @@ Class FotoModule extends Module {
 			
 			
 			$_addParams['category_url'] = get_url($this->getModuleURL('category/' . $result->getCategory_id()));
-			$_addParams['profile_url'] = getProfileUrl($result->getAuthor()->getId());
+			$_addParams['profile_url'] = getProfileUrl($result->getAuthor_id());
 
 
 			//set users_id that are on this page
 			$this->setCacheTag(array(
-				'user_id_' . $result->getAuthor()->getId(),
+				'user_id_' . $result->getAuthor_id(),
 				'record_id_' . $result->getId(),
 			));
 		
@@ -233,12 +233,12 @@ Class FotoModule extends Module {
 			
 			
 			$_addParams['category_url'] = get_url($this->getModuleURL('category/' . $result->getCategory_id()));
-			$_addParams['profile_url'] = getProfileUrl($result->getAuthor()->getId());
+			$_addParams['profile_url'] = getProfileUrl($result->getAuthor_id());
 
 
 			//set users_id that are on this page
 			$this->setCacheTag(array(
-				'user_id_' . $result->getAuthor()->getId(),
+				'user_id_' . $result->getAuthor_id(),
 				'record_id_' . $result->getId(),
 				'category_id_' . $id,
 			));
@@ -285,7 +285,7 @@ Class FotoModule extends Module {
 		
 		
 		//category block
-		$this->_getCatsTree($entity->getCategory()->getId());
+		$this->_getCatsTree($entity->getCategory_id());
 
 		/* COMMENT BLOCK */
 		if ($this->Register['Config']->read('comment_active', $this->module) == 1 
@@ -304,9 +304,9 @@ Class FotoModule extends Module {
 		
 		$navi = array();
 		$navi['module_url'] = get_url($this->getModuleURL());
-		$navi['category_url'] = get_url($this->getModuleURL('category/' . $entity->getCategory()->getId()));
+		$navi['category_url'] = get_url($this->getModuleURL('category/' . $entity->getCategory_id()));
 		$navi['category_name'] = h($entity->getCategory()->getTitle());
-		$navi['navigation'] = $this->_buildBreadCrumbs($entity->getCategory()->getId());
+		$navi['navigation'] = $this->_buildBreadCrumbs($entity->getCategory_id());
 		$this->_globalize($navi);
 		
 		
@@ -314,12 +314,12 @@ Class FotoModule extends Module {
 		
 		
 		$markers = array();
-		$markers['profile_url'] = getProfileUrl($entity->getAuthor()->getId());
+		$markers['profile_url'] = getProfileUrl($entity->getAuthor_id());
 		
 		$markers['moder_panel'] = $this->_getAdminBar($entity);
 		$markers['main'] = get_url($this->getFilesPath('full/' . $entity->getFilename()));
 		$markers['foto_alt'] = h(preg_replace('#[^\w\d ]+#ui', ' ', $entity->getTitle()));
-		$markers['description'] = $this->Textarier->print_page($entity->getDescription(), $entity->getAuthor()->geteStatus());
+		$markers['description'] = $this->Textarier->print_page($entity->getDescription(), $entity->getAuthor() ? $entity->getAuthor()->geteStatus() : 0);
 		
 
 		$prev_id = (!empty($next_prev['prev'])) ? $next_prev['prev']->getId() : $id;
@@ -336,7 +336,7 @@ Class FotoModule extends Module {
 		
 		
 		$this->setCacheTag(array(
-			'user_id_' . $entity->getAuthor()->getId(),
+			'user_id_' . $entity->getAuthor_id(),
 			'record_id_' . $entity->getId(),
 			(!empty($_SESSION['user']['status'])) ? 'user_group_' . $_SESSION['user']['status'] : 'user_group_' . 'guest',
 		));
@@ -587,7 +587,7 @@ Class FotoModule extends Module {
 
 		
 		$this->Model->bindModel('author');
-		$this->Model->bindModel('category');
+		// $this->Model->bindModel('category');
 		$entity = $this->Model->getById($id);
 		
 		if (!$entity) return redirect($this->getModuleURL());
@@ -639,7 +639,7 @@ Class FotoModule extends Module {
 		
 		$data->setAction(get_url($this->getModuleURL('update/' . $id)));
 		$data->setCats_selector($cats_selector);
-		$data->setMain_text($this->Textarier->print_page($data->getDescription(), $data->getAuthor()->geteStatus()));
+		$data->setMain_text($this->Textarier->print_page($data->getDescription(), $entity->getAuthor() ? $data->getAuthor()->geteStatus() : 0));
 		
 		
 		$source = $this->render('editform.html', array('data' => $data));

@@ -54,7 +54,7 @@ if (!$check) {
 			);
 		}
 
-		if (!empty($records) && is_array($records)) {
+		if (!empty($records) && is_array($records) && count($records)) {
 			if ($this->module == 'forum') {
 				$last_date = $records[0]->getLast_post();
 			} else {

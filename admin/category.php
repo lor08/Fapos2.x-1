@@ -232,12 +232,14 @@ function buildCatsList($catsTree, $catsList, $indent = '') {
 			<div class="form-item2">
 			' . __('Access for') . ':<br /><table><tr>';
 		$n = 1;
-		foreach ($acl_groups as $id => $group) {
-			if (($n % 3) == 0) $out .= '</tr><tr>';
-			$checked = (in_array($id, $no_access)) ? '' : ' checked="checked"';
-			$out .= '<td><input type="checkbox" name="access[' . $id . ']" value="' . $id 
-			. '"' . $checked . '  />&nbsp;' . h($group['title']) . '</td>';
-			$n++;
+		if ($acl_groups && is_array($acl_groups)) {
+			foreach ($acl_groups as $id => $group) {
+				if (($n % 3) == 0) $out .= '</tr><tr>';
+				$checked = (in_array($id, $no_access)) ? '' : ' checked="checked"';
+				$out .= '<td><input type="checkbox" name="access[' . $id . ']" value="' . $id 
+				. '"' . $checked . '  />&nbsp;' . h($group['title']) . '</td>';
+				$n++;
+			}
 		}
 		$out .= '</tr></table><div style="clear:both;"></div></div>
 			
@@ -328,11 +330,13 @@ function index(&$page_title) {
 		<div class="form-item2">
 		Доступно:<br /><table><tr>';
 		$n = 1;
-		foreach ($acl_groups as $id => $group) {
-			if (($n % 3) == 0) $html .= '</tr><tr>';
-			$html .= '<td><input type="checkbox" name="access[' . $id . ']" value="' . $id 
-			. '"  checked="checked" />&nbsp;' . h($group['title']) . '</td>';
-			$n++;
+		if ($acl_groups && is_array($acl_groups)) {
+			foreach ($acl_groups as $id => $group) {
+				if (($n % 3) == 0) $html .= '</tr><tr>';
+				$html .= '<td><input type="checkbox" name="access[' . $id . ']" value="' . $id 
+				. '"  checked="checked" />&nbsp;' . h($group['title']) . '</td>';
+				$n++;
+			}
 		}
 		$html .= '</tr></table><div style="clear:both;"></div></div>
 		
@@ -362,7 +366,10 @@ function index(&$page_title) {
 
 
 function edit() {
-	global $FpsDB, $acl_groups;
+    $Register = Register::getInstance();
+	$FpsDB = $Register['DB'];
+    $acl_groups = $Register['ACL']->get_group_info();
+	
 	if (!isset($_GET['id'])) redirect('/admin/category.php?mod=' . getCurrMod());
 	if (!isset($_POST['title'])) redirect('/admin/category.php?mod=' . getCurrMod());
 	$id = intval($_GET['id']);
@@ -391,9 +398,11 @@ function edit() {
 	
 	
 	$no_access = array();
-	foreach ($acl_groups as $gid => $group) {
-		if (!array_key_exists($gid, $_POST['access'])) {
-			$no_access[] = $gid;
+	if ($acl_groups && is_array($acl_groups)) {
+		foreach ($acl_groups as $gid => $group) {
+			if (!array_key_exists($gid, $_POST['access'])) {
+				$no_access[] = $gid;
+			}
 		}
 	}
 	$no_access = (count($no_access)) ? implode(',', $no_access) : '';
@@ -416,7 +425,10 @@ function edit() {
 
 
 function add() {
-	global $FpsDB, $acl_groups;
+    $Register = Register::getInstance();
+	$FpsDB = $Register['DB'];
+    $acl_groups = $Register['ACL']->get_group_info();
+
 	if (empty($_POST['title'])) redirect('/admin/category.php?mod=' . getCurrMod());
 	$error = '';
 	$title = mysql_real_escape_string($_POST['title']);
@@ -427,9 +439,11 @@ function add() {
 	if (empty($title)) $error .= '<li>' . __('Empty field "title"') . '</li>';
 	
 	$no_access = array();
-	foreach ($acl_groups as $id => $group) {
-		if (!array_key_exists($id, $_POST['access'])) {
-			$no_access[] = $id;
+	if ($acl_groups && is_array($acl_groups)) {
+		foreach ($acl_groups as $id => $group) {
+			if (!array_key_exists($id, $_POST['access'])) {
+				$no_access[] = $id;
+			}
 		}
 	}
 	$no_access = (count($no_access)) ? implode(',', $no_access) : '';

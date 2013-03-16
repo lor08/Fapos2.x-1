@@ -69,7 +69,7 @@ class PrintText {
 		
 		
 		if (is_object($material)) {
-			$ustatus = $material->getAuthor()->getStatus();
+			$ustatus = $material->getAuthor() ? $material->getAuthor()->getStatus() : 0;
 			$title = $material->getTitle();
 		} else {
 			$ustatus = $material;
