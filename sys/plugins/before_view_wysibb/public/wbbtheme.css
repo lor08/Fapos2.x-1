@@ -1,9 +1,9 @@
 /* wysibb */
 @font-face {
   font-family: 'WysiBBiconFont';
-  src:url('/sys/js/wysibb/fonts/WysiBBiconFontAH.eot');
-  src:url('/sys/js/wysibb/fonts/WysiBBiconFontAH.eot?#iefix') format('embedded-opentype'),
-	  url('/sys/js/wysibb/fonts/WysiBBiconFontAH.ttf') format('truetype');
+  src:url('./fonts/WysiBBiconFontAH.eot');
+  src:url('./fonts/WysiBBiconFontAH.eot?#iefix') format('embedded-opentype'),
+	  url('./fonts/WysiBBiconFontAH.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }

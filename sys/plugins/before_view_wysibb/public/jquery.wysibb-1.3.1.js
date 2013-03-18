@@ -2,7 +2,7 @@
 * http://www.wysibb.com
 * Copyright (c) 2012 Vadim Dobroskok; Licensed MIT, GPL */
 
-// Изменён пользователем modos189 на 228 строке для совместимости с CMS Fapos
+// Изменён для совместимости с CMS Fapos
 
 if (typeof (WBBLANG)=="undefined") {WBBLANG = {};}
 WBBLANG['ru']= CURLANG = {
@@ -77,7 +77,16 @@ WBBLANG['ru']= CURLANG = {
 	sm6: "Шок",
 	sm7:"Злой",
 	sm8: "Огорчение",
-	sm9: "Тошнит"
+	sm9: "Тошнит",
+	sm10: "Улыбка2",
+	sm11: "Смех2",
+	sm12: "Подмигивание2",
+	sm13: "Спасибо, класс2",
+	sm14: "Ругаю2",
+	sm15: "Шок2",
+	sm16:"Злой2",
+	sm17: "Огорчение2",
+	sm18: "Тошнит2"
 	
 	
 };
@@ -320,7 +329,7 @@ var wbbdebug=true;
 						'<font face="{FONT}">{SELTEXT}</font>':'[font={FONT}]{SELTEXT}[/font]'
 					}
 				},
-				smilebox: {
+				smilebox: { 
 					type: 'smilebox',
 					title: CURLANG.smilebox,
 					buttonHTML: '<span class="fonticon ve-tlb-smilebox1">\uE00b</span>'
@@ -381,7 +390,7 @@ var wbbdebug=true;
 						}
 					},
 					transform: {
-						'<iframe src="http://www.youtube.com/embed/{SRC}" width="640" height="480" frameborder="0"></iframe>':'[video]{SRC}[/video]'
+						'<iframe src="http://www.youtube.com/embed/{SRC}" width="640" height="480" frameborder="0"></iframe>':'[video]http://www.youtube.com/watch?v={SRC}[/video]'
 					}
 				},
 				
@@ -449,19 +458,29 @@ var wbbdebug=true;
 				//blockquote: [["   {SELTEXT}",{seltext: {rgx:false,attr:false,sel:false}}]]
 			},
 			smileList: [
-				{title:CURLANG.sm1, img: '<img src="{themePrefix}{themeName}/img/smiles/sm1.png" class="sm">', bbcode:":)"},
-				{title:CURLANG.sm8 ,img: '<img src="{themePrefix}{themeName}/img/smiles/sm8.png" class="sm">', bbcode:":("},
-				{title:CURLANG.sm1, img: '<img src="{themePrefix}{themeName}/img/smiles/sm2.png" class="sm">', bbcode:":D"},
-				{title:CURLANG.sm3, img: '<img src="{themePrefix}{themeName}/img/smiles/sm3.png" class="sm">', bbcode:";)"},
-				{title:CURLANG.sm4, img: '<img src="{themePrefix}{themeName}/img/smiles/sm4.png" class="sm">', bbcode:":up:"},
-				{title:CURLANG.sm5, img: '<img src="{themePrefix}{themeName}/img/smiles/sm5.png" class="sm">', bbcode:":down:"},
-				{title:CURLANG.sm6, img: '<img src="{themePrefix}{themeName}/img/smiles/sm6.png" class="sm">', bbcode:":shock:"},
-				{title:CURLANG.sm7, img: '<img src="{themePrefix}{themeName}/img/smiles/sm7.png" class="sm">', bbcode:":angry:"},
-				{title:CURLANG.sm9, img: '<img src="{themePrefix}{themeName}/img/smiles/sm9.png" class="sm">', bbcode:":sick:"}
-			],
+				{title:CURLANG.sm1, img: '<img src="/sys/img/smiles/fapos/smile.gif" class="sm">', bbcode:":)"},
+				{title:CURLANG.sm2, img: '<img src="/sys/img/smiles/fapos/tongue.gif" class="sm">', bbcode:"=)"},
+				{title:CURLANG.sm3, img: '<img src="/sys/img/smiles/fapos/nifiga.gif" class="sm">', bbcode:"%)"},
+				{title:CURLANG.sm4, img: '<img src="/sys/img/smiles/fapos/lol.gif" class="sm">', bbcode:":D"},
+				{title:CURLANG.sm5, img: '<img src="/sys/img/smiles/fapos/gg.gif" class="sm">', bbcode:"gg)"},
+				{title:CURLANG.sm6, img: '<img src="/sys/img/smiles/fapos/plak.gif" class="sm">', bbcode:":("},
+				{title:CURLANG.sm7, img: '<img src="/sys/img/smiles/fapos/glaza.gif" class="sm">', bbcode:"=0"},
+				{title:CURLANG.sm8, img: '<img src="/sys/img/smiles/fapos/biggrin2.gif" class="sm">', bbcode:";)"},
+				{title:CURLANG.sm9, img: '<img src="/sys/img/smiles/fapos/biggrin.gif" class="sm">', bbcode:":0"},
+			    {title:CURLANG.sm10, img: '<img src="/sys/img/smiles/fapos/cool.gif" class="sm">', bbcode:":|"},
+				{title:CURLANG.sm11 ,img: '<img src="/sys/img/smiles/fapos/fing.gif" class="sm">', bbcode:"0_o"},
+				{title:CURLANG.sm12, img: '<img src="/sys/img/smiles/fapos/baks.gif" class="sm">', bbcode:":baks:"},
+				{title:CURLANG.sm13, img: '<img src="/sys/img/smiles/fapos/bis.gif" class="sm">', bbcode:":bis:"},
+				{title:CURLANG.sm14, img: '<img src="/sys/img/smiles/fapos/girl.gif" class="sm">', bbcode:":girl:"},
+				{title:CURLANG.sm15, img: '<img src="/sys/img/smiles/fapos/gordo.gif" class="sm">', bbcode:":gordo:"},
+				{title:CURLANG.sm16, img: '<img src="/sys/img/smiles/fapos/gy.gif" class="sm">', bbcode:":gy:"},
+				{title:CURLANG.sm17, img: '<img src="/sys/img/smiles/fapos/girlgy.gif" class="sm">', bbcode:":girlgy:"},
+				{title:CURLANG.sm18, img: '<img src="/sys/img/smiles/fapos/haha.gif" class="sm">', bbcode:"::haha: :"}
+
+			],	
 			attrWrap: ['src','color','href'] //use becouse FF and IE change values for this attr, modify [attr] to _[attr]
 		}
-		
+
 		//FIX for Opera. Wait while iframe loaded
 		this.inited=this.options.onlyBBmode;
 		
@@ -903,7 +922,7 @@ var wbbdebug=true;
 			}
 			
 			
-			this.$editor.append('<span class="powered">Powered by <a href="http://www.wysibb.com" target="_blank">WysiBB<a/></span>');
+			
 			
 			//add event listeners to textarea
 			this.$txtArea.bind('mouseup keyup',$.proxy(this.updateUI,this));
@@ -949,7 +968,7 @@ var wbbdebug=true;
 			
 			//build bbcode switch button
 			//var $bbsw = $('<div class="wysibb-toolbar-container modeSwitch"><div class="wysibb-toolbar-btn" unselectable="on"><span class="btn-inner ve-tlb-bbcode" unselectable="on"></span></div></div>').appendTo(this.$toolbar);
-			var $bbsw = $(document.createElement('div')).addClass("wysibb-toolbar-container modeSwitch").html('<div class="wysibb-toolbar-btn mswitch" unselectable="on"><span class="btn-inner modesw" unselectable="on">[BBcode]</span></div>').appendTo(this.$toolbar);
+			var $bbsw = $(document.createElement('div')).addClass("wysibb-toolbar-container modeSwitch").html('<div class="wysibb-toolbar-btn mswitch" unselectable="on"><span class="btn-inner modesw" unselectable="on">BB</span></div>').appendTo(this.$toolbar);
 			$bbsw.children(".wysibb-toolbar-btn").click($.proxy(function(e) {
 				$(e.currentTarget).toggleClass("on");
 				this.modeSwitch();
