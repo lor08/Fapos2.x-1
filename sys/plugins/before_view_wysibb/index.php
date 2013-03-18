@@ -3,9 +3,10 @@
 class WysiBB {
 
 public function common($params) {
+include ('config.php');
 return str_replace('</head>', '
 <script src="/sys/plugins/before_view_wysibb/public/jquery.wysibb-1.3.1.js"></script>
-<link rel="stylesheet" href="/sys/plugins/before_view_wysibb/public/wbbtheme.css" />
+<link rel="stylesheet" href="/sys/plugins/before_view_wysibb/public/wbbtheme_'.$conf['style'].'.css" />
 
 <script>
 $(document).ready(function() {
