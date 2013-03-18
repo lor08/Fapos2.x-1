@@ -81,7 +81,7 @@ class UserAuth
 			
 			header( 'Refresh: ' . Config::read('redirect_delay') . '; url=http://' . $_SERVER['SERVER_NAME'] . '/');
 			$View = new Fps_Viewer_Manager();
-			$output = $View->view('infomessagegrand.html', array('data' => array('info_message' => __('Your accaunt not activated'))));
+			$output = $View->view('infomessagegrand.html', array('data' => array('info_message' => __('Your accaunt not activated'), 'error_message' => null)));
 			echo $output;
 			die();
 		}

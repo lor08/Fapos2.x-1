@@ -413,7 +413,7 @@ Class StatModule extends Module {
 
 		$markers['mainText'] = $announce;
 		$entity->setAdd_markers($markers);
-		if ($entity->getTags()) $entity->setTags(explode(',', $entity->getTags()));
+		$entity->setTags(explode(',', $entity->getTags()));
 		
 		
 		$this->setCacheTag(array(
@@ -963,7 +963,7 @@ Class StatModule extends Module {
 			'commented'    => $commented,
 			'available'    => $available,
 		);
-		$target->__construct($data);
+		$target->set($data);
 		$target->save();
 		if (is_object($this->AddFields)) {
 			$this->AddFields->save($id, $_addFields);

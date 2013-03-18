@@ -71,49 +71,30 @@ class ForumModel extends FpsModel
 	}
 	
 	
-	public function updateForumCounters($fid)
+	public function updateForumCounters($id_forum)
 	{
-		$this->getDbDriver()->query(
-				"UPDATE `" . $this->getDbDriver()->getFullTableName('forums') . "` SET `themes` = 
-				(SELECT COUNT(*) FROM `" . $this->getDbDriver()->getFullTableName('themes') . "` 
-				WHERE `id_forum` = '" . $fid . "'), `posts` = 
-				(SELECT COUNT(b.`id`) FROM `" . $this->getDbDriver()->getFullTableName('themes') . "` a 
-				LEFT JOIN `" . $this->getDbDriver()->getFullTableName('posts') . "` b ON a.`id`=b.`id_theme`),
-				`last_theme_id`=(SELECT `id` FROM `" . $this->getDbDriver()->getFullTableName('themes') . "` 
-				WHERE `id_forum`='" . $fid . "'
-				ORDER BY `last_post` DESC  LIMIT 1) WHERE `id` = '" . $fid . "'" );
-	}
-	
-	
-	public function deleteThemesPostsCollisions()
-	{
-		$this->getDbDriver()->query("DELETE FROM `" . $this->getDbDriver()->getFullTableName('themes') . "` WHERE id NOT IN (SELECT DISTINCT id_theme FROM `" . $this->getDbDriver()->getFullTableName('posts') . "`)");
-		$this->getDbDriver()->query("DELETE FROM `" . $this->getDbDriver()->getFullTableName('posts') . "` WHERE id_theme NOT IN (SELECT DISTINCT id FROM `" . $this->getDbDriver()->getFullTableName('themes') . "`)");
-	}
-	
-	
-	public function upThemesPostsCounters($theme)
-	{
-		// Обновляем таблицу USERS
-		$this->getDbDriver()->query(
-			"UPDATE `" . $this->getDbDriver()->getFullTableName('users') . "` SET 
-			`themes` = (SELECT COUNT(*) FROM `" . $this->getDbDriver()->getFullTableName('themes') . "` 
-			WHERE `id_author` = '" . $theme->getId_author() . "')
-			, `posts` = (SELECT COUNT(*) FROM `" . $this->getDbDriver()->getFullTableName('posts') . "` 
-			WHERE `id_author` = '" . $theme->getId_author() . "')
-			WHERE `id` = '" . $theme->getId_author() . "'");
-
-		//update forum info
 		$this->getDbDriver()->query(
 			"UPDATE `" . $this->getDbDriver()->getFullTableName('forums') . "` SET `themes` = 
 			(SELECT COUNT(*) FROM `" . $this->getDbDriver()->getFullTableName('themes') . "` 
-			WHERE `id_forum` = '" . $theme->getId_forum() . "'), `posts` = 
+			WHERE `id_forum` = '" . $id_forum . "'), `posts` = 
 			(SELECT COUNT(b.`id`) FROM `" . $this->getDbDriver()->getFullTableName('themes') . "` a 
 			LEFT JOIN `" . $this->getDbDriver()->getFullTableName('posts') . "` b ON a.`id`=b.`id_theme`
-			WHERE a.`id_forum` = '" . $theme->getId_forum() . "'),
-			`last_theme_id`=(SELECT `id` FROM `" . $this->getDbDriver()->getFullTableName('themes') . "` 
-			WHERE `id_forum`='" . $theme->getId_forum() . "'
-			ORDER BY `last_post` DESC  LIMIT 1) WHERE `id` = '" . $theme->getId_forum() . "'" );
+			WHERE a.`id_forum` = '" . $id_forum . "'),
+			`last_theme_id`=IFNULL((SELECT `id` FROM `" . $this->getDbDriver()->getFullTableName('themes') . "` 
+			WHERE `id_forum`='" . $id_forum . "'
+			ORDER BY `last_post` DESC  LIMIT 1), 0) WHERE `id` = '" . $id_forum . "'" );
+	}
+	
+	
+	public function updateUserCounters($id_user)
+	{
+		$this->getDbDriver()->query(
+			"UPDATE `" . $this->getDbDriver()->getFullTableName('users') . "` SET 
+			`themes` = (SELECT COUNT(*) FROM `" . $this->getDbDriver()->getFullTableName('themes') . "` 
+			WHERE `id_author` = '" . $id_user . "')
+			, `posts` = (SELECT COUNT(*) FROM `" . $this->getDbDriver()->getFullTableName('posts') . "` 
+			WHERE `id_author` = '" . $id_user . "')
+			WHERE `id` = '" . $id_user . "'");
 	}
 	
 	
@@ -129,10 +110,16 @@ class ForumModel extends FpsModel
 	
 	public function deleteCollisions()
 	{
-		$this->getDbDriver()->query("DELETE FROM `" . $this->getDbDriver()->getFullTableName('themes') 
-                . "` WHERE id NOT IN (SELECT DISTINCT id_theme FROM `" . $this->getDbDriver()->getFullTableName('posts') . "`)");
-		$this->getDbDriver()->query("DELETE FROM `" . $this->getDbDriver()->getFullTableName('posts') 
-		. "` WHERE id_theme NOT IN (SELECT DISTINCT id FROM `" . $this->getDbDriver()->getFullTableName('themes') . "`)");
+		$this->getDbDriver()->query("DELETE FROM `" . $this->getDbDriver()->getFullTableName('themes')
+			. "` WHERE id NOT IN (SELECT DISTINCT id_theme FROM `" . $this->getDbDriver()->getFullTableName('posts') . "`)");
+		$this->getDbDriver()->query("DELETE FROM `" . $this->getDbDriver()->getFullTableName('posts')
+			. "` WHERE id_theme NOT IN (SELECT DISTINCT id FROM `" . $this->getDbDriver()->getFullTableName('themes') . "`)");
+		$this->getDbDriver()->query("DELETE FROM `" . $this->getDbDriver()->getFullTableName('polls')
+			. "` WHERE theme_id NOT IN (SELECT DISTINCT id FROM `" . $this->getDbDriver()->getFullTableName('themes') . "`)");
+		$this->getDbDriver()->query("DELETE FROM `" . $this->getDbDriver()->getFullTableName('forum_attaches')
+			. "` WHERE theme_id NOT IN (SELECT DISTINCT id FROM `" . $this->getDbDriver()->getFullTableName('themes') . "`)");
+		$this->getDbDriver()->query("DELETE FROM `" . $this->getDbDriver()->getFullTableName('forum_attaches')
+			. "` WHERE post_id NOT IN (SELECT DISTINCT id FROM `" . $this->getDbDriver()->getFullTableName('posts') . "`)");
 	}
 	
 	

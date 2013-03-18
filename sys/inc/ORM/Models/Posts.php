@@ -67,5 +67,6 @@ class PostsModel extends FpsModel
 			$new_time = $time + 1;
 			$this->getDbDriver()->query("UPDATE `" . $this->getDbDriver()->getFullTableName('posts') . "` SET `time` = '" . date("Y-m-d H:i:s", $new_time) . "' WHERE `id` IN (" . implode(',', (array)$posts_id) . ") AND `time` < '" . date("Y-m-d H:i:s", $time) . "'");
 		}
+		$this->getDbDriver()->query("UPDATE `" . $this->getDbDriver()->getFullTableName('forum_attaches') . "` SET `theme_id` = " . $theme_id . " WHERE `post_id` IN (" . implode(',', (array)$posts_id) . ")");
 	}
 }

@@ -451,7 +451,7 @@ Class LoadsModule extends Module {
 		
 		$markers['profile_url'] = getProfileUrl($entity->getAuthor_id());
         $entity->setAdd_markers($markers);
-		if ($entity->getTags()) $entity->setTags(explode(',', $entity->getTags()));
+		$entity->setTags(explode(',', $entity->getTags()));
 
 
         $source = $this->render('material.html', array('entity' => $entity));
@@ -1063,7 +1063,7 @@ Class LoadsModule extends Module {
 			$data['download'] = $file;
 			$data['filename'] = $filename;
 		}
-        $target->__construct($data);
+        $target->set($data);
         $target->save();
 
 		// Save additional fields if they is active

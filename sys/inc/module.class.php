@@ -630,7 +630,7 @@ class Module {
 	function showInfoMessage($message, $queryString = null) 
 	{
 		header( 'Refresh: ' . Config::read('redirect_delay') . '; url=http://' . $_SERVER['SERVER_NAME'] . get_url($queryString));
-		$output = $this->render('infomessagegrand.html', array('data' => array('info_message' => $message)));
+		$output = $this->render('infomessagegrand.html', array('data' => array('info_message' => $message, 'error_message' => null)));
 		echo $output;
 		die();
 	}

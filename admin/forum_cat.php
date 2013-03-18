@@ -289,9 +289,9 @@ function index(&$page_title) {
 					$acl_rules = $ACL->getRules();
 					$acl_forums = $ACL->getForums();
 
-					$view_rules = $acl_forums['view_themes'][$cat['id']];
-					$theme_rules = $acl_forums['add_themes'][$cat['id']];
-					$post_rules = $acl_forums['add_posts'][$cat['id']];
+					$view_rules = isset($acl_forums['view_themes'][$cat['id']]) ? $acl_forums['view_themes'][$cat['id']] : null;
+					$theme_rules = isset($acl_forums['add_themes'][$cat['id']]) ? $acl_forums['add_themes'][$cat['id']] : null;
+					$post_rules = isset($acl_forums['add_posts'][$cat['id']]) ? $acl_forums['add_posts'][$cat['id']] : null;
 					
 					$rules_state = true;
 					

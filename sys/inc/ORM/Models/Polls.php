@@ -48,4 +48,10 @@ class PollsModel extends FpsModel
 		}
 		throw new Exception('Entity not found');
 	}
+	
+	
+	public function deleteByTheme($theme_id)
+	{
+		$this->getDbDriver()->query("DELETE FROM `" . $this->getDbDriver()->getFullTableName($this->Table) . "` WHERE `theme_id` = '" . $theme_id . "'");
+	}
 }
