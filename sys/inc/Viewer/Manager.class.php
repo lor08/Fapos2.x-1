@@ -90,10 +90,14 @@ class Fps_Viewer_Manager
 			$Register = Register::getInstance();
 			$template = $Register['Config']->read('template');
 		}
-		$path = ROOT . '/template/' . $template . '/html/' . '%s' . '/' . $fileName;
-		if (file_exists(sprintf($path, $this->moduleTitle))) $path = sprintf($path, $this->moduleTitle);
-		else $path = sprintf($path, 'default');
-		
+		$ext = strtolower(strrchr($fileName, '.'));
+		if ($ext == '.msg') {
+			$path = ROOT . '/template/' . $template . '/mail/' . $fileName;
+		} else {
+			$path = ROOT . '/template/' . $template . '/html/' . '%s' . '/' . $fileName;
+			if (file_exists(sprintf($path, $this->moduleTitle))) $path = sprintf($path, $this->moduleTitle);
+			else $path = sprintf($path, 'default');
+		}
 		return $path;
 	}
 	

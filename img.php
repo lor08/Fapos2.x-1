@@ -11,8 +11,7 @@ $FpsDB = $Register['DB'];
 $params = (!empty($_GET['url'])) ? explode('/', $_GET['url']) : array();
 if (!empty($params[0]) && !empty($params[1])) {
 
-	$ext = strchr($params[1], '.');
-	$ext = strtolower($ext);
+	$ext = strtolower(strrchr($params[1], '.'));
 	if (!in_array($ext, $allowed_ext)) die();
 	
 	

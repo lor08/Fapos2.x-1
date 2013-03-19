@@ -171,6 +171,7 @@ class Document_Parser {
         $Register = Register::getInstance();
 		$markers = array();
 		
+		$markers['fps_server_name'] = $_SERVER['SERVER_NAME'];
 		$markers['fps_wday'] = date("D");
 		$markers['fps_date'] = date("d-m-Y");
 		$markers['fps_time'] = date("H:i");
