@@ -202,13 +202,14 @@ class Document_Parser {
 			} else {
 				$markers['unread_pm'] = '0';
 			}
-
+			$markers['fps_user_avatar_url'] = getAvatar($_SESSION['user']['id']);
 		} else {
 			$markers['personal_page_link'] = get_url('/users/add_form/');
 			$markers['fps_user_name'] = 'Гость'; //TODO
 			$markers['fps_user_group'] = 'Гости';
 			$markers['fps_user_reg_days'] = '';
 			$markers['unread_pm'] = '';
+			$markers['fps_user_avatar_url'] = getAvatar();
 		}
 		
 		
