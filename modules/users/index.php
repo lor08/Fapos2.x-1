@@ -2964,4 +2964,22 @@ Class UsersModule extends Module {
 		$user->save();
 		die('ok');
 	}
+
+
+	public function search_niks()
+	{
+		if (empty($_GET['name'])) return;
+		$sql = "(SELECT * FROM `users` WHERE `name` LIKE '%".htmlspecialchars($_GET['name'])."%' ";
+		if (isset($_SESSION['user'])) {
+			$sql .= "AND `name` NOT LIKE '".$_SESSION['user']['name']."' ";
+		}
+		$sql .= "LIMIT 10)";
+
+		$users = $this->DB->query($sql);
+		if ($users) {
+			foreach ($users as $user) { 
+				print '<option value="'.$user['name'].'">';
+			}
+		}
+	}
 }
