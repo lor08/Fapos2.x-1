@@ -1,4 +1,17 @@
 <form action="{{ context.action }}" method="POST">
 <input type="text" value="{{ context.search }}" name="search" style="width:80%;" />
 <input  type="submit" value="Искать" name="send" />
+
+<br>
+<input id="smdforum" type="checkbox" value="forum" name="m[]" {{ context.forum }}>
+<label for="smdforum">Форум</label><br>
+
+<input id="smdnews" type="checkbox" value="news" name="m[]" {{ context.news }}>
+<label for="smdnews">Новости</label><br>
+
+<input id="smdstat" type="checkbox" value="stat" name="m[]" {{ context.stat }}>
+<label for="smdstat">Статьи</label><br>
+
+<input id="smdloads" type="checkbox" value="loads" name="m[]" {{ context.loads }}>
+<label for="smdloads">Загрузки</label>
 </form>

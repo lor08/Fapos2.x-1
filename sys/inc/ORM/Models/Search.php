@@ -37,13 +37,23 @@ class SearchModel extends FpsModel
     }
 	
 	
-	public function getSearchResults($search, $limit)
+	public function getSearchResults($search, $limit, $modules)
 	{
+		$lmsql = '';
+		if (is_array($modules)) {
+			$lmsql .= '(';
+			foreach ($modules as $module) {
+				if ($module != $modules[0]) {
+					$lmsql .= ' OR ';
+				}
+				$lmsql .= '`module` = \''.$module.'\'';
+			}
+			$lmsql .= ') AND';
+		}
 		$results = $this->getDbDriver()->query("
 			SELECT * FROM `" . $this->getDbDriver()->getFullTableName('search_index') . "`
-			WHERE MATCH (`index`) AGAINST ('" . $search . "' IN BOOLEAN MODE)
+			WHERE ".$lmsql." MATCH (`index`) AGAINST ('" . $search . "' IN BOOLEAN MODE)
 			ORDER BY MATCH (`index`) AGAINST ('" . $search . "' IN BOOLEAN MODE) DESC LIMIT " . $limit);
-			
 		if ($results) {
 			foreach ($results as $key => $res) {
 				$results[$key] = new SearchEntity($res);

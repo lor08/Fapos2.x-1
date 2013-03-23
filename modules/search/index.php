@@ -62,13 +62,24 @@ class SearchModule extends Module {
 		$this->__checkIndex();
 
 		
-		$minInput = $this->Register['Config']->read('min_lenght', $this->module);
+		$minInput = Config::read('min_lenght', $this->module);
 		if (!empty($minInput)) $this->minInputStr = (int)$minInput;
 		
 		$html = null;
 		$error = null;
 		$results = null;
-		
+
+		if (isset($_POST['m'])) {
+			$modules = array();
+			foreach ($_POST['m'] as $m) {
+				if ($m=='forum' or $m=='news'
+					or $m=='stat' or $m=='loads') Array_push($modules, $m);
+			}
+		} else {
+			$modules = array('forum', 'news', 'stat', 'loads');
+		}
+		$_SESSION['m'] = $modules;
+
 		if (isset($_POST['search']) || isset($_GET['search'])) {
 			$str = (isset($_POST['search'])) ? $_POST['search'] : '';
 			if (empty($str)) $str = (isset($_GET['search'])) ? $_GET['search'] : '';
@@ -94,8 +105,8 @@ class SearchModule extends Module {
 				$_SESSION['errorForm']['error'] = $error;
 				redirect($this->getModuleURL());
 			}
-			
-			$results = $this->__search($str);
+
+			$results = $this->__search($str, $modules);
 			if (count($results) && is_array($results)) {
 				foreach ($results as $result) {
 					if (preg_match('#(.{0,100}' . $str . '.{0,100})#miu', $result->getIndex(), $match)) {
@@ -135,7 +146,6 @@ class SearchModule extends Module {
 		if (!empty($_POST['search'])) $this->page_title .= ' - ' . h($_POST['search']);
 		
 		
-		
 		$this->returnForm = false;
 		$form = $this->form();
 		$source = $this->render('search_list.html', array('context' => array(
@@ -169,6 +179,10 @@ class SearchModule extends Module {
 		$markers = array(
 			'action' => $this->getModuleURL(),
 			'search' => '',
+			'forum' => '0',
+			'news' => '0',
+			'stat' => '0',
+			'loads' => '0',
 		);
 		
 		
@@ -181,6 +195,10 @@ class SearchModule extends Module {
 		}
 		
 		$markers['search'] = $_SESSION['search_query'];
+
+		foreach ($_SESSION['m'] as $m) {
+			$markers[$m] = 'checked';
+		}
 
 		$source = $this->render('search_form.html', array('context' => $markers));
 		return ($this->returnForm) ? $this->_view($source) : $source;
@@ -206,9 +224,9 @@ class SearchModule extends Module {
 			$this->__createIndex();
 		}
 		
-		$index_interval = intval($this->Register['Config']->read('index_interval', $this->module));
+		$index_interval = intval(Config::read('index_interval', $this->module));
 		if ($index_interval < 1) $index_interval = 1;
-		$meta['expire'] = (time() + ($index_interval * 84000));
+		$meta['expire'] = (time() + ($index_interval * 8));
 		file_put_contents($meta_file, serialize($meta));
 		return true;
 	}
@@ -222,7 +240,7 @@ class SearchModule extends Module {
 	 *
 	 * Send request and return search results
 	 */
-	private function __search($str)
+	private function __search($str, $modules)
 	{
 		$words = explode(' ', $str);
 		$_words = array();
@@ -235,8 +253,8 @@ class SearchModule extends Module {
 		$string = resc(implode('* ', $_words) . '*');
 		
 		//query
-		$limit = $this->Register['Config']->read('per_page', $this->module);
-		$results = $this->Model->getSearchResults($string, $limit);
+		$limit = Config::read('per_page', $this->module);
+		$results = $this->Model->getSearchResults($string, $limit, $modules);
 		return $results;
 	}
 	
