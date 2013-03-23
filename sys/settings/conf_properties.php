@@ -196,6 +196,13 @@ $settingsInfo = array(
 	
 	
 		'Прочее' => 'Прочее',
+		'IEC60027-2' => array(
+			'type' => 'checkbox',
+			'title' => 'Использование стандарта IEC60027-2',
+			'description' => 'При выводе размера файла использовать к примеру не Kb, а KiB. Подробнее: https://github.com/modos189/Fapos2.x/wiki/Стандарт-IEC60027-2',
+			'checked' => '1',
+			'value' => '1',
+		),
 		'cache' => array(
 			'type' => 'checkbox',
 			'title' => 'Кэш',

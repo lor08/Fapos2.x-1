@@ -412,7 +412,7 @@ Class LoadsModule extends Module {
 		if($entity->getDownload() && is_file(ROOT . $this->getFilesPath($entity->getDownload()))) {
 		  $attach_serv = '<a target="_blank" href="' . get_url($this->getModuleURL('download_file/' 
 		  . $entity->getId())) . '">' . __('Download from server') . ' ('.
-		  ( getFileSize(ROOT . $this->getFilesPath($entity->getDownload()))) . ' Кб)</a>';
+          getSimpleFileSize(filesize(ROOT . $this->getFilesPath($entity->getDownload()))) . ')</a>';
 		} else {
 			$attach_serv  = '';
 		}

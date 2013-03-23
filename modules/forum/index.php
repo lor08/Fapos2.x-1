@@ -874,7 +874,7 @@ Class ForumModule extends Module {
 						if (file_exists(ROOT . $this->getFilesPath($attach->getFilename()))) {
 							$attachment .= __('Attachment') . ' ' . $attach->getAttach_number() 
 								. ': ' . get_img('/sys/img/file.gif', array('alt' => __('Open file'), 'title' => __('Open file'))) 
-								. '&nbsp;' . get_link(round($attach->getSize() / 1024, 2) .' Кб', $this->getModuleURL('download_file/' 
+								. '&nbsp;' . get_link(getSimpleFileSize($attach->getSize()), $this->getModuleURL('download_file/' 
 								. $attach->getFilename()), array('target' => '_blank')) . '<br />';
 								
 								

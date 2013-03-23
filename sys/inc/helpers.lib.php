@@ -51,7 +51,11 @@ function getSimpleFileSize($size) {
 	$size = intval($size);
 	if (empty($size)) return '0 B';
 	
-	$ext = array('B', 'KB', 'MB', 'GB');
+	if (Config::read('IEC60027-2')==1) {
+		$ext = array('B', 'KiB', 'MiB', 'GiB');
+	} else {
+		$ext = array('B', 'KB', 'MB', 'GB');
+	}
 	$i = 0;
 	
 	while (($size / 1024) > 1) {
