@@ -1,5 +1,6 @@
 {{ data.errors }}
 {{ data.preview }}
+{{ editor_body }}
 <form name="sendForm" id="sendForm" action="{{ data.action }}" method="POST"
 enctype="multipart/form-data" onsubmit="return checkForm(this)">
 <table border="0"  class="add-form small" cellspacing="1" cellpadding="0">
@@ -88,7 +89,7 @@ enctype="multipart/form-data" onsubmit="return checkForm(this)">
 
 	<tr>
 		<td colspan="2">
-			<textarea id="editor" class="text-area" name="mainText" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">{{ data.main_text }}</textarea>
+			<textarea {{ editor_text }} class="text-area" name="mainText">{{ data.main_text }}</textarea>
 		</td>
 	</tr>
     <tr>

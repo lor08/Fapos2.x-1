@@ -1,3 +1,4 @@
+{{ editor_body }}
 <script type="text/javascript">
 maxAttachedFiles = {{ data.max_attaches }};
 </script>
@@ -91,7 +92,7 @@ enctype="multipart/form-data" onsubmit="return checkForm(this)">
 
 	<tr>
 		<td colspan="2">
-			<textarea id="editor" class="text-area" name="mainText" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">{{ data.main_text }}</textarea>
+			<textarea {{ editor_text }} class="text-area" name="mainText">{{ data.main_text }}</textarea>
 		</td>
 	</tr>
 	<tr>

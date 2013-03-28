@@ -1,3 +1,5 @@
+{{ editor_body }}
+
 {{ context.errors }}
 {{ context.preview }}
 <form name="sendForm" id="sendForm" action="{{ context.action }}" method="POST"
@@ -88,7 +90,7 @@ enctype="multipart/form-data" onsubmit="return checkForm(this)">
 
 	<tr>
 		<td colspan="2">
-			<textarea id="editor" class="text-area" name="mainText" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);">{{ context.mainText }}</textarea>
+			<textarea {{ editor_text }} class="text-area" name="mainText">{{ context.mainText }}</textarea>
 		</td>
 	</tr>
     <tr>

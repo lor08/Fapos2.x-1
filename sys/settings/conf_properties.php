@@ -59,27 +59,22 @@ $settingsInfo = array(
 		'site_title' => array(
 			'type' => 'text',
 			'title' => 'Название сайта',
-			'description' => 'можно использовать в шаблонах как {SITE_TITLE}',
+			'description' => 'можно использовать в шаблонах как {{ site_title }}',
 		),
 		'title' => array(
 			'type' => 'text',
 			'title' => 'Заголовок сайта',
-			'description' => 'можно использовать в шаблонах как {TITLE}',
-		),
-		'title' => array(
-			'type' => 'text',
-			'title' => 'Заголовок сайта',
-			'description' => 'можно использовать в шаблонах как {TITLE}',
+			'description' => 'можно использовать в шаблонах как {{ title }}',
 		),
 		'meta_keywords' => array(
 			'type' => 'text',
 			'title' => 'Ключевые слова сайта',
-			'description' => 'можно использовать в шаблонах как {META_KEYWORDS}',
+			'description' => 'можно использовать в шаблонах как {{ meta_keywords }}',
 		),
 		'meta_description' => array(
 			'type' => 'text',
 			'title' => 'Описание сайта',
-			'description' => 'можно использовать в шаблонах как {META_DESCRIPTION}',
+			'description' => 'можно использовать в шаблонах как {{ meta_description }}',
 		),
 		'cookie_time' => array(
 			'type' => 'text',
