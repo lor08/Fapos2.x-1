@@ -1385,7 +1385,7 @@ Class ForumModule extends Module {
 
 		//clean cache
 		$this->Cache->clean(CACHE_MATCHING_TAG, array('forum_id_' . $id_forum));
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		if ($this->Log) $this->Log->write('editing forum', 'forum id(' . $id_forum . ')');
 		return $this->showInfoMessage(__('Forum update is successful'), $this->getModuleURL() );
 	}
@@ -1442,7 +1442,7 @@ Class ForumModule extends Module {
 		
 		//clean cache
 		$this->Cache->clean(CACHE_MATCHING_TAG, array('forum_id_' . $id_forum));
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		
 		if ($this->Log) $this->Log->write('uping forum', 'forum id(' . $id_forum . ')');
 		if ($res1 && $res2)
@@ -1501,7 +1501,7 @@ Class ForumModule extends Module {
 		
 		//clean cache
 		$this->Cache->clean(CACHE_MATCHING_TAG, array('forum_id_' . $id_forum));
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		
 		if ($this->Log) $this->Log->write('down forum', 'forum id(' . $id_forum . ')');
 		if ($res1 && $res2)
@@ -1541,7 +1541,7 @@ Class ForumModule extends Module {
 		
 		//clean cache
 		$this->Cache->clean(CACHE_MATCHING_TAG, array('forum_id_' . $id_forum));
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		if ($this->Log) $this->Log->write('delete forum', 'forum id(' . $id_forum . ')');
 		return $this->showInfoMessage(__('Operation is successful'), $this->getModuleURL() );
 	}
@@ -1840,7 +1840,7 @@ Class ForumModule extends Module {
 			'user_id_' . $user_id,
 			'forum_id_' . $id_forum,
 		));
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		if ($this->Log) $this->Log->write('adding theme', 'theme id(' . $id_theme . '), post id(' . $post_id . ')');
 		return $this->showInfoMessage(__('Operation is successful'), $this->getModuleURL('view_forum/' . $id_forum));
 	}
@@ -2046,7 +2046,7 @@ Class ForumModule extends Module {
 				
 		//clean cahce
 		$this->Cache->clean(CACHE_MATCHING_ANY_TAG, array('theme_id_' . $id_theme));
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		if ($this->Log) $this->Log->write('editing theme', 'theme id(' . $id_theme . ')');
 		return $this->showInfoMessage(__('Operation is successful'), $this->getModuleURL('view_forum/' . $id_forum));
 		
@@ -2117,7 +2117,7 @@ Class ForumModule extends Module {
 		
 		//clean cache
 		$this->Cache->clean(CACHE_MATCHING_ANY_TAG, array('theme_id_' . $id_theme));
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		if ($this->Log) $this->Log->write('lock theme', 'theme id(' . $id_theme . ')');
 		return $this->showInfoMessage(__('Theme is locked'), $this->getModuleURL('view_forum/' . $theme->getId_forum()));
 	}
@@ -2157,7 +2157,7 @@ Class ForumModule extends Module {
 		
 		//clean cache
 		$this->Cache->clean(CACHE_MATCHING_ANY_TAG, array('theme_id_' . $id_theme));
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		if ($this->Log) $this->Log->write('unlock theme', 'theme id(' . $id_theme . ')');
 		return $this->showInfoMessage(__('Theme is open'), $this->getModuleURL('view_forum/' . $theme->getId_forum()));
 	}
@@ -2455,7 +2455,7 @@ Class ForumModule extends Module {
 
 		//clean cache
 		$this->Cache->clean(CACHE_MATCHING_ANY_TAG, array('theme_id_' . $id_theme, 'user_id_' . $id_user));
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		
 		
 		if ($gluing === false) {
@@ -2718,7 +2718,7 @@ Class ForumModule extends Module {
 
 		//clean cache
 		$this->Cache->clean(CACHE_MATCHING_ANY_TAG, array('post_id_' . $id));
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		if ($this->Log) $this->Log->write('editing post', 'post id(' . $id . '), theme id(' . $id_theme . ')');
 		return $this->showInfoMessage(__('Operation is successful'), getReferer());
 	}
@@ -2827,7 +2827,7 @@ Class ForumModule extends Module {
 		$cahceKey = array('post_id_' . $id);
 		if (isset($deleteTheme)) $cahceKey[] = 'theme_id_' . $post->getId_theme();
 		$this->Cache->clean(CACHE_MATCHING_ANY_TAG, $cahceKey);
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		if ($this->Log) $this->Log->write('delete post', 'post id(' . $id . '), theme id(' . $post->getId_theme() . ')');
 		
 		
@@ -3049,7 +3049,7 @@ Class ForumModule extends Module {
 		$theme->save();
 
 		/* clean cache DB*/
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		if ($this->Log) $this->Log->write('important post', 'theme id(' . $id . ')');
 		return $this->showInfoMessage(__('Operation is successful'), $this->getModuleURL('view_forum/' . $theme->getId_forum()));
 	}
@@ -3070,7 +3070,7 @@ Class ForumModule extends Module {
 		$theme->save();
 
 		/* clean cache DB */
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		if ($this->Log) $this->Log->write('unimportant post', 'theme id(' . $id . ')');
 		return $this->showInfoMessage(__('Operation is successful'), $this->getModuleURL('view_forum/' . $theme->getId_forum()));
 	}
@@ -3190,7 +3190,7 @@ Class ForumModule extends Module {
 		// Step 8: Cleaning cache
 		$this->Cache->clean(CACHE_MATCHING_ANY_TAG, array('theme_id_' . $id_theme,));
 		$this->Cache->clean(CACHE_MATCHING_TAG, array('module_forum', 'action_index'));
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 	}
 	
 	
@@ -3500,7 +3500,7 @@ Class ForumModule extends Module {
 				
 		//clean cahce
 		$this->Cache->clean(CACHE_MATCHING_ANY_TAG, array('theme_id_' . $id_theme));
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		if ($this->Log) $this->Log->write('split theme', 'theme id(' . $id_theme . ')');
 		return $this->showInfoMessage(__('Operation is successful'), $this->getModuleURL('view_theme/' . $id_new_theme));
 	}
@@ -3736,7 +3736,7 @@ Class ForumModule extends Module {
 				
 		//clean cahce
 		$this->Cache->clean(CACHE_MATCHING_ANY_TAG, array('theme_id_' . $id_theme));
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		if ($this->Log) $this->Log->write('move posts', 'theme id(' . $id_theme . ')');
 		return $this->showInfoMessage(__('Operation is successful'), $this->getModuleURL('view_theme/' . $id_new_theme));
 	}
@@ -3935,7 +3935,7 @@ Class ForumModule extends Module {
 				
 		//clean cahce
 		$this->Cache->clean(CACHE_MATCHING_ANY_TAG, array('theme_id_' . $id_theme));
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		if ($this->Log) $this->Log->write('move posts', 'theme id(' . $id_theme . ')');
 		return $this->showInfoMessage(__('Operation is successful'), $this->getModuleURL('view_theme/' . $id_new_theme));
 	}

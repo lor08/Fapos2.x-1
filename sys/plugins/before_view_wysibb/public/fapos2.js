@@ -50,8 +50,8 @@ WBBPRESET = {
 		},
 		img : {
 			transform : {
-				'<img src="{SRC}" />':"[imgl]{SRC}[/imgl]",
-				'<img style="float:left;" src="{SRC}" />':"[img]{SRC}[/img]"
+				'<img src="{SRC}" style="max-width:400px; max-height:400px; float:left;" />':"[imgl]{SRC}[/imgl]",
+				'<img src="{SRC}" style="max-width:400px; max-height:400px; float:inherit;" />':"[img]{SRC}[/img]"
 			}
 		},
 		video: {

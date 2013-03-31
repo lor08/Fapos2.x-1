@@ -500,7 +500,7 @@ Class UsersModule extends Module {
 		
 		
 		/* clean DB cache */
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		cleanAllUsersCount();
 		
 		
@@ -551,7 +551,7 @@ Class UsersModule extends Module {
 		$code = substr( $code, 0, 32 );
 		$code = preg_replace( "#[^0-9a-f]#i", '', $code );
 		/* clean DB cache */
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		$res = $this->Model->getFirst(array('activation' => $code));
 
 		if ($res) {
@@ -707,7 +707,7 @@ Class UsersModule extends Module {
 		
 		
 		/* clean DB cache */
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		if ($this->Log) $this->Log->write('wrong send new passw', 'name(' . $name . '), mail(' . $email . ')');
 		// Если были допущены ошибки при заполнении формы - перенаправляем посетителя
 		if (!empty($error)) {
@@ -1892,13 +1892,13 @@ Class UsersModule extends Module {
 				$body = $this->render('main.msg', array('from' => $from, 'mail' => $mail, 'context' => $context));
 
 				/* clean DB cache */
-				$this->Register['DB']->cleanSqlCache();
+				$this->DB->cleanSqlCache();
 				mail($user->getEmail(), __('New PM on forum'), $body, $headers);
 			}
 		}
 
 		/* clean DB cache */
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		if ($this->Log) $this->Log->write('adding pm message', 'message id(' . mysql_insert_id() . ')');
 		return $this->showInfoMessage(__('Message successfuly send'), $this->getModuleURL('out_msg_box/'));
 	}
@@ -2147,7 +2147,7 @@ Class UsersModule extends Module {
 		}
 		
 		/* clean DB cache */
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		if ($this->Log) $this->Log->write('delete pm message(s)', 'message(s) id(' . implode(', ', $ids) . ')');
 		return $this->showInfoMessage(__('Operation is successful'), $redirect );
 	}
@@ -2295,7 +2295,7 @@ Class UsersModule extends Module {
 		$body = $this->render('main.msg', array('from' => $from, 'mail' => $mail, 'context' => $context));
 
 		/* clean DB cache */
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		if (mail($user->getEmail(), $subject, $body, $headers))
 			return $this->showInfoMessage(__('Operation is successful'), '/');
 		else

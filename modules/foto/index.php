@@ -347,7 +347,7 @@ Class FotoModule extends Module {
 		
 		$entity->setViews($entity->getViews() + 1);
 		$entity->save();
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		
 		return $this->_view($source);
 	}
@@ -564,7 +564,7 @@ Class FotoModule extends Module {
 
 			//clean cache
 			$this->Cache->clean(CACHE_MATCHING_TAG, array('module_foto'));
-			$this->Register['DB']->cleanSqlCache();
+			$this->DB->cleanSqlCache();
 			if ($this->Log) $this->Log->write('adding foto', 'foto id(' . $last_id . ')');
 			return $this->showInfoMessage(__('Material successful added'), $this->getModuleURL() );
 		} else {
@@ -737,7 +737,7 @@ Class FotoModule extends Module {
 		
 		//clean cache
 		$this->Cache->clean(CACHE_MATCHING_TAG, array('module_foto', 'record_id_' . $id));
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		if ($this->Log) $this->Log->write('editing foto', 'foto id(' . $id . ')');
 		return $this->showInfoMessage(__('Operation is successful'), $this->getModuleURL() );
 	}
@@ -772,7 +772,7 @@ Class FotoModule extends Module {
 
 		//clean cache
 		$this->Cache->clean(CACHE_MATCHING_TAG, array('module_foto'));
-		$this->Register['DB']->cleanSqlCache();
+		$this->DB->cleanSqlCache();
 		if ($this->Log) $this->Log->write('delete foto', 'foto id(' . $id . ')');
 		return $this->showInfoMessage(__('Operation is successful'), $this->getModuleURL() );
 	}

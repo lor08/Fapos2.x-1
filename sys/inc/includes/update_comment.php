@@ -49,7 +49,7 @@ if (!empty( $error )) {
 
 //remove cache
 $this->Cache->clean(CACHE_MATCHING_TAG, array('module_' . $this->module, 'record_id_' . $comment->getEntity_id()));
-$this->Register['DB']->cleanSqlCache();
+$this->DB->cleanSqlCache();
 
 
 // Update comment
