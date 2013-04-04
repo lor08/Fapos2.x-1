@@ -168,7 +168,7 @@ class ForumModel extends FpsModel
 				$res[] = array(
 					'text' => 'Тем',
 					'count' => $result[0]['themes'],
-					'url' => get_url('/forum/user_posts/' . $user_id),
+					'url' => get_url('/forum/user_themes/' . $user_id),
 				);
 			}
 			if ($result[0]['posts'] > 0) {

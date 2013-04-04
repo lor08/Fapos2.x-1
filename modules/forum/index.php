@@ -453,15 +453,10 @@ Class ForumModule extends Module {
 
 	/**
 	 * @param array $theme
-	 * @param string $template
-	 * If $template = FALSE, use default template file
 	 * @retrun string HTML theme table with replaced markers
 	 */
-	private function __parseThemeTable($theme, $template = false) 
+	private function __parseThemeTable($theme) 
 	{
-		$htmltheme = null;
-		$markers = array();
-		
 		//ICONS
 		$themeicon = $this->__getThemeIcon($theme); 
 			
@@ -729,16 +724,6 @@ Class ForumModule extends Module {
 			$this->_globalize($markers);
 			
 			
-			$post_num = (($page - 1) * $this->Register['Config']->read('posts_per_page', $this->module));
-			
-			
-			//serialize rating settings
-			$settingsModel = $this->Register['ModManager']->getModelInstance('UsersSettings');
-			$rating_settings = $settingsModel->getFirst(array('type' => 'rating'));
-			$rating_settings = $rating_settings ? $rating_settings->getValues() : ''; 
-			
-			
-			
 			$first_top = false;
 			if ($page > 1 && $theme->getFirst_top() == '1') {
 				$post = $postsModel->getFirst(array(
@@ -751,6 +736,73 @@ Class ForumModule extends Module {
 					$first_top = true;
 				}
 			}
+			$this->setCacheTag('theme_id_' . $id_theme);
+			
+			
+			// Polls render
+			$polls = $theme->getPoll();
+			if (is_array($polls) && count($polls) && !empty($polls[0])) {
+				$theme->setPoll($this->_renderPoll($polls[0]));
+			} else {
+				$theme->setPoll('');
+			}
+			
+			
+			
+			$markers = array(
+				'reply_form' => $this->add_post_form($theme),
+			);
+			$this->_globalize($markers);
+			
+			
+			$source = $this->render('posts_list.html', array(
+				'posts' => $this->__parsePostsTable($posts, $page, $first_top),
+				'theme' => $theme,
+			));
+			
+			
+			//write into cache
+			if ($this->cached)
+				$this->Cache->write($source, $this->cacheKey, $this->cacheTags);
+		}
+
+		
+		// Если страницу темы запросил зарегистрированный пользователь, значит он ее просмотрит
+		if ( isset( $_SESSION['user'] ) and isset( $_SESSION['newThemes'] ) ) {
+			if ( count( $_SESSION['newThemes'] ) > 0 ) {
+				if ( in_array( $id_theme, $_SESSION['newThemes'] ) ) {
+					unset( $_SESSION['newThemes'][$id_theme] );
+				}
+			} else {
+				unset( $_SESSION['newThemes'] );
+			}
+		} 
+		
+		if (empty($_SESSION['VIEW_PAGE']) || $_SESSION['VIEW_PAGE'] != 'theme' . $id_theme) {
+			$theme->setViews($theme->getViews() + 1);
+			$theme->save();	
+			$_SESSION['VIEW_PAGE'] = 'theme' . $id_theme;
+		}
+		
+		//clean cache
+		$this->Cache->clean(CACHE_MATCHING_TAG, array('action_viev_forum', 'theme_id_' . $id_theme));
+		return $this->_view($source);
+	}
+			
+	
+	/**
+	 * Parse posts table
+	 */
+	private function __parsePostsTable($posts, $page, $first_top = false) 
+	{
+		if ($posts) {
+			$post_num = (($page - 1) * $this->Register['Config']->read('posts_per_page', $this->module));
+			
+			//serialize rating settings
+			$settingsModel = $this->Register['ModManager']->getModelInstance('UsersSettings');
+			$rating_settings = $settingsModel->getFirst(array('type' => 'rating'));
+			$rating_settings = $rating_settings ? $rating_settings->getValues() : ''; 
+			
 			foreach ($posts as $post) {
 				// Если автор сообщения (поста) - зарегистрированный пользователь
 				$postAuthor = $post->getAuthor();
@@ -958,28 +1010,80 @@ Class ForumModule extends Module {
 					'user_id_' . $post->getId_author(),
 				));
 			}
-			$this->setCacheTag('theme_id_' . $id_theme);
+		}
+		return $posts;
+	}
+	
+	
+	/**
+	 * View post for users
+	 *
+	 * @param ind $user_id
+	 * @return none
+	 */
+	public function user_posts($user_id = null) 
+	{	
+		$this->page_title .= ' - ' . __('User messages');
+		
+		//turn access
+		$this->ACL->turn(array($this->module, 'view_themes'));
+		$user_id = intval($user_id);
+		if (empty($user_id) || $user_id < 1) redirect($this->getModuleURL());
+		
+		if ($this->cached && $this->Cache->check($this->cacheKey)) {
+			$source = $this->Cache->read($this->cacheKey);
+		} else {
+			$usersModel = $this->Register['ModManager']->getModelInstance('Users');
+			$user = $usersModel->getById($user_id);
+			if (!$user) return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL());
+			
+
+			// Заголовок страницы (содержимое тега title)
+			$this->page_title .= ' "' . $user->getName() . '"';
 			
 			
-			// Polls render
-			$polls = $theme->getPoll();
-			if (is_array($polls) && count($polls) && !empty($polls[0])) {
-				$theme->setPoll($this->_renderPoll($polls[0]));
+			$markers = array();
+			$markers['navigation'] = get_link(__('Home'), '/') . __('Separator') 
+			. get_link(__('Forums list'), $this->getModuleURL()) . __('Separator') . __('User messages') . ' "' . $user->getName() . '"';
+			
+			
+			// Page nav
+			$postsModel = $this->Register['ModManager']->getModelInstance('Posts');
+			$total = $postsModel->getTotal(array('cond' => array('id_author' => $user_id)));
+			if ($total > 0) {
+				list($pages, $page) = pagination($total, $this->Register['Config']->read('posts_per_page', $this->module), $this->getModuleURL('user_posts/' . $user_id));
+				$markers['pagination'] = $pages;
+				$this->page_title .= ' (' . $page . ')';
+
+
+
+				// SELECT posts
+				$postsModel->bindModel('author');
+				$postsModel->bindModel('editor');
+				$postsModel->bindModel('attacheslist');
+				$posts = $postsModel->getCollection(array(
+					'id_author' => $user_id,
+				), array(
+					'order' => 'time DESC, id DESC',
+					'page' => $page,
+					'limit' => $this->Register['Config']->read('posts_per_page', $this->module),
+				));
 			} else {
-				$theme->setPoll('');
+				$markers['pagination'] = null;
+				$posts = array();
+				$page = 1;
 			}
-			
-			
-			
-			$markers = array(
-				'reply_form' => $this->add_post_form($theme),
-			);
+			// Ссылка "Ответить" (если тема закрыта - выводим сообщение "Тема закрыта")
+			$markers['add_link'] = '';
+			$markers['admin_bar'] = '';
+			$markers['meta'] = '';
+			$markers['reply_form'] = '';
 			$this->_globalize($markers);
 			
 			
 			$source = $this->render('posts_list.html', array(
-				'posts' => $posts,
-				'theme' => $theme,
+				'posts' => $this->__parsePostsTable($posts, $page),
+				'theme' => array('poll' => null, 'title' => __('User messages') . ' "' . $user->getName() . '"'	),
 			));
 			
 			
@@ -987,30 +1091,10 @@ Class ForumModule extends Module {
 			if ($this->cached)
 				$this->Cache->write($source, $this->cacheKey, $this->cacheTags);
 		}
-
 		
-		// Если страницу темы запросил зарегистрированный пользователь, значит он ее просмотрит
-		if ( isset( $_SESSION['user'] ) and isset( $_SESSION['newThemes'] ) ) {
-			if ( count( $_SESSION['newThemes'] ) > 0 ) {
-				if ( in_array( $id_theme, $_SESSION['newThemes'] ) ) {
-					unset( $_SESSION['newThemes'][$id_theme] );
-				}
-			} else {
-				unset( $_SESSION['newThemes'] );
-			}
-		} 
-		
-		if (empty($_SESSION['VIEW_PAGE']) || $_SESSION['VIEW_PAGE'] != 'theme' . $id_theme) {
-			$theme->setViews($theme->getViews() + 1);
-			$theme->save();	
-			$_SESSION['VIEW_PAGE'] = 'theme' . $id_theme;
-		}
-		
-		//clean cache
-		$this->Cache->clean(CACHE_MATCHING_TAG, array('action_viev_forum', 'theme_id_' . $id_theme));
 		return $this->_view($source);
 	}
-	
+			
 	
 	private function __savePoll($theme) 
 	{
@@ -2862,14 +2946,14 @@ Class ForumModule extends Module {
 
 	
 	/**
-	 * View post for users
+	 * View themes for users
 	 *
 	 * @param ind $user_id
 	 * @return none
 	 */
-	public function user_posts($user_id) 
+	public function user_themes($user_id = null) 
 	{
-		$this->page_title .= ' - ' . __('User messages');
+		$this->page_title .= ' - ' . __('User themes');
 		$html = '';
     
 		if ($this->cached && $this->Cache->check($this->cacheKey)) {
@@ -2877,12 +2961,19 @@ Class ForumModule extends Module {
 			return $this->_view($html);
         }
 		
+		$usersModel = $this->Register['ModManager']->getModelInstance('Users');
+		$user = $usersModel->getById($user_id);
+		if (!$user) return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL());
+		
+
+		// Заголовок страницы (содержимое тега title)
+		$this->page_title .= ' "' . $user->getName() . '"';
 		
 		
 		$themesModel = $this->Register['ModManager']->getModelInstance('Themes');
 		$total = $themesModel->getTotal(array('cond' => array('id_author' => $user_id)));
 		$perPage = $this->Register['Config']->read('themes_per_page', $this->module);
-        list($pages, $page) = pagination($total, $perPage, $this->getModuleURL('user_posts/' . $user_id));
+        list($pages, $page) = pagination($total, $perPage, $this->getModuleURL('user_themes/' . $user_id));
 		
 		
 		// Page nav
@@ -2895,7 +2986,7 @@ Class ForumModule extends Module {
 		$recOnPage = ($page == $this->Register['pagecnt']) ? ($total % $perPage) : $perPage;
         if ($recOnPage > $total) $recOnPage = $total;
 		$nav['navigation'] = get_link(__('Home'), '/') . __('Separator') 
-			. get_link(__('Forums list'), $this->getModuleURL()) . __('Separator') . __('User messages');
+			. get_link(__('Forums list'), $this->getModuleURL()) . __('Separator') . __('User themes') . ' "' . $user->getName() . '"';
 		$nav['meta'] = __('Count all topics') . $total . '. ' . __('Count visible') . $recOnPage;
 		$this->_globalize($nav);
 		
@@ -2942,7 +3033,7 @@ Class ForumModule extends Module {
 		//pr($themes); die();
 		$source = $this->render('lastposts_list.html', array(
 			'context' => array(
-				'forum_name' => __('User messages'),
+				'forum_name' => __('User themes') . ' "' . $user->getName() . '"',
 			),
 			'themes' => $themes
 		));
