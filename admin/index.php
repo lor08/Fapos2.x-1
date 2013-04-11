@@ -91,7 +91,7 @@ include 'template/header.php';
 <?php
 if (!empty($_SESSION['clean_cache'])):
 ?>
-<script type="text/javascript">showHelpWin('<?php echo __('Cache is clened'); ?>', 'Сообщение');</script>
+<script type="text/javascript">showHelpWin('<?php echo __('Cache is cleared'); ?>', 'Сообщение');</script>
 <?php
 	unset($_SESSION['clean_cache']);
 endif;
@@ -120,7 +120,7 @@ endif;
 			<div class="setting-item">
 				<div class="left">
 					<?php echo __('SQL inj state'); ?>
-					<span class="comment"><?php echo __('Is the controll of SQL inj'); ?></span>
+					<span class="comment"><?php echo __('Is the control of SQL inj'); ?></span>
 				</div>
 				<div class="right"><div class="<?php echo (Config::read('antisql', 'secure') == 1) ? 'yes' : 'no' ?>"></div></div>
 				<div class="clear"></div>
@@ -160,7 +160,7 @@ endif;
 	<div class="level1">
 		<div class="head">
 			<div class="title settings">Группа</div>
-			<div class="title-r">Кол-во</div>
+			<div class="title-r">Количество</div>
 			<div class="clear"></div>
 		</div>
 		<div class="items">
@@ -223,7 +223,7 @@ endif;
 					Хитов за все время
 					<span class="comment">*Хиты(hits) - это просмотры, фактически - это любой<br />
 						просмотрт страницы, даже с одного IP. На один хост может приходиться<br />
-						любое кол-во хитов</span>
+						любое количество хитов</span>
 				</div>
 				<div class="right"><?php echo $all_hosts[0]['hits_cnt'] ?></div>
 				<div class="clear"></div>
@@ -295,7 +295,7 @@ endif;
 	<div class="level1">
 		<div class="head">
 			<div class="title settings">Материал</div>
-			<div class="title-r">Кол-во</div>
+			<div class="title-r">Количество</div>
 			<div class="clear"></div>
 		</div>
 		<div class="items">

@@ -97,6 +97,9 @@ $set = array (
   'pages' => 
   array (
     'active' => 1,
+    'img_size_x' => 150,
+    'img_size_y' => 200,
+    'use_preview' => 1,
   ),
   'loads' => 
   array (

@@ -14,6 +14,7 @@ $settingsInfo = array(
 			'checked' => '1',
 		),
 		'hlu_extention' => array(
+			'type' => 'text',
 			'title' => 'Окончание URL',
 			'description' => 'Например .html',
 		),
@@ -24,26 +25,30 @@ $settingsInfo = array(
 			'value' => '1',
 			'checked' => '1',
 		),
-		
-		
-		__('Auto tags settings') => __('Auto tags settings'),
-		'autotags_active' => array(
+	),
+	
+    /* AutoTags */
+    'autotags' => array(
+        'autotags_active' => array(
 			'type' => 'checkbox',
-			'title' => __('Status'),
-			'description' => '(Активирован/Деактивирован)',
+			'title' => 'Разрешить использование',
 			'value' => '1',
 			'checked' => '1',
-		),
-		'autotags_exception' => array(
+      	),
+        'autotags_exception' => array(
+            'type' => 'text',
 			'title' => __('Exceptions'),
-			'description' => __('Throught coma'),
-		),
-		'autotags_priority' => array(
+            'description' => 'Слова которые не будут учитываться',
+			'help' => __('Separated by comma'),
+      	),
+        'autotags_priority' => array(
+            'type' => 'text',
 			'title' => __('Priority'),
-			'description' => __('Throught coma'),
-		),
-	),
-
+            'description' => 'Слова с приоритетом',
+			'help' => __('Separated by comma'),
+       	),
+    ),
+	
 	/* SYS */
 	'sys' => array(
 		'template' => array(
@@ -188,8 +193,8 @@ $settingsInfo = array(
 			'title' => 'Размер анонса на главной',
 			'description' => '',
 		),
-	
-	
+
+
 		'Прочее' => 'Прочее',
 		'IEC60027-2' => array(
 			'type' => 'checkbox',
@@ -343,6 +348,13 @@ $settingsInfo = array(
         'rss_forum' => array(
              'type' => 'checkbox',
              'title' => 'Форум',
+             'description' => '',
+             'checked' => '1',
+             'value' => '1',
+       	),
+        'rss_foto' => array(
+             'type' => 'checkbox',
+             'title' => 'Фотокаталог',
              'description' => '',
              'checked' => '1',
              'value' => '1',
@@ -571,12 +583,14 @@ $sysMods = array(
 	'common',
 	'sitemap',
 	'watermark',
+	'autotags',
 );
 $noSub = array(
 	'sys',
 	'hlu',
 	'sitemap',
 	'watermark',
+	'autotags',
 );
 
 
@@ -631,7 +645,7 @@ if (!function_exists('saveWaterMarkText')) {
 			$text_size[$i + 1] = round(- $x * sin($rangle) + $y * cos($rangle));
 		}
 		*/
-
+		
 		$x_ar = array($text_size[0], $text_size[2], $text_size[4], $text_size[6]);
 		$y_ar = array($text_size[1], $text_size[3], $text_size[5], $text_size[7]);
 
@@ -676,7 +690,7 @@ if (!function_exists('saveWaterMarkText')) {
 		imagettftext($img, $size, $angle, $pos_x, $pos_y-$delta, $border_color, $font, $text);
 
 		imagettftext($img, $size, $angle, $pos_x, $pos_y, $text_color, $font, $text);
-
+		
 		imagepng($img, ROOT . '/sys/img/watermark_text.png', 9);
 		imagedestroy($img);
 	}

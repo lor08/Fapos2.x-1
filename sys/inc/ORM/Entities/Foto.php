@@ -2,12 +2,12 @@
 /*---------------------------------------------\
 |											   |
 | @Author:       Andrey Brykin (Drunya)        |
-| @Version:      1.0                           |
+| @Version:      1.1                           |
 | @Project:      CMS                           |
 | @package       CMS Fapos                     |
 | @subpackege    Foto Entity                   |
-| @copyright     ©Andrey Brykin 2010-2012      |
-| @last mod      2012/04/26                    |
+| @copyright     ©Andrey Brykin 2010-2013      |
+| @last mod      2013/04/03                    |
 |----------------------------------------------|
 |											   |
 | any partial or not partial extension         |
@@ -49,8 +49,8 @@ class FotoEntity extends FpsEntity
 			'description' => $this->description,
 			'views' => intval($this->views),
 			'date' => $this->date,
-			'category_id' => $this->category_id,
-			'author_id' => $this->author_id,
+			'category_id' => intval($this->category_id),
+			'author_id' => intval($this->author_id),
 			'comments' => (!empty($this->comments)) ? intval($this->comments) : 0,
 			'commented' => (!empty($this->commented)) ? 1 : 0,
 			'filename' => $this->filename,

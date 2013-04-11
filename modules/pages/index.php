@@ -2,12 +2,12 @@
 /*-----------------------------------------------\
 | 												 |
 |  @Author:       Andrey Brykin (Drunya)         |
-|  @Version:      1.5.2                          |
+|  @Version:      1.5.6                          |
 |  @Project:      CMS                            |
 |  @package       CMS Fapos                      |
 |  @subpackege    Pages Module                   |
-|  @copyright     ©Andrey Brykin 2010-2012       |
-|  @last mod      2012/09/18                     |
+|  @copyright     ©Andrey Brykin 2010-2013       |
+|  @last mod      2013/04/07                     |
 \-----------------------------------------------*/
 
 /*-----------------------------------------------\
@@ -26,93 +26,92 @@
 Class PagesModule extends Module {
 
 	/**
-	* @module_title  title of module
-	*/
-	var $module_title;
-	/**
-	* @template  layout for module
-	*/
-	//var $template;
-	/**
-	* @module module indentifier
-	*/
-	var $module = 'pages';
+	 * @module_title  title of module
+	 */
+	public $module_title = 'Страницы';
 
-
-	
 	/**
-	* default action
-	*/
-	function index($id = null, $s =null, $x = null) {
+	 * @template  layout for module
+	 */
+	public $template = 'pages';
+
+	/**
+	 * @module module indentifier
+	 */
+	public $module = 'pages';
+
+	/**
+	 * default action
+	 */
+	function index($id = null, $s = null, $x = null) {
 		//if isset ID - we need load page with this ID
 		if (!empty($id)) {
-			if (is_int($id)) {
-				$id = (int)$id;
-				if ($id < 2)  redirect($this->getModuleURL());
+			if (is_numeric($id)) {
+				$id = intval($id);
+				if ($id < 2)
+					return $this->showInfoMessage(__('Can not find this page'), $this->getModuleURL());
+
+				$page = $this->Model->getById($id);
+				if (!$page)
+					return $this->showInfoMessage(__('Can not find this page'), '/');
 			} else {
-				if (!preg_match('#^[\da-z_\-]+$#i', $id))  redirect($this->getModuleURL());
-			
-				$record = $this->Model->getByUrl($id);
-				if (empty($record)) return $this->showInfoMessage(__('Can not find this page'), '/');
-				
-				$id = $record->getId();
+				if (!preg_match('#^[\da-z_\-.]+$#i', $id))
+					return $this->showInfoMessage(__('Can not find this page'), $this->getModuleURL());
+
+				$page = $this->Model->getByUrl($id);
+				if (!$page)
+					return $this->showInfoMessage(__('Can not find this page'), $this->getModuleURL());
+				$id = $page->getId();
 			}
-		
-		
-			$page = $this->Model->getById($id);
-			if (!$page) return $this->showInfoMessage(__('Can not find this page'), '/');
-			
-			
+
 			$this->page_title = $page->getName();
 			$this->page_meta_keywords = $page->getMeta_keywords();
 			$this->page_meta_description = $page->getMeta_description();
 			$this->template = ($page->getTemplate()) ? $page->getTemplate() : 'default';
 			$source = $page->getContent();
 			$source = $this->renderString($source, array('entity' => $page));
-		
-		
+
+
 			// Tree line
 			$navi['navigation'] = get_link(__('Home'), '/');
 			$cnots = explode('.', $page->getPath());
-			if (false !== ($res = array_search(1, $cnots))) unset($cnots[$res]);
+			if (false !== ($res = array_search(1, $cnots)))
+				unset($cnots[$res]);
 			if (!empty($cnots)) {
 				$ids = "'" . implode("', '", $cnots) . "'";
 				$pages = $this->Model->getCollection(array(
 					"`id` IN (" . $ids . ")"
-				), array(
+						), array(
 					'order' => 'path',
-				));
-				
+						));
+
 				if (!empty($pages) && is_array($pages)) {
-					foreach($pages as $p) {
+					foreach ($pages as $p) {
 						$navi['navigation'] .= __('Separator') . get_link(__($p->getName()), '/' . $p->getId());
 					}
 				}
 			}
 			$navi['navigation'] .= __('Separator') . h($page->getName());
 			$this->_globalize($navi);
-			
+
 			return $this->_view($source);
 
-			
-		//may be need view latest materials	
+
+			//may be need view latest materials
 		} else {
 			$this->page_title = $this->Register['Config']->read('title');
 			$latest_on_home = $this->Register['Config']->read('latest_on_home');
 			$navi = null; //vsyakiy sluchay:)
-			
-			
 			//if we want view latest materials on home page
 			if (is_array($latest_on_home) && count($latest_on_home) > 0) {
-			
+
 				// Navigation Block
 				$navi = array();
-				$navi['add_link'] = ($this->ACL->turn(array('news', 'add_materials'), false)) 
-					? get_link(__('Add material'), '/news/add_form') : '';
+				$navi['add_link'] = ($this->ACL->turn(array('news', 'add_materials'), false)) ? get_link(__('Add material'), '/news/add_form') : '';
 				$navi['navigation'] = get_link(__('Home'), '/');
 				$this->_globalize($navi);
-			
-			
+
+
 				if ($this->cached && $this->Cache->check($this->cacheKey)) {
 					$html = $this->Cache->read($this->cacheKey);
 					return $this->_view($html);
@@ -120,183 +119,174 @@ Class PagesModule extends Module {
 
 
 				//create SQL query
-                $entities = $this->Model->getEntitiesByHomePage($latest_on_home);
-
-					
-                //if we have records
-                if (count($entities) > 0) {
-
-                    // Get users(authors)
-                    $uids = array();
-                    $mod_mats = array('news' => array(), 'stat' => array(), 'loads' => array());
-                    foreach ($entities as $key => $mat) {
-                        $uids[] = $mat->getAuthor_id();
-                        switch ($mat->getSkey()) {
-                            case 'news':
-                                $mod_mats['news'][$key] = $mat;
-                                break;
-                            case 'stat':
-                                $mod_mats['stat'][$key] = $mat;
-                                break;
-                            case 'loads':
-                                $mod_mats['loads'][$key] = $mat;
-                                break;
-                        }
-                    }
+				$entities = $this->Model->getEntitiesByHomePage($latest_on_home);
 
 
-                    $uids = '(' . implode(', ', $uids) . ')';
-                    $uModel = $this->Register['ModManager']->getModelInstance('users');
-                    $authors = $uModel->getCollection(array('`id` IN ' . $uids));
+				//if we have records
+				if (count($entities) > 0) {
+
+					// Get users(authors)
+					$uids = array();
+					$mod_mats = array('news' => array(), 'stat' => array(), 'loads' => array());
+					foreach ($entities as $key => $mat) {
+						$uids[] = $mat->getAuthor_id();
+						switch ($mat->getSkey()) {
+							case 'news':
+								$mod_mats['news'][$key] = $mat;
+								break;
+							case 'stat':
+								$mod_mats['stat'][$key] = $mat;
+								break;
+							case 'loads':
+								$mod_mats['loads'][$key] = $mat;
+								break;
+						}
+					}
 
 
-                    // Merge records with additional fields
-                    if (is_object($this->AddFields)) {
-                        if (!empty($mod_mats['news']) && count($mod_mats['news']) > 0)
-                            $mod_mats['news'] = $this->AddFields->mergeRecords($mod_mats['news'], false, 'news');
-                        if (!empty($mod_mats['stat']) && count($mod_mats['stat']) > 0)
-                            $mod_mats['stat'] = $this->AddFields->mergeRecords($mod_mats['stat'], false, 'stat');
-                        if (!empty($mod_mats['loads']) && count($mod_mats['loads']) > 0)
-                            $mod_mats['loads'] = $this->AddFields->mergeRecords($mod_mats['loads'], false, 'loads');
-                    }
+					$uids = '(' . implode(', ', $uids) . ')';
+					$uModel = $this->Register['ModManager']->getModelInstance('users');
+					$authors = $uModel->getCollection(array('`id` IN ' . $uids));
 
 
-                    foreach ($mod_mats as $module => $mats) {
-                        if (count($mats) > 0) {
-                            $attach_ids = array();
-                            foreach ($mats as $mat) {
-                                $attach_ids[] = $mat->getId();
-                            }
+					// Merge records with additional fields
+					if (is_object($this->AddFields)) {
+						if (!empty($mod_mats['news']) && count($mod_mats['news']) > 0)
+							$mod_mats['news'] = $this->AddFields->mergeRecords($mod_mats['news'], false, 'news');
+						if (!empty($mod_mats['stat']) && count($mod_mats['stat']) > 0)
+							$mod_mats['stat'] = $this->AddFields->mergeRecords($mod_mats['stat'], false, 'stat');
+						if (!empty($mod_mats['loads']) && count($mod_mats['loads']) > 0)
+							$mod_mats['loads'] = $this->AddFields->mergeRecords($mod_mats['loads'], false, 'loads');
+					}
 
 
-                            $ids = implode(', ', $attach_ids);
-                            $attModel = $this->Register['ModManager']->getModelInstance($module . 'Attaches');
-                            $attaches = $attModel->getCollection(array('`entity_id` IN ('.$ids.')'));
-							
-                            foreach ($mats as $mat) {
-                                if ($attaches) {
-                                    foreach ($attaches as $attach) {
-                                        if ($mat->getId() == $attach->getEntity_id()) {
-                                            $currAttaches = $mat->getAttaches();
-                                            if (is_array($currAttaches)) {
-                                                $currAttaches[] = $attach;
-                                            } else {
-                                                $currAttaches = array($attach);
-                                            }
-
-                                            $mat->setAttaches($currAttaches);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+					foreach ($mod_mats as $module => $mats) {
+						if (count($mats) > 0) {
+							$attach_ids = array();
+							foreach ($mats as $mat) {
+								$attach_ids[] = $mat->getId();
+							}
 
 
-                    $entities = $mod_mats['news'] + $mod_mats['stat'] + $mod_mats['loads'];
-                    ksort($entities);
+							$ids = implode(', ', $attach_ids);
+							$attModel = $this->Register['ModManager']->getModelInstance($module . 'Attaches');
+							$attaches = $attModel->getCollection(array('`entity_id` IN (' . $ids . ')'));
+
+							foreach ($mats as $mat) {
+								if ($attaches) {
+									foreach ($attaches as $attach) {
+										if ($mat->getId() == $attach->getEntity_id()) {
+											$currAttaches = $mat->getAttaches();
+											if (is_array($currAttaches)) {
+												$currAttaches[] = $attach;
+											} else {
+												$currAttaches = array($attach);
+											}
+
+											$mat->setAttaches($currAttaches);
+										}
+									}
+								}
+							}
+						}
+					}
 
 
-                    //if we have materials for view on home page (now we get their an create page)
-                    $info = null;
-                    foreach ($entities as $result) {
-                        foreach ($authors as $author) {
-                            if ($result->getAuthor_id() == $author->getId()) {
-                                $result->setAuthor($author);
-                                break;
-                            }
-                        }
+					$entities = $mod_mats['news'] + $mod_mats['stat'] + $mod_mats['loads'];
+					ksort($entities);
 
 
-                        // Create and replace markers
-                        $markers = array();
-                        $this->Register['current_vars'] = $result;
+					//if we have materials for view on home page (now we get their an create page)
+					$info = null;
+					foreach ($entities as $result) {
+						foreach ($authors as $author) {
+							if ($result->getAuthor_id() == $author->getId()) {
+								$result->setAuthor($author);
+								break;
+							}
+						}
 
-                        //moder panel
-                        $markers['moder_panel'] = $this->_getAdminBar($result->getId(), $result->getSkey());
-                        $entry_url = get_url(entryUrl($result, $result->getSkey()));
-                        $markers['entry_url'] = $entry_url;
+
+						// Create and replace markers
+						$markers = array();
+						$this->Register['current_vars'] = $result;
+
+						//moder panel
+						$markers['moder_panel'] = $this->_getAdminBar($result->getId(), $result->getSkey());
+						$entry_url = get_url(entryUrl($result, $result->getSkey()));
+						$markers['entry_url'] = $entry_url;
 
 
-                        $matattaches = ($result->getAttaches() && count($result->getAttaches()))
-                        ? $result->getAttaches() : array();
-                        $announce = $result->getMain();
+						$matattaches = ($result->getAttaches() && count($result->getAttaches())) ? $result->getAttaches() : array();
+						$announce = $result->getMain();
 
-						
-                        $announce = $this->Textarier->getAnnounce($announce, $entry_url, 0,
-                            $this->Register['Config']->read('announce_lenght'), $result);
-						
-						
-                        if (count($matattaches) > 0) {
-                            foreach ($matattaches as $attach) {
+
+						$announce = $this->Textarier->getAnnounce($announce, $entry_url, 0, $this->Register['Config']->read('announce_lenght'), $result);
+
+
+						if (count($matattaches) > 0) {
+							foreach ($matattaches as $attach) {
 								if ($attach->getIs_image() == '1') {
 									$announce = $this->insertImageAttach($announce, $attach->getFilename(), $attach->getAttach_number(), $result->getSkey());
 								}
-                            }
-                        }
-						
-                        $markers['announce'] = $announce;
+							}
+						}
+
+						$markers['announce'] = $announce;
 
 						$markers['profile_url'] = get_url('/users/info/' . $result->getAuthor_id());
 
-                        $markers['module_title'] = $this->Register['Config']->read('title', $result->getSkey());
-                        $result->setAdd_markers($markers);
+						$markers['module_title'] = $this->Register['Config']->read('title', $result->getSkey());
+						$result->setAdd_markers($markers);
 
 
-                        //set users_id that are on this page
-                        $this->setCacheTag(array(
-                            'module_' . $result->getSkey(),
-                            'record_id_' . $result->getId(),
-                        ));
-                    }
+						//set users_id that are on this page
+						$this->setCacheTag(array(
+							'module_' . $result->getSkey(),
+							'record_id_' . $result->getId(),
+						));
+					}
 
-                    $html = $this->render('list.html', array('entities' => $entities));
+					$html = $this->render('list.html', array('entities' => $entities));
 
 
-                    //write int cache
-                    if ($this->cached)
-                        $this->Cache->write($html, $this->cacheKey, $this->cacheTags);
-                }
+					//write int cache
+					if ($this->cached)
+						$this->Cache->write($html, $this->cacheKey, $this->cacheTags);
+				}
 
-	
-				if (empty($html)) $html = __('Materials not found');
+
+				if (empty($html))
+					$html = __('Materials not found');
 				return $this->_view($html);
 			}
-			return $this->_view(__('Materials not found'));
+			return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL());
 		}
 	}
 
-
-	
-	
 	/**
-	* @param int $id - record ID
-	* @param string $module - module
-	* @return string - admin buttons
-	*
-	* create and return admin bar
-	*/
+	 * @param int $id - record ID
+	 * @param string $module - module
+	 * @return string - admin buttons
+	 *
+	 * create and return admin bar
+	 */
 	protected function _getAdminBar($id, $module) {
 		$moder_panel = '';
 		if ($this->ACL->turn(array($module, 'edit_materials'), false)) {
-			$moder_panel .= get_link(get_img('/sys/img/edit_16x16.png', array('alt' => __('Edit'), 'title' => __('Edit'))),
-			'/' . $module . '/edit_form/' . $id) . '&nbsp;';
+			$moder_panel .= get_link(get_img('/sys/img/edit_16x16.png', array('alt' => __('Edit'), 'title' => __('Edit'))), '/' . $module . '/edit_form/' . $id) . '&nbsp;';
 		}
 		if ($this->ACL->turn(array($module, 'up_materials'), false)) {
-			$moder_panel .= get_link(get_img('/sys/img/up_arrow_16x16.png', array('alt' => __('Up'), 'title' => __('Up'))),
-			'/' . $module . '/upper/' . $id, array('onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+			$moder_panel .= get_link(get_img('/sys/img/up_arrow_16x16.png', array('alt' => __('Up'), 'title' => __('Up'))), '/' . $module . '/upper/' . $id, array('onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
 		}
 		if ($this->ACL->turn(array($module, 'on_home'), false)) {
-			$moder_panel .= get_link(get_img('/sys/img/round_ok.png', array('alt' => __('On home'), 'title' => __('On home'))),
-			'/' . $module . '/off_home/' . $id, array('onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+			$moder_panel .= get_link(get_img('/sys/img/round_ok.png', array('alt' => __('On home'), 'title' => __('On home'))), '/' . $module . '/off_home/' . $id, array('onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
 		}
 		if ($this->ACL->turn(array($module, 'delete_materials'), false)) {
-			$moder_panel .= get_link(get_img('/sys/img/delete_16x16.png', array('alt' => __('Delete'), 'title' => __('Delete'))),
-			'/' . $module . '/delete/' . $id, array('onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+			$moder_panel .= get_link(get_img('/sys/img/delete_16x16.png', array('alt' => __('Delete'), 'title' => __('Delete'))), '/' . $module . '/delete/' . $id, array('onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
 		}
 
 		return $moder_panel;
 	}
 
-	
 }

@@ -41,13 +41,14 @@ if (!$check) {
 				)
 			);
 		} else {
+			$where = array();
 			$this->Model->bindModel('category');
 			$this->Model->bindModel('author');
-			$this->Model->bindModel('attaches');
-			$records = $this->Model->getCollection(
-				array(
-					'available' => '1',
-				), array(
+			if ($this->module != 'foto') {
+				$this->Model->bindModel('attaches');
+				$where['available'] = '1';
+			}
+			$records = $this->Model->getCollection($where, array(
 					'limit' => Config::read('rss_cnt', 'common'),
 					'order' => 'date DESC',
 				)
@@ -78,18 +79,22 @@ if (!$check) {
 					$record_date = $record->getLast_post();
 					$url = get_url($this->module . '/view_theme/' . $record->getId());
 				} else {
-					$announce = $this->Textarier->getAnnounce($record->getMain(), null, 0, Config::read('rss_lenght', 'common'), $record);
-					$atattaches = ($record->getAttaches() && count($record->getAttaches())) ? $record->getAttaches() : array();
-					if (count($atattaches) > 0) {
-						foreach ($atattaches as $attach) {
-							if ($attach->getIs_image() == '1') {
-								$announce = $this->insertImageAttach($announce, $attach->getFilename(), $attach->getAttach_number(), $record->getSkey());
+					if ($this->module == 'foto') {
+						$announce = '<img src="' . $this->getFilesPath('preview/' . $record->getFilename()) . '" />';
+					} else {
+						$announce = $this->Textarier->getAnnounce($record->getMain(), null, 0, Config::read('rss_lenght', 'common'), $record);
+						$atattaches = ($record->getAttaches() && count($record->getAttaches())) ? $record->getAttaches() : array();
+						if (count($atattaches) > 0) {
+							foreach ($atattaches as $attach) {
+								if ($attach->getIs_image() == '1') {
+									$announce = $this->insertImageAttach($announce, $attach->getFilename(), $attach->getAttach_number(), $record->getSkey());
+								}
 							}
 						}
 					}
 					$announce .= '<br />';
 					if ($record->getAuthor() != null) {
-						$announce .= 'Автор темы: ' . $record->getAuthor()->getName() . '<br />';
+						$announce .= 'Автор: ' . $record->getAuthor()->getName() . '<br />';
 					}
 					$record_date = $record->getDate();
 					if ($record->getCategory() != null) {

@@ -5,6 +5,7 @@ class Fps_Viewer_Manager
 
 	
 	protected $moduleTitle;
+	protected $layout;
 	protected $tokensParser;
 	protected $treesParser;
 	protected $compileParser;
@@ -15,13 +16,22 @@ class Fps_Viewer_Manager
 
 	public function __construct(Module $instance = null)
 	{
-		if (null !== $instance) $this->moduleTitle = $instance->module;
+		if (null !== $instance) {
+			$this->moduleTitle = $instance->module;
+			$this->layout = $instance->template;
+		}
 		
 		$this->tokensParser = new Fps_Viewer_TokensParser();
 		$this->treesParser = new Fps_Viewer_TreesParser();
 		$this->compileParser = new Fps_Viewer_CompileParser();
 	}
 	
+	
+	
+	public function setLayout($layout)
+	{
+		$this->layout = trim($layout);
+	}
 	
 	
 	public function setModuleTitle($title)
@@ -87,7 +97,7 @@ class Fps_Viewer_Manager
 	{
 		$template = getTemplateName();
 		if (empty($template) or !is_dir(ROOT . '/template/' . $template)) {
-			$Register = Register::getInstance();
+		$Register = Register::getInstance();
 			$template = $Register['Config']->read('template');
 		}
 		$ext = strtolower(strrchr($fileName, '.'));
@@ -107,9 +117,9 @@ class Fps_Viewer_Manager
 	public function parseTemplate($code, $context)
 	{
 		$tokens = $this->getTokens($code);
-		//pr($tokens); die();
+		//pr($tokens); //die();
 		$nodes = $this->getTreeFromTokens($tokens);
-		//pr($nodes); //die();
+		//pr(h($nodes)); //die();
 		$this->compileParser->clean();
 		$this->compileParser->setTmpClassName($this->getTmpClassName($code));
 		$this->compile($nodes);

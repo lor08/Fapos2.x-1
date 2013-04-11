@@ -1,14 +1,14 @@
 {{ editor_body }}
-<form name="sendForm" id="sendForm" action="{{ data.action }}" method="POST" 
+<form name="sendForm" id="sendForm" action="{{ context.action }}" method="POST" 
 enctype="multipart/form-data">
 <table border="0"  class="add-form small" cellspacing="1" cellpadding="0">
 	<tr>
 		<td>Категория:<font color="red" class="manStar">*</font></td>
-		<td class="right"><select name="cats_selector">{{ data.cats_selector }}</select></td>
+		<td class="right"><select name="cats_selector">{{ context.cats_selector }}</select></td>
 	</tr>
 	<tr>
 		<td>Заголовок:<font color="red" class="manStar">*</font></td>
-		<td class="right"><input type="text" name="title" maxlength="128" value="{{ data.title }}"></td>
+		<td class="right"><input type="text" name="title" maxlength="128" value="{{ context.title }}"></td>
 	</tr>
 	<tr class="BB_buttons">
 		<td colspan="2">
@@ -75,12 +75,12 @@ enctype="multipart/form-data">
 
 	<tr>
 		<td colspan="2">
-			<textarea {{ editor_text }} class="text-area" name="mainText">{{ data.main_text }}</textarea>
+			<textarea {{ editor_text }} class="text-area" name="mainText">{{ context.main_text }}</textarea>
 		</td>
 	</tr>
 	<tr>
 		<td>Комментарии:</td>
-		<td class="right"><input type="checkbox" name="commented" value="1" {{ data.commented }} /></td>
+		<td class="right"><input type="checkbox" name="commented" value="1" {{ context.commented }} /></td>
 	</tr>
 	<tr>
 		<td>Изображение:<font color="red" class="manStar">*</font></td>

@@ -46,7 +46,7 @@ if (isset($_GET['a']) && $_GET['a'] == 'ed') {
 if (isset($_GET['a']) && $_GET['a'] == 'ed') {
 
 	$id = (!empty($_GET['id'])) ? intval($_GET['id']) : '';
-	if(isset($_POST['save']) && isset($_POST['text_edit'])) {
+	if($id > 0 && isset($_POST['save']) && isset($_POST['text_edit'])) {
 		$sql = $FpsDB->save('snippets', array(
 			'body' => $_POST['text_edit'],
 			'id' => $id,
@@ -83,12 +83,13 @@ if (isset($_GET['a']) && $_GET['a'] == 'ed') {
 	Для то, что бы создавать и редактировать сниппеты, желательно, обладать, хотя бы, базовыми знаниями PHP
 	
 
-	<?php if (isset($_SESSION['mess'])) : ?>
+	<?php if (isset($_SESSION['mess'])): ?>
 	<br />
 	<br />
 	<br />
-	<tr><td align="center" colspan="2" style="color:green; font-size:11px; font-weight:none; font-family: Tahoma, Arial, serif;"><b><?php echo $_SESSION['mess'] ?></b></td></tr>
-	<?php unset($_SESSION['mess']); endif; ?>
+	<b><?php echo $_SESSION['mess'] ?></b>
+	<?php unset($_SESSION['mess']); 
+	endif; ?>
 </div>
 
 
@@ -145,7 +146,7 @@ if (isset($_GET['a']) && $_GET['a'] == 'ed') {
 					<div class="left">
 					</div>
 					<div class="right">
-						<input class="save-button" type="submit" name="send" value="Сохранить" />
+						<input class="save-button" type="submit" name="save" value="Сохранить" />
 					</div>
 					<div class="clear"></div>
 				</div>
@@ -200,12 +201,13 @@ if (isset($_GET['a']) && $_GET['a'] == 'ed') {
 	
 
 	
-	<?php if (isset($_SESSION['mess'])) : ?>
+	<?php if (isset($_SESSION['mess'])): ?>
 	<br />
 	<br />
 	<br />
-	<tr><td colspan="2" align="center" style="color:green; font-size:11px; font-weight:none; font-family: Tahoma, Arial, serif;"><b><?php echo $_SESSION['mess'] ?></b></td></tr>
-	<?php unset($_SESSION['mess']); endif; ?>
+	<b><?php echo $_SESSION['mess'] ?></b>
+	<?php unset($_SESSION['mess']); 
+	endif; ?>
 </div>
 
 

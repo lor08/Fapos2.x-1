@@ -26,21 +26,21 @@ $message = mb_substr($message, 0, Config::read('comment_lenght', $this->module))
 $message = trim($message);
 
 
-$error  = '';
+$error = '';
 $valobj = $this->Register['Validate'];
 if (empty($name)) {
-	$error = $error . '<li>' . __('Empty field "login"') . '</li>' . "\n";
+	$error .= '<li>' . __('Empty field "login"') . '</li>' . "\n";
 } elseif (!$valobj->cha_val($name, V_TITLE)) {
-	$error = $error . '<li>' . __('Wrong chars in field "login"') . '</li>' . "\n";
+	$error .= '<li>' . __('Wrong chars in field "login"') . '</li>' . "\n";
 }
-if (empty($message))  $error = $error.'<li>' . __('Empty field "text"') . '</li>'."\n";
+if (empty($message)) $error .= '<li>' . __('Empty field "text"') . '</li>' . "\n";
 
 	
 /* if an error */
-if (!empty( $error )) {
+if (!empty($error)) {
 	$_SESSION['editCommentForm'] = array();
 	$_SESSION['editCommentForm']['error'] = '<p class="errorMsg">' . __('Some error in form') . '</p>'
-		."\n".'<ul class="errorMsg">'."\n".$error.'</ul>'."\n";
+		. "\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
 	$_SESSION['editCommentForm']['message'] = $message;
 	$_SESSION['editCommentForm']['name'] = $name;
 	redirect($this->getModuleURL('/edit_comment_form/' . $id));

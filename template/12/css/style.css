@@ -1171,8 +1171,8 @@ table.formtb tr td textarea {width: 500px; height: 200px;}
 .fps-form-textarea {overflow:hidden; width:100%; border:1px solid #7F9DB9;}
 .fps-form-textarea textarea {border:none;}
 
-.fps-controll {font-size:12px;}
-.fps-controll input, .fps-controll select {font-size:12px;}
+.fps-control {font-size:12px;}
+.fps-control input, .fps-control select {font-size:12px;}
 
 
 .spoiler-open {width:90%; height:20px;  padding: 2px; color:#E57D1C;}

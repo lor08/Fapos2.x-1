@@ -133,7 +133,7 @@ include_once ROOT . '/admin/template/header.php';
 					Ранг № <?php echo $i; ?>
 				</div>
 				<div class="right">
-					<input type="text" name="cond<?php echo $i ?>" value="<?php echo (!empty($result['cond'.$i])) ? intval($result['cond'.$i]) : 10*$i; ?>">&nbsp;<span class="help">Кол-во сообщений</span><br /><br />
+					<input type="text" name="cond<?php echo $i ?>" value="<?php echo (!empty($result['cond'.$i])) ? intval($result['cond'.$i]) : 10*$i; ?>">&nbsp;<span class="help">Количество сообщений</span><br /><br />
 					<?php echo (!empty($errors['cond'.$i])) ? '<br /><span class="error">'.$errors['cond'.$i].'</span>' : ''; ?>
 					<input type="text" name="rat<?php echo $i ?>" value="<?php echo (!empty($result['rat'.$i])) ? h($result['rat'.$i]) : ''; ?>">&nbsp;<span class="help">Звание</span><br />
 					<?php echo (!empty($errors['rat'.$i])) ? '<br /><span class="error">'.$errors['rat'.$i].'</span>' : ''; ?>

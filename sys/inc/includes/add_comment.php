@@ -7,7 +7,7 @@ if ($id < 1) redirect($this->getModuleURL());
 
 $target_new = $this->Model->getById($id);
 if (!$target_new) redirect($this->getModuleURL());
-if (!$target_new->getCommented()) return $this->showInfoMessage(__('Comments is denied here'), $this->getModuleURL('/view/' . $id));
+if (!$target_new->getCommented()) return $this->showInfoMessage(__('Comments are denied here'), $this->getModuleURL('/view/' . $id));
 
 
 /* cut and trim values */
@@ -27,20 +27,20 @@ $keystring = (isset($_POST['captcha_keystring'])) ? trim($_POST['captcha_keystri
 
 
 // Check fields
-$error  = '';
+$error = '';
 $valobj = $this->Register['Validate'];
 if (empty($name))                          
-	$error = $error . '<li>' . __('Empty field "login"') . '</li>' . "\n";
+	$error .= '<li>' . __('Empty field "login"') . '</li>' . "\n";
 elseif (!$valobj->cha_val($name, V_TITLE))  
-	$error = $error . '<li>' . __('Wrong chars in field "login"') . '</li>' . "\n";
+	$error .= '<li>' . __('Wrong chars in field "login"') . '</li>' . "\n";
 if (empty($message))                       
-	$error = $error . '<li>' . __('Empty field "text"') . '</li>' . "\n";
+	$error .= '<li>' . __('Empty field "text"') . '</li>' . "\n";
 
 
 // Check captcha if need exists	 
 if (!$this->ACL->turn(array('other', 'no_captcha'), false)) {
 	if (empty($keystring))                      
-		$error = $error . '<li>' . __('Empty field "code"') . '</li>' . "\n";
+		$error .= '<li>' . __('Empty field "code"') . '</li>' . "\n";
 
 	
 	// Проверяем поле "код"
@@ -106,7 +106,7 @@ if ($entityComm) {
 		$entity->save();
 		
 		if ($this->Log) $this->Log->write('adding comment to ' . $this->module, $this->module . ' id(' . $id . ')');
-		return $this->showInfoMessage(__('Comments is added'), $this->getModuleURL('/view/' . $id));
+		return $this->showInfoMessage(__('Comment is added'), $this->getModuleURL('/view/' . $id));
 	}
 }
 return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL('/view/' . $id));

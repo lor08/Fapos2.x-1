@@ -58,14 +58,14 @@ $(document).ready(function() {
 
 		<a href="{{ www_root }}/users">Пользователи</a>
 		<a href="{{ www_root }}/search">Поиск</a>
-		{% if fps_admin_access == 1 %}<a href="{{ www_root }}/admin">Админка</a>{% endif %}
+		{% if fps_admin_access == 1 %}<a target="_blank" href="{{ www_root }}/admin">Админка</a>{% endif %}
 	</li>
 </ul>
 </div>
 <img src="{{ template_path }}/img/rtm.png" alt="" style="float:right;"/>
 
 <div class="header">
-	<a href="/"><img src="{{ template_path }}/img/logo.png" alt="Шаблон UkrTor" style="float:left;position:absolute;"/></a>
+	<a href="{{ www_root }}/"><img src="{{ template_path }}/img/logo.png" alt="Шаблон UkrTor" style="float:left;position:absolute;"/></a>
 	<div class="feed">
 		<a href="/"><span class="home"></span></a>
 		<img src="{{ template_path }}/img/listtm.png" alt="" class="gran2"/>

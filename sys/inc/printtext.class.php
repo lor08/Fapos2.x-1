@@ -36,8 +36,8 @@
 class PrintText {
 
 	public $bbCodes = array('php', 'left', 'right', 'center', 'code', 'html', 'xml', 'b', 'i', 's', 'u', 'quote', 'hide', 'size');
-	
-	
+
+
 	/**
 	 * @param string $str
 	 * @param string $url - URL to full material
@@ -52,22 +52,22 @@ class PrintText {
 		$start_tag = mb_strpos($str, '[announce]');
 		$end_tag = mb_strpos($str, '[/announce]');
 		if (false !== $start_tag) $start_tag += 10;
-		
-		
+
+
 		if (false !== $start_tag && false !== $end_tag && $end_tag > $start_tag) {
 			$announce = mb_substr($str, $start_tag, ($end_tag - $start_tag));
 		} else {
 			// if no tags, use settings lenght
 			$start = (int)$start;
-			$length = (int)$length; 
-			
+			$length = (int)$length;
+
 			if ($length < 1) $length = 500;
-			if ($start >= $length) $start = 0; 
+			if ($start >= $length) $start = 0;
 			$announce = mb_substr($str, $start, $length);
 			//if (!preg_match('#[a-zа-я]$#ui', $announce)) $announce = mb_substr($announce, 0, -1);
 		}
-		
-		
+
+
 		if (is_object($material)) {
 			$ustatus = $material->getAuthor() ? $material->getAuthor()->getStatus() : 0;
 			$title = $material->getTitle();
@@ -75,17 +75,17 @@ class PrintText {
 			$ustatus = $material;
 			$title = false;
 		}
-		
+
 		//pr($announce);
-		$announce = $this->closeOpenTags($announce); 
-		$announce = $this->print_page($announce, $ustatus, $title); 
+		$announce = $this->closeOpenTags($announce);
+		$announce = $this->print_page($announce, $ustatus, $title);
 		if (!empty($url)) {
 			$announce .= ' ... <br /><div style="clear:both;"></div> <a class="fps-show-mat" href="' . get_url($url) . '">'.__('Show material').'</a>';
 		}
 		return $announce;
 	}
-	
-	
+
+
 	/**
 	 * Pareseand return user signature
 	 *
@@ -96,10 +96,10 @@ class PrintText {
 	public function getSignature($str, $uid) {
 		$str = htmlspecialchars($str);
 		$str = nl2br($str);
-		
+
 		$Register = Register::getInstance();
 		$ACL = $Register['ACL'];
-		
+
 		if ($ACL->turn(array('bbcodes', 'bb_s'), false, $uid))
 			$str = $this->parseSBb($str);
 		if ($ACL->turn(array('bbcodes', 'bb_u'), false, $uid))
@@ -115,9 +115,9 @@ class PrintText {
 
 		return $str;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * @param string $str
 	 * @return string with closed tags
@@ -131,7 +131,7 @@ class PrintText {
 		if (preg_match_all('#\[([\w\d]+)[^\]]*\]#u', $str, $tags)) {
 			if (!empty($tags[1]) && count($cl_tags) != count($tags[1])) {
 				$tags[1] = array_reverse($tags[1]);
-				
+
 				//through all tags
 				foreach ($tags[1] as $tag) {
 					$close = array_pop($cl_tags);
@@ -147,16 +147,16 @@ class PrintText {
 		return $str;
 	}
 
-	
-	
-	
+
+
+
 
 	/**
 	 * @param string $message
 	 * @param int $ustatus
 	 * @param string $title
 	 * @return string
-	 * 
+	 *
 	 * bb code process
 	 */
 	public function print_page($message, $ustatus = false, $title = false) {
@@ -164,30 +164,30 @@ class PrintText {
 
 		// hook (for plugins)
 		$message = Plugins::intercept('before_print_page', $message);
-	
-	
+
+
 		// Announce tags
 		$start_tag = mb_strpos($message, '[announce]');
 		$end_tag = mb_strpos($message, '[/announce]');
 		if (false !== $start_tag && false !== $end_tag && $end_tag > $start_tag) {
 			$message = preg_replace('#\[announce\].+\[/announce\]#sui', '', $message);
 		}
-	
-		
+
+
 		// Разрезаем слишком длинные слова
-		//$message = wordwrap($message, 70, ' ', 1); 
-		//$message = preg_replace("#([^\s/\]\[]{100})#ui", "\\1 ", $message);	  
-				  
+		//$message = wordwrap($message, 70, ' ', 1);
+		//$message = preg_replace("#([^\s/\]\[]{100})#ui", "\\1 ", $message);
+
 
 		// Тэги - [code], [php], [sql]
 		preg_match_all( "#\[php\](.+)\[\/php\]#uisU", $message, $matches );
 		$cnt = count( $matches[0] );
 		for ( $i = 0; $i < $cnt; $i++ ) {
-			
+
 			$matches[1][$i] = preg_replace('#^\s*<\?php(.*)\?>\s*$#uis', '$1', $matches[1][$i]);
 			$matches[1][$i] = preg_replace('#^\s*<\?(.*)\?>\s*$#uis', '$1', $matches[1][$i]);
 			$phpBlocks[] = '<div class="codePHP">' . $this->highlight_php_string('<?php ' . $matches[1][$i] . '?>', true ) . '</div>';
-			
+
 			/*
 			$phpBlocks[] = '<div class="codePHP">' . geshi_highlight($matches[1][$i], 'php', '', true) . '</div>';
 			*/
@@ -195,15 +195,15 @@ class PrintText {
 			$phpBlocks[$i] = str_replace( '<div class="codePHP"><br />', '<div class="codePHP">', $phpBlocks[$i]);
 			$uniqidPHP = '[php_'.uniqid('').']';
 			$uniqidsPHP[] = $uniqidPHP;
-			$message = str_replace( $matches[0][$i], $uniqidPHP, $message ); 
+			$message = str_replace( $matches[0][$i], $uniqidPHP, $message );
 		}
 
 		$spaces = array( ' ', "\t" );
 		$entities = array( '&nbsp;', '&nbsp;&nbsp;&nbsp;&nbsp;' );
 
-	
-		
-		
+
+
+
 		preg_match_all( "#\[code\](.+)\[\/code\]#uisU", $message, $matches );
 		$cnt = count( $matches[0] );
 		for ( $i = 0; $i < $cnt; $i++ ) {
@@ -212,11 +212,11 @@ class PrintText {
 			$codeBlocks[$i] = str_replace( '<div class="code"><br />', '<div class="code">', $codeBlocks[$i] );
 			$uniqidCode = '[code_'.uniqid('').']';
 			$uniqidsCode[] = $uniqidCode;
-			$message = str_replace( $matches[0][$i], $uniqidCode, $message ); 
+			$message = str_replace( $matches[0][$i], $uniqidCode, $message );
 		}
 
-		
-		
+
+
 		preg_match_all( "#\[sql\](.+)\[\/sql\]#isU", $message, $matches );
 		$cnt = count( $matches[0] );
 		for ( $i = 0; $i < $cnt; $i++ ) {
@@ -225,11 +225,11 @@ class PrintText {
 			$sqlBlocks[$i] = str_replace( '<div class="codeSQL"><br />', '<div class="codeSQL">', $sqlBlocks[$i] );
 			$uniqidSQL = '[sql_'.uniqid('').']';
 			$uniqidsSQL[] = $uniqidSQL;
-			$message = str_replace( $matches[0][$i], $uniqidSQL, $message ); 
+			$message = str_replace( $matches[0][$i], $uniqidSQL, $message );
 		}
 
-			
-		
+
+
 		preg_match_all( "#\[js\](.+)\[\/js\]#isU", $message, $matches );
 		$cnt = count( $matches[0] );
 		for ( $i = 0; $i < $cnt; $i++ ) {
@@ -238,8 +238,8 @@ class PrintText {
 			$jsBlocks[$i] = str_replace( '<div class="codeJS"><code><br />', '<div class="codeJS"><code>', $jsBlocks[$i] );
 			$uniqidJS = '[js_'.uniqid('').']';
 			$uniqidsJS[] = $uniqidJS;
-			$message = str_replace( $matches[0][$i], $uniqidJS, $message ); 
-		} 
+			$message = str_replace( $matches[0][$i], $uniqidJS, $message );
+		}
 
 		preg_match_all( "#\[css\](.+)\[\/css\]#isU", $message, $matches );
 		$cnt = count( $matches[0] );
@@ -249,8 +249,8 @@ class PrintText {
 			$cssBlocks[$i] = str_replace( '<div class="codeCSS"><code><br />', '<div class="codeCSS"><code>', $cssBlocks[$i] );
 			$uniqidCSS = '[css_'.uniqid('').']';
 			$uniqidsCSS[] = $uniqidCSS;
-			$message = str_replace( $matches[0][$i], $uniqidCSS, $message ); 
-		} 
+			$message = str_replace( $matches[0][$i], $uniqidCSS, $message );
+		}
 
 		preg_match_all( "#\[html\](.+)\[\/html\]#isU", $message, $matches );
 		$cnt = count( $matches[0] );
@@ -260,9 +260,9 @@ class PrintText {
 			$htmlBlocks[$i] = str_replace( '<div class="codeHTML"><br />', '<div class="codeHTML">', $htmlBlocks[$i] );
 			$uniqidHTML = '[html_'.uniqid('').']';
 			$uniqidsHTML[] = $uniqidHTML;
-			$message = str_replace( $matches[0][$i], $uniqidHTML, $message ); 
-		}	
-		
+			$message = str_replace( $matches[0][$i], $uniqidHTML, $message );
+		}
+
 		preg_match_all( "#\[xml\](.+)\[\/xml\]#isU", $message, $matches );
 		$cnt = count( $matches[0] );
 		for ( $i = 0; $i < $cnt; $i++ ) {
@@ -271,7 +271,7 @@ class PrintText {
 			$xmlBlocks[$i] = str_replace( '<div class="codeHTML"><br />', '<div class="codeHTML">', $xmlBlocks[$i] );
 			$uniqidXML = '[xml_'.uniqid('').']';
 			$uniqidsXML[] = $uniqidXML;
-			$message = str_replace( $matches[0][$i], $uniqidXML, $message ); 
+			$message = str_replace( $matches[0][$i], $uniqidXML, $message );
 		}
 		/*
 		preg_match_all( "#\[img\][\s]*([\S]+)[\s]*\[\/img\]#isU", $message, $matches );
@@ -280,10 +280,10 @@ class PrintText {
 		file_put_contents( );
 		}
 		*/
-		
-		
+
+
 		$ACL = $register['ACL'];
-		if (!$ACL->turn(array('bbcodes', 'html'), false, $ustatus) 
+		if (!$ACL->turn(array('bbcodes', 'html'), false, $ustatus)
 		|| !Config::read('allow_html')) {
 			$message = htmlspecialchars($message);
 		}
@@ -292,46 +292,46 @@ class PrintText {
 		$message = $this->parseBBb($message);
 		$message = $this->parseSBb($message);
 		$message = $this->parseUBb($message);
-		
+
 		$message = preg_replace("#\[quote\](.+)\[\/quote\]#uisU",'<div class="bbQuoteBlock"><div class="bbQuoteName" style=""><b>Цитата</b></div><div class="quoteMessage" style="">\\1</div></div>',$message);
 		$message = preg_replace("#\[quote=([-_0-9a-zа-я]{1,30})\](.+)\[\/quote\]#isuU", '<div class="bbQuoteBlock"><div class="bbQuoteName" style=""><b>\\1 пишет:</b></div><div class="quoteMessage" style="">\\2</div></div>', $message);
-		if (!$ACL->turn(array('bbcodes', 'html'), false, $ustatus) 
+		if (!$ACL->turn(array('bbcodes', 'html'), false, $ustatus)
 		|| !Config::read('allow_html')) {
 			$message = preg_replace("#\[quote=&quot;([-_ 0-9a-zа-я]{1,30})&quot;\](.+)\[\/quote\]#isuU", '<div class="bbQuoteBlock"><div class="bbQuoteName" style=""><b>\\1 пишет:</b></div><div class="quoteMessage" style="">\\2</div></div>', $message);
 		} else {
 			$message = preg_replace("#\[quote=\"([-_ 0-9a-zа-я]{1,30})\"\](.+)\[\/quote\]#isuU", '<div class="bbQuoteBlock"><div class="bbQuoteName" style=""><b>\\1 пишет:</b></div><div class="quoteMessage" style="">\\2</div></div>', $message);
 		}
 		$message = $this->parseImgBb($message, $title);
-		
-		
+
+
 		$message = preg_replace("#\[color=red\](.+)\[\/color\]#uisU",'<span style="color:#FF0000">\\1</span>',$message);
 		$message = preg_replace("#\[color=green\](.+)\[\/color\]#uisU",'<span style="color:#008000">\\1</span>',$message);
 		$message = preg_replace("#\[color=blue\](.+)\[\/color\]#uisU",'<span style="color:#0000FF">\\1</span>',$message);
 		$message = preg_replace("#\[color=\#?([0-9a-z]{3,6})\](.+)\[\/color\]#uisU",'<span style="color:#\\1">\\2</span>',$message);
-		
-		
+
+
 		$message = preg_replace_callback("#\[list\]\s*((?:\[\*\].+)+)\[\/list\]#usiU",'getUnorderedList',$message);
 		$message = preg_replace_callback("#\[list=([a|1])\]\s*((?:\[\*\].+)+)\[\/list\]#usiU", 'getOrderedList',$message);
 		$message = $this->parseUrlBb($message);
-		
-		
+
+
 		$message = preg_replace("#\[size=(10|15|20|25)\]([^\[]*)\[/size\]#uisU", '<span style="font-size:\\1px;">\\2</span>', $message); //для поддержки старого формата
 		$message = preg_replace("#\[size=(50|85|100|150|200)\]([^\[]*)\[/size\]#uisU", '<span style="font-size:\\1%;">\\2</span>', $message);
 		$message = preg_replace("#\[center\]([^\[]*)\[/center\]#uisU", '<span style="display:block;width:100%;text-align:center;">\\1</span>', $message);
 		$message = preg_replace("#\[right\]([^\[]*)\[/right\]#uisU", '<span style="display:block;width:100%;text-align:right;">\\1</span>', $message);
 		$message = preg_replace("#\[left\]([^\[]*)\[/left\]#uisU", '<span style="display:block;width:100%;text-align:left;">\\1</span>', $message);
-		
-		
+
+
 		$message = preg_replace("#\[spoiler\](.+)\[/spoiler\]#suU", '<div onClick="if ($(this).next().css(\'display\') == \'none\') { $(this).next().toggle(1000); } else { $(this).next().toggle(1000); }" class="spoiler-open">' . __('Bb-spoiler open') . '</div><div class="spoiler-win">\\1</div>', $message);
-		
-		
+
+
 		if (preg_match_all("#\[video\](http://(www\.)*youtube\.com/watch\?v=([\w-]+))\[/video\]#isU", $message, $match)) {
 			if (!empty($match[1])) {
 				foreach ($match[1] as $key => $url) {
-					$message = str_replace('[video]' . $url . '[/video]', 
-					'<object height="300" width="450" data="http://youtube.com/v/' . $match[3][$key] 
+					$message = str_replace('[video]' . $url . '[/video]',
+					'<object height="300" width="450" data="http://youtube.com/v/' . $match[3][$key]
 					. '" type="application/x-shockwave-flash" class="restrain" id="yui-gen54">'
-					. '<param value="http://youtube.com/v/' . $match[3][$key] . '" name="movie"><param value="transparent" name="wmode">' 
+					. '<param value="http://youtube.com/v/' . $match[3][$key] . '" name="movie"><param value="transparent" name="wmode">'
 					. '<!--[if IE 6]><embed width="400" height="300" type="application/x-shockwave-flash" src="http://youtube.com/v/' . $match[3][$key] . '" />'
 					. '<![endif]--></object>', $message);
 				}
@@ -340,11 +340,11 @@ class PrintText {
 		if (preg_match_all("#\[video\](http://(www\.)*rutube\.ru/tracks/[\d]+\.html\?v=([\w]+))\[/video\]#isU", $message, $match)) {
 			if (!empty($match[1])) {
 				foreach ($match[1] as $key => $url) {
-					$message = str_replace('[video]' . $url . '[/video]', 
-					'<object height="300" width="450" data="http://video.rutube.ru/' . $match[3][$key] 
+					$message = str_replace('[video]' . $url . '[/video]',
+					'<object height="300" width="450" data="http://video.rutube.ru/' . $match[3][$key]
 					. '" type="application/x-shockwave-flash" class="restrain" id="yui-gen54">'
-					. '<param value="http://video.rutube.ru/' . $match[3][$key] . '" name="movie"><param value="transparent" name="wmode">' 
-					. '<!--[if IE 6]><embed width="400" height="300" type="application/x-shockwave-flash" src="http://video.rutube.ru/' 
+					. '<param value="http://video.rutube.ru/' . $match[3][$key] . '" name="movie"><param value="transparent" name="wmode">'
+					. '<!--[if IE 6]><embed width="400" height="300" type="application/x-shockwave-flash" src="http://video.rutube.ru/'
 					. $match[3][$key] . '" />'
 					. '<![endif]--></object>', $message);
 				}
@@ -353,13 +353,13 @@ class PrintText {
 		if (!empty($_SESSION['user']['id'])) {
 			$message = preg_replace("#\[hide\](.*)\[/hide\]#isU", '\\1', $message);
 		} else {
-			$message = preg_replace("#\[hide\](.*)\[/hide\]#isU", '<div class="hide">Необходима авторизация. <a href="' . WWW_ROOT 
+			$message = preg_replace("#\[hide\](.*)\[/hide\]#isU", '<div class="hide">Необходима авторизация. <a href="' . WWW_ROOT
 					. '/users/add_form/">Регистрация</a></div>', $message);
 		}
 
-		
-		
-		
+
+
+
 		$message = nl2br( $message);
 		//work for smile
 		if (Config::read('allow_smiles')) {
@@ -377,7 +377,7 @@ class PrintText {
 		// Над этим тоже надо будет подумать
 		$message = str_replace( '</div><br />', '</div>', $message );
 
-		
+
 
 		return $message;
 	}
@@ -401,48 +401,39 @@ class PrintText {
 	public function parseImgBb($str, $title = false) {
 		$title = (false !== $title) ? h(preg_replace('#[^\w\dА-я ]+#ui', ' ', $title)) : '';
 		$Register = Register::getInstance();
-		
-		
-		if (!empty($Register['module'])) {
-			$sizex = $Register['Config']->read('img_size_x', $Register['module']);
-			$sizey = $Register['Config']->read('img_size_y', $Register['module']);
-			$sizex = intval($sizex);
-			$sizey = intval($sizey);
-			if (!empty($sizex) && !empty($sizey)) {
-				$str = preg_replace("#\[img\][\s]*([^\"'\>\<\(\)]+)[\s]*\[\/img\]#isU"
-				,'<a href="\\1" class="gallery"><img style="max-width:'.$sizex.'px; max-height:'.$sizey
-				.'px;" src="\\1" alt="'.$title.'" title="'.$title.'" /></a>',$str);
-				$str = preg_replace("#\[imgl\][\s]*([^\"'\>\<\(\)]+)[\s]*\[\/imgl\]#isU"
-				,'<a style="float:left;" href="\\1" class="gallery"><img style="max-width:'.$sizex.'px; max-height:'
-				.$sizey.'px;" src="\\1" alt="'.$title.'" title="'.$title.'" /><div class="clear"></div></a>',$str);
-				return $str;
-			}
-		}
-		$str = preg_replace("#\[img\][\s]*([^\"'\>\<\(\)]+)[\s]*\[\/img\]#isU"
-		,'<a href="\\1" class="gallery"><img style="max-width:150px;" src="\\1" alt="'.$title.'" title="'.$title.'" /></a>',$str);
-		$str = preg_replace("#\[imgl\][\s]*([^\"'\>\<\(\)]+)[\s]*\[\/imgl\]#isU"
-		,'<a style="float:left;" href="\\1" class="gallery"><img style="max-width:150px;" src="\\1" alt="'.$title.'" title="'.$title.'" /></a>',$str);
+
+		$sizex = (!empty($Register['module'])) ? intval($Register['Config']->read('img_size_x', $Register['module'])) : 150;
+		$sizey = (!empty($Register['module'])) ? intval($Register['Config']->read('img_size_y', $Register['module'])) : 150;
+		$preview = (!empty($Register['module'])) ? $Register['Config']->read('use_preview', $Register['module']) : false;
+		$str = preg_replace("#\[img\][\s]*([^\"'\>\<\(\)]+)[\s]*\[\/img\]#isU", 
+				($preview ? '<a href="\\1" class="gallery">' : '') .
+				'<img style="max-width:' . (isset($sizex) ? $sizex : 150) . 'px; max-height:' . (isset($sizey) ? $sizey : 150) . 'px;" src="\\1" alt="' . $title . '" title="' . $title . '" />' .
+				($preview ? '</a>' : ''), $str);
+		$str = preg_replace("#\[imgl\][\s]*([^\"'\>\<\(\)]+)[\s]*\[\/imgl\]#isU", 
+				($preview ? '<a style="float:left;" href="\\1" class="gallery">' : '') .
+				'<img style="max-width:' . (isset($sizex) ? $sizex : 150) . 'px; max-height:' . (isset($sizey) ? $sizey : 150) . 'px;" src="\\1" alt="' . $title . '" title="' . $title . '" /><div class="clear"></div>' .
+				($preview ? '</a>' : ''), $str);
 		return $str;
 	}
 	public function parseUrlBb($str) {
 		$str = preg_replace("#\[url\](http[s]*://[\w\d\-_.]*\.\w{2,}[\w\d\-_\\/.\?=\#&;%]*)\[\/url\]#iuU",'<noindex><a href="\\1" target="_blank">\\1</a></noindex>',$str);
 		$str = preg_replace("#\[url=(http[s]*://[\w\d\-_.]*\.\w{2,}[\w\d\-_\\/.\?=\#;&%]*)\]([^\[]*)\[/url\]#iuU", '<noindex><a href="\\1" target="_blank">\\2</a></noindex>', $str);
-		
+
 		$str = preg_replace("#\[gallery=([\w\d\-_\\/.\?=\#;&%+]*)\]([^\[]*)\[/gallery\]#iuU", '<a href="\\1" class="gallery">\\2</a>', $str);
 
 		return $str;
 	}
 
-	
+
 	/**
 	 * @param string $str
-	 * @return string 
+	 * @return string
 	 *
-	 * highlight php string 
+	 * highlight php string
 	 */
 	public function highlight_php_string($str) {
 		$str = highlight_string($str, true);
-		
+
 		$cnt = 1;
 		if (preg_match_all('#(<br />)#iu', $str, $count)) {
 			$cnt = count($count[1]);
@@ -453,20 +444,20 @@ class PrintText {
 			$box .= '&nbsp;' . $i . '&nbsp;<br />';
 		}
 		$box .= '</code></div>';
-		
+
 		$str = $box . '<div style="margin-left:40px;">' . $str . '</div>';
-		
+
 		return $str;
 	}
 
 
-	
-	
+
+
 	/**
 	 * @param string $str
-	 * @return string 
+	 * @return string
 	 *
-	 * smiles process 
+	 * smiles process
 	 */
 	public function smile($str) {
 		$str = Plugins::intercept('before_smiles_parse', $str);
@@ -474,9 +465,9 @@ class PrintText {
 		$Register = Register::getInstance();
 		$path = $Register['Config']->read('smiles_set');
 		$path = ROOT . '/sys/img/smiles/' . (!empty($path) ? $path : 'fapos') . '/info.php';
-		
+
 		include $path;
-		
+
 		$from = array();
 		$to = array();
 		if (isset($smilesList) && is_array($smilesList)) {
@@ -486,19 +477,19 @@ class PrintText {
 			}
 		}
 		$str = str_replace($from, $to, $str);
-		
+
 		return $str;
 	}
 
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * @param string $str
-	 * @return string 
+	 * @return string
 	 *
-	 * highlight sql string 
+	 * highlight sql string
 	 */
 	public function highlight_sql($sql) {
 		$sql = preg_replace("#(\"|'|`)(.+?)\\1#i", "<span style='color:red'>\\0</span>", $sql );
@@ -514,7 +505,7 @@ class PrintText {
 	}
 
 
-	
+
 }
 
 
@@ -527,7 +518,7 @@ function getUnorderedList( $matches )
 	$list = '<ul>';
 	$tmp = trim( $matches[1] );
 	$tmp = substr( $tmp, 3 );
-	$tmpArray = explode( '[*]', $tmp );	 
+	$tmpArray = explode( '[*]', $tmp );
 	$elements = '';
 	foreach ( $tmpArray as $value ) {
 		$elements = $elements.'<li>'.trim($value).'</li>';
@@ -591,13 +582,13 @@ class Lingua_Stem_Ru {
     {
 		mb_internal_encoding('UTF-8');
         $word = mb_strtolower($word);
-		
+
         $word = str_replace('ё', 'е', $word);
         # Check against cache of stemmed words
         if ($this->Stem_Caching && isset($this->Stem_Cache[$word])) {
             return $this->Stem_Cache[$word];
         }
-		
+
         $stem = $word;
         do {
           if (!preg_match($this->RVRE, $word, $p)) break;

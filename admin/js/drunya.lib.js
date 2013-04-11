@@ -6,6 +6,15 @@ var openedWindows = new Array();
 //var wObj = document.getElementById('test');
 
 
+function selectAclTab(id) {
+	$('div.acl-perms-collection').each(function(){
+		$(this).hide();
+	});
+	
+	$('div#aclset' + id).show();
+}
+
+
 function openPopup(id) {
 	$('#' + id).fadeIn(1000);
 	
@@ -68,7 +77,7 @@ function save(prefix) {
 	}
 }
 function _confirm() {
-	return confirm('Вы уверенны?');
+	return confirm('Вы уверены?');
 }
 
 

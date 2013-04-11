@@ -29,7 +29,7 @@ include_once ROOT . '/admin/inc/adm_boot.php';
 
 $pageTitle = __('Design - templates');
 $pageNav = $pageTitle;
-$pageNavr = '<a href="set_default_dis.php" onClick="return confirm(\'Система востановит стандартный шаблон. Вы уверенны?\')">' . __('Return to default template') . '</a>&nbsp;|&nbsp;<a href="backup_dis.php" onClick="return confirm(\'Система сделает резервную копию шаблона. Вы уверенны?\')">' . __('Save current state of template') . '</a>';
+$pageNavr = '<a href="set_default_dis.php" onClick="return confirm(\'Система востановит стандартный шаблон. Вы уверены?\')">' . __('Return to default template') . '</a>&nbsp;|&nbsp;<a href="backup_dis.php" onClick="return confirm(\'Система сделает резервную копию шаблона. Вы уверены?\')">' . __('Save current state of template') . '</a>';
 
 
 $allowedFiles = array(
@@ -164,9 +164,9 @@ if(isset($_POST['send']) && isset($_POST['templ'])) {
 	
 	
 	if(fputs($file, $_POST['templ'])) {
-		$mess = __('Templates is saved');
+		$mess = __('Template is saved');
 	} else {
-		$mess = __('Templates is not saved');
+		$mess = __('Template is not saved');
 	}
 	fclose($file);
 }

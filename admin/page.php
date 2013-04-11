@@ -2,11 +2,12 @@
 ##################################################
 ##												##
 ## Author:       Andrey Brykin (Drunya)         ##
-## Version:      1.5                            ##
+## Version:      1.5.1                          ##
 ## Project:      CMS                            ##
 ## package       CMS Fapos                      ##
 ## subpackege    Admin Panel module             ##
-## copyright     ©Andrey Brykin 2010-2012       ##
+## copyright     ©Andrey Brykin 2010-2013       ##
+## @last mod.     2013/04/05                    ##
 ##################################################
 
 
@@ -418,7 +419,7 @@ include_once ROOT . '/admin/template/header.php';
 				</div>
 				<div class="setting-item">
 					<div class="center">
-						<textarea style="height:300px;" id="mainTextarea" name="content"></textarea>
+						<textarea style="min-height:300px;" id="mainTextarea" name="content"></textarea>
 					</div>
 					<div class="clear"></div>
 				</div>
@@ -453,6 +454,7 @@ $(document).ready(function(){
 		remove_styles: false,
 		remove_classes: false,
 		image_upload: "/img_uploader.php",
+		autoresize: true,
 	});
 	
 	
@@ -741,7 +743,7 @@ function fillForm(id){
 		$(form).find('input[name="meta_description"]').val(data.meta_description);
 		$(form).find('input[name="template"]').val(data.template);
 		$(form).find('textarea[name="content"]').val(data.content);
-		$('div.redactor_editor').html(data.content);
+		$('div.redactor_editor').html(data.content); 
 		FpsLib.hideLoader();
 	});
 }

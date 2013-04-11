@@ -2,12 +2,12 @@
 ##################################################
 ##												##
 ## @Author:       Andrey Brykin (Drunya)        ##
-## @Version:      1.4.9                         ##
+## @Version:      1.6.1                         ##
 ## @Project:      CMS                           ##
 ## @package       CMS Fapos                     ##
 ## @subpackege    Admin Panel module            ##
-## @copyright     ©Andrey Brykin 2010-2011      ##
-## @last mod.     2012/02/15                    ##
+## @copyright     ©Andrey Brykin 2010-2013      ##
+## @last mod.     2013/04/05                    ##
 ##################################################
 
 
@@ -55,9 +55,9 @@ if (!empty($templates)) {
 
 // Prepare fonts select list
 $fonts = glob(ROOT . '/sys/fonts/*.ttf');
-sort($fonts);
 $fontSelect = array();
 if (!empty($fonts)) {
+	sort($fonts);
 	foreach ($fonts as $value) {
 		$pos = strrpos($value, "/");
 		if ($pos >= 0) {
@@ -71,9 +71,9 @@ if (!empty($fonts)) {
 
 // Prepare smiles select list
 $smiles = glob(ROOT . '/sys/img/smiles/*/info.php');
-sort($smiles);
 $smilesSelect = array();
 if (!empty($smiles)) {
+	sort($smiles);
 	foreach ($smiles as $value) {
 		if (is_file($value)) {
 			include_once $value;
@@ -136,16 +136,20 @@ if (in_array($module, $sysMods)) {
 		case 'watermark':
 			$pageTitle = __('Watermark settings');
 			break;
+		case 'autotags':
+			$pageTitle = __('Auto tags settings');
+			break;
 	}
 } else {
 	$pathToModInfo = ROOT . '/modules/' . $module . '/info.php';
 	if (file_exists($pathToModInfo)) {
-	include ($pathToModInfo);
+		include ($pathToModInfo);
 		$pageTitle = (isset($menuInfo['ankor']) ? $menuInfo['ankor'] . ' - Настройки' : $pageTitle);
 	} else {
+		$_SESSION['mess'] = "Модуль \"{$module}\" не найден!";
 		$module = 'sys';
 		$settingsInfo = $settingsInfo[$module];
-}
+	}
 }
 
 
@@ -178,18 +182,18 @@ if (isset($_POST['send'])) {
 			continue;
 		} 
 		
-		
+
 		
 		if (isset($_POST[$fname]) || isset($_FILES[$fname])) {
 			$value = trim((string)$_POST[$fname]);
-				}
+		}
+			
+			
 		
-		
-		
-			if (!empty($params['onsave'])) {
-				if (!empty($params['onsave']['multiply'])) {
-					$value = round($value * $params['onsave']['multiply']);
-				}
+		if (!empty($params['onsave'])) {
+			if (!empty($params['onsave']['multiply'])) {
+				$value = round($value * $params['onsave']['multiply']);
+			}
 			if (!empty($params['onsave']['func'])
 				&& function_exists((string)$params['onsave']['func'])) {
 				if ($params['type'] == 'file' && (isset($_POST[$fname]) || isset($_FILES[$fname]))) {
@@ -198,13 +202,13 @@ if (isset($_POST['send'])) {
 				} else {
 					$tmpSet[$fname] = $value;
 					call_user_func((string)$params['onsave']['func'], $tmpSet);
+				}
 			}
-		}	
 		}
 			
 
 		if (empty($value)) $value = '';
-		if ('checkbox' === $params['type']) {
+		if (isset($params['type']) && $params['type'] === 'checkbox') {
 			$tmpSet[$fname] = (!empty($value)) ? 1 : 0;
 		} else {
 			$tmpSet[$fname] = $value;
@@ -222,6 +226,7 @@ if (isset($_POST['send'])) {
 
 	//save settings
 	Config::write($tmpSet);
+	$_SESSION['mess'] = "Настройки успешно сохранены!";
 	//clean cache
 	$Cache = new Cache;
 	$Cache->clean(CACHE_MATCHING_ANY_TAG, array('module_' . $module));
@@ -362,11 +367,16 @@ if (count($settingsInfo)) {
 $pageNav = $pageTitle;
 $pageNavr = '';
 include_once ROOT . '/admin/template/header.php';
+
+if (isset($_SESSION['mess'])) {
+	echo '<div class="warning"><br /><b>' . $_SESSION['mess'] . '</b><br /><br /></div>';
+	unset($_SESSION['mess']);
+}
 ?>
 
 <form method="POST" action="settings.php?m=<?php echo $module; ?>" enctype="multipart/form-data">
 <div class="list">
-	<div class="title">Общие настройки</div>
+	<div class="title"><?php echo $pageTitle; ?></div>
 	<div class="level1">
 		<div class="head">
 			<div class="title settings">Ключ</div>

@@ -7,7 +7,7 @@
 ## Project:      CMS                            ##
 ## package       CMS Fapos                      ##
 ## subpackege    Document parser library        ##
-## copyright     В©Andrey Brykin 2010-2013       ##
+## copyright     ©Andrey Brykin 2010-2013       ##
 ## last mod.     2013/02/17                     ##
 ##################################################
 
@@ -272,8 +272,8 @@ class Document_Parser {
 			}
 			$tbout = implode(', ', $names);
 		}
-		$markers['today_born_users'] = (!empty($tbout)) ? $tbout : __('No today born users');
-
+		$markers['today_born_users'] = (!empty($tbout)) ? $tbout : __('No birthdays today');
+		
 		$markers['fps_users_groups'] = $Register['ACL']->getGroups();
 		$markers['fps_users_edit'] = ($Register['ACL']->turn(array('users', 'edit_users'), false)) ? '1' : '0';
 		

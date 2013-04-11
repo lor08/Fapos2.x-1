@@ -17,7 +17,7 @@ if ($commentsModel) {
 			$entity->save();
 			
 			if ($this->Log) $this->Log->write('delete comment for ' . $this->module, $this->module . ' id(' . $entityID . ')');
-			return $this->showInfoMessage(__('Comments is deleted'), $this->getModuleURL('/view/' . $entityID));
+			return $this->showInfoMessage(__('Comment is deleted'), $this->getModuleURL('/view/' . $entityID));
 		}
 	}
 }

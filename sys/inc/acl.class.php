@@ -30,26 +30,57 @@ class ACL {
 
 	private $rules;
 	private $groups;
-	private $forums;
+	private $forumRules;
+	private $forumAssociateRules = array(
+		'grn' => array(),
+		'grm' => array(
+			'edit_themes', 
+			'edit_mine_themes',
+			'delete_mine_themes',
+			'close_themes',
+			'add_posts',
+			'edit_posts',
+			'edit_mine_posts',
+			'delete_mine_posts',
+		),
+		'grsm' => array(
+			'edit_themes', 
+			'edit_mine_themes',
+			'delete_themes',
+			'delete_mine_themes',
+			'close_themes',
+			'add_posts',
+			'edit_posts',
+			'delete_posts',
+			'edit_mine_posts',
+			'delete_mine_posts',
+		),
+	);
 
 
 	public function __construct($path) {
         include_once $path . 'acl_rules.php';
         include_once $path . 'acl_groups.php';
-        include_once $path . 'acl_forums.php';
+        include_once $path . 'forum_rules.php';
 
 		$this->rules = $acl_rules;
 		$this->groups = $acl_groups;
-		$this->forums = $acl_forums;
+		$this->forumRules = $forum_rules;
 	}
 
 
 	public function turn($params, $redirect = true, $group = false) {
+		
+		// If check access for forum actions, we must get id for this forum
+		$forum_id = (!empty($params[2])) ? intval($params[2]) : false;
+		
+	
 		if ($group === false) {
 			$user_group = (!empty($_SESSION['user']['status'])) ? $_SESSION['user']['status'] : 0;
 		} else {
 			$user_group = (int)$group;
 		}
+		
 		if (!isset($this->rules[$params[0]]) || !is_array($this->rules[$params[0]])) return false;
 		switch (count($params)) {
 			case 1:
@@ -63,19 +94,21 @@ class ACL {
 				} else {
 					$access = false;
 				}
-				if (count($params) == 3 && $params[0] == 'forum') {
-					$cat_id = intval($params[2]);
-					if ($cat_id > 0 && in_array($params[1], array('view_themes', 'add_themes', 'add_posts'))) {
-						if (isset($this->forums[$params[1]][$cat_id])) {
-							$access = (bool)in_array($user_group, $this->forums[$params[1]][$cat_id]);
-						}
-					}
-				}
 				break;
 			default:
 				$access = false;
 				break;
 		}
+		
+
+		
+		
+		// Check forum access (Moderators rules)
+		if (!$access && $forum_id) {
+			$access = $this->turnForumRules($forum_id, $params[1], $user_group);
+		}
+		
+		
 	
 		if (empty($access) && $redirect) {
 			redirect('/error.php?ac=403');
@@ -113,13 +146,45 @@ class ACL {
 	}
 	
 	
-	/**
-	*
-	*/
-	public function save_forums($forums) {
-		if ($fopen = fopen(ROOT . '/sys/settings/acl_forums.php', 'w')) {
-			fputs($fopen, '<?php ' . "\n" . '$acl_forums = ' . var_export($forums, true) . "\n" . '?>');
-			fclose($fopen);
+	
+	public function getForumRules()
+	{
+		return $this->forumRules;
+	}
+	
+	
+	function turnForumRules($forum_id, $action, $group)
+	{
+		$dest_access_groups = array();
+		
+		// Get needed access groups (groups with needed action)
+		foreach ($this->forumAssociateRules as $access_group => $actions) {
+			if (in_array($action, $actions)) {
+				$dest_access_groups[] = $access_group;
+			}
+		}
+		
+		if (empty($dest_access_groups)) return false;
+		
+		
+		// Get current forum rules
+		if (!array_key_exists($forum_id, $this->forumRules)) return false;
+		$forum_rules = $this->forumRules[$forum_id];
+		
+		if (empty($forum_rules[$group])) return false;
+		
+		
+		return (in_array($forum_rules[$group], $dest_access_groups)) ? true : false;
+	}
+	
+	
+	public function saveForumRules($rules)
+	{
+		$this->forumRules = $rules;
+		
+		if ($fopen=@fopen(ROOT . '/sys/settings/forum_rules.php', 'w')) {
+			@fputs($fopen, '<?php ' . "\n" . '$forum_rules = ' . var_export($rules, true) . "\n" . '?>');
+			@fclose($fopen);
 			return true;
 		} else {
 			return false;
@@ -149,12 +214,6 @@ class ACL {
     public function getRules()
     {
         return $this->rules;
-    }
-
-
-    public function getForums()
-    {
-        return $this->forums;
     }
 	
 	
