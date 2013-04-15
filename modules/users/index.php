@@ -1,27 +1,24 @@
 <?php
-/*---------------------------------------------\
-|											   |
-| @Author:       Andrey Brykin (Drunya)        |
-| @Version:      1.5.5                         |
-| @Project:      CMS                           |
-| @package       CMS Fapos                     |
-| @subpackege    Users Module                  |
-| @copyright     ©Andrey Brykin 2010-2013      |
-| @last mod      2013/02/22                    |
-|----------------------------------------------|
-|											   |
-| any partial or not partial extension         |
-| CMS Fapos,without the consent of the         |
-| author, is illegal                           |
-|----------------------------------------------|
-| Любое распространение                        |
-| CMS Fapos или ее частей,                     |
-| без согласия автора, является не законным    |
-\---------------------------------------------*/
 
-
-
-
+/* ---------------------------------------------\
+  |											   |
+  | @Author:       Andrey Brykin (Drunya)        |
+  | @Version:      1.5.5                         |
+  | @Project:      CMS                           |
+  | @package       CMS Fapos                     |
+  | @subpackege    Users Module                  |
+  | @copyright     ©Andrey Brykin 2010-2013      |
+  | @last mod      2013/02/22                    |
+  |----------------------------------------------|
+  |											   |
+  | any partial or not partial extension         |
+  | CMS Fapos,without the consent of the         |
+  | author, is illegal                           |
+  |----------------------------------------------|
+  | Любое распространение                        |
+  | CMS Fapos или ее частей,                     |
+  | без согласия автора, является не законным    |
+  \--------------------------------------------- */
 
 Class UsersModule extends Module {
 
@@ -88,7 +85,7 @@ Class UsersModule extends Module {
 
 			$markers['moder_panel'] = '';
 			if ($this->ACL->turn(array($this->module, 'edit_users'), false)) {
-				$markers['moder_panel'] = get_link(get_img('/sys/img/edit_16x16.png', array('alt' => __('Edit'), 'title' => __('Edit'))), $this->getModuleURL('edit_form_by_admin/' . $uid));
+				$markers['moder_panel'] = get_link('', $this->getModuleURL('edit_form_by_admin/' . $uid), array('class' => 'fps-edit'));
 			}
 
 
@@ -1940,7 +1937,7 @@ Class UsersModule extends Module {
 		// Формируем заголовок страницы
 		if ($inBox)  // Папка "Входящие"
 			$markers['h1'] = __('PM in');
-		else	 // Папка "Исходящие"
+		else  // Папка "Исходящие"
 			$markers['h1'] = __('PM on');
 		$markers['menu'] = $this->_getMessagesMenu();
 
@@ -1998,10 +1995,10 @@ Class UsersModule extends Module {
 		$markers = array('error' => '');
 		$messages = $this->Model->getInputMessages();
 
-		if (count($messages) == 0) {
+		if (!$messages || (is_array($messages) && count($messages) == 0)) {
 			$markers['messages'] = array();
 			$markers['error'] = __('This dir is empty');
-			$source = $this->render('vievinpm.html', array('context' => $markers));
+			$source = $this->render('vievinpm.html', array('messages' => array(), 'context' => $markers));
 			return $this->_view($source);
 		}
 
@@ -2036,10 +2033,10 @@ Class UsersModule extends Module {
 
 		$markers = array('error' => '');
 		$messages = $this->Model->getOutputMessages();
-		if (count($messages) == 0) {
+		if (!$messages || (is_array($messages) && count($messages) == 0)) {
 			$markers['messages'] = array();
 			$markers['error'] = __('This dir is empty');
-			$source = $this->render('vievonpm.html', array('context' => $markers));
+			$source = $this->render('vievonpm.html', array('messages' => array(), 'context' => $markers));
 			return $this->_view($source);
 		}
 
@@ -2602,9 +2599,10 @@ Class UsersModule extends Module {
 
 
 		$votesModel = $this->Register['ModManager']->getModelInstance('UsersVotes');
-		$votesModel->bindModel('Users');
+		$votesModel->bindModel('touser');
+		$votesModel->bindModel('fromuser');
 		$messages = $votesModel->getCollection(array('to_user' => $user_id), array('order' => '`date` DESC'));
-		if (count($messages) < 1) {
+		if (!is_array($messages) || count($messages) < 1) {
 			return $this->_view(__('No votes for user'));
 		}
 
@@ -2615,11 +2613,7 @@ Class UsersModule extends Module {
 			// Admin buttons
 			$message->setModer_panel('');
 			if ($this->ACL->turn(array($this->module, 'delete_rating_comments'), false)) {
-				$message->setModer_panel(get_img('/sys/img/delete_16x16.png', array(
-							'onclick' => "deleteUserVote('" . $message->getId() . "'); return false;",
-							'class' => 'aimg',
-								)
-						));
+				$message->setModer_panel(get_link('', 'javascript://', array('onclick' => "deleteUserVote('" . $message->getId() . "'); return false;", 'class' => 'fps-delete')));
 			}
 		}
 
@@ -2838,12 +2832,7 @@ Class UsersModule extends Module {
 		$max_warnings_by_ban = $this->Register['Config']->read('warnings_by_ban', $this->module);
 		$user_procent_warnings = (100 / $max_warnings_by_ban) * $to_user->getWarnings();
 		foreach ($warnings as $warning) {
-			$panel = get_img('/sys/img/delete_16x16.png', array(
-				'onclick' => "deleteUserWarning('" . $warning->getId() . "'); return false;",
-				'class' => 'aimg',
-					)
-			);
-			$warning->setModerPanel($panel);
+			$warning->setModerPanel(get_link('', 'javascript://', array('onclick' => "deleteUserWarning('" . $warning->getId() . "'); return false;", 'class' => 'fps-delete')));
 		}
 
 
@@ -2963,6 +2952,103 @@ Class UsersModule extends Module {
 				print '<option value="' . $user['name'] . '">';
 			}
 		}
+	}
+
+	/**
+	 * Show comments by user.
+	 */
+	public function comments($id = null) {
+		/* COMMENT BLOCK */
+		$total = $this->Model->getCountComments($id);
+		$per_page = 25;
+
+		/* pages nav */
+		list($pages, $page) = pagination($total, $per_page,  $this->getModuleURL('comments/' . ($id ? $id : '')));
+		$this->_globalize(array('comments_pagination' => $pages));
+
+		$offset = ($page - 1) * $per_page;
+
+		$comments = $this->Model->getComments($id, $offset, $per_page);
+		if ($comments && is_array($comments)) {
+			foreach ($comments as $index => $comment) {
+
+				$module = $comment['type'];
+
+				$className = $this->Register['ModManager']->getEntityName($module . 'Comments');
+				$entity = new $className($comment);
+
+				if ($entity) {
+					$markers = array();
+
+					// COMMENT ADMIN BAR
+					$ip = ($entity->getIp()) ? $entity->getIp() : 'Unknown';
+					$moder_panel = '';
+					if ($this->ACL->turn(array($module, 'edit_comments'), false)) {
+						$moder_panel .= get_link('', '/' . $module . '/edit_comment_form/' . $entity->getId(), array('class' => 'fps-edit', 'title' => __('Edit')));
+					}
+
+					if ($this->ACL->turn(array($module, 'delete_comments'), false)) {
+						$moder_panel .= get_link('', '/' . $module . '/delete_comment/' . $entity->getId(), array('class' => 'fps-delete', 'title' => __('Delete'), 'onClick' => "return confirm('" . __('Are you sure') . "')"));
+					}
+
+					if (!empty($moder_panel)) {
+						$moder_panel .= '<a target="_blank" href="https://apps.db.ripe.net/search/query.html?searchtext=' . h($ip) . '" class="fps-ip" title="IP: ' . h($ip) . '"></a>';
+					}
+
+					$img = array(
+						'alt' => 'User avatar',
+						'title' => h($entity->getName()),
+						'class' => 'ava',
+					);
+					$markers['avatar'] = '<img class="ava" src="' . getAvatar($entity->getUser_id()) . '" alt="User avatar" />';
+
+
+					if ($entity->getUser_id()) {
+						$markers['name_a'] = get_link(h($entity->getName()), getProfileUrl((int)$entity->getUser_id()));
+						$markers['user_url'] = get_url(getProfileUrl((int)$entity->getUser_id()));
+						$markers['avatar'] = get_link($markers['avatar'], $markers['user_url']);
+					} else {
+						$markers['name_a'] = h($entity->getName());
+					}
+					$markers['name'] = h($entity->getName());
+
+
+					$markers['moder_panel'] = $moder_panel;
+					$markers['message'] = $this->Textarier->print_page($entity->getMessage());
+
+					if ($entity->getEditdate()!='0000-00-00 00:00:00') {
+						$markers['editdate'] = 'Комментарий был изменён '.$entity->getEditdate();
+					} else {
+						$markers['editdate'] = '';
+					}
+
+					$entity->setEntry_url(get_url('/' . $module . '/view/' . $entity->getEntity_id()));
+
+					$entity->setAdd_markers($markers);
+				}
+				$comments[$index] = $entity;
+			}
+		}
+		$this->comments = $this->render('viewcomment.html', array('commentsr' => $comments));
+
+		$title = __('All comments');
+		if ($id && intval($id) > 0) {
+			$user = $this->Model->getById(intval($id));
+			if ($user)
+				$title = __('User comments') . ' "' . h($user->getName()) . '"';
+		}
+		$this->page_title = $title . ' - ' . $this->page_title;
+
+		$navi = array();
+		$navi['add_link'] = ($this->ACL->turn(array($this->module, 'add_materials'), false)) ? get_link(__('Add material'), $this->getModuleURL('add_form/')) : '';
+		$navi['module_url'] = get_url($this->getModuleURL());
+		$navi['category_url'] = get_url($this->getModuleURL('comments/' . ($id ? $id : '')));
+		$navi['category_name'] = $title;
+		$navi['navigation'] = get_link(__('Home'), '/') . __('Separator')
+				. get_link(h($this->module_title), $this->getModuleURL()) . __('Separator') . $title;
+		$this->_globalize($navi);
+
+		return $this->_view('');
 	}
 
 }

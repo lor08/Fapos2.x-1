@@ -76,7 +76,7 @@ class ChatModule extends Module {
 					$record['message'] = $this->Textarier->print_page($record['message']);
 					/* view ip adres if admin */
 					if ($this->ACL->turn(array($this->module, 'delete_materials'), false)) {
-						$record['ip'] = get_img('/sys/img/ip.png', array('title' => h($record['ip'])));
+						$record['ip'] = '<a target="_blank" href="https://apps.db.ripe.net/search/query.html?searchtext=' . $record['ip'] . '" class="fps-ip" title="IP: ' . $record['ip'] . '"></a>';
 					} else {
 						$record['ip'] = '';
 					}

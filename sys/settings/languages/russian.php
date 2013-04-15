@@ -35,7 +35,7 @@ $language = array(
 	'To last' 						=> 'К последнему...',
 	'Post author' 					=> '<br />Сообщение от: ',
 	'To profile' 					=> 'К профайлу',
-	'Are you sure'				    => 'Are you sure?',
+	'Are you sure'				    => 'Вы уверены?',
 	'Can not find forum' 			=> 'Форум с таким ID не найден',
 	'New topic' 					=> 'Начать новую тему',
 	'No topics' 					=> '<h4>Тут пока нет тем :(</h4>',
@@ -369,6 +369,15 @@ $language = array(
 	'New PM on forum'               => 'У вас новое личное сообщение',
 	'User themes'                   => 'Темы пользователя',
 	'Material not found'            => 'Материал не найден',
+	'User materials'                => 'Материалы пользователя',
+	'User comments'                 => 'Комментарии пользователя',
+	'All comments'                  => 'Комментарии пользователей',
+	'Lock theme'                    => 'Закрыть тему',
+	'Unlock theme'                  => 'Открыть тему',
+	'Important theme'               => 'Закрепить тему',
+	'Unimportant theme'             => 'Открепить тему',
+	'Delete theme'                  => 'Удалить тему',
+	'Theme admin panel'             => 'Панель администрирования',
 	
 	
 	// Templates name

@@ -45,9 +45,16 @@ function resampleImage($path, $new_path, $sizew, $sizeh) {
 	}
 
 	$dest = imagecreatetruecolor($nw, $nh);
-	imagecopyresampled(
-		$dest, $img, 0, 0, 0, 0, $nw, $nh, $w, $h
-	);
+	switch ($itype) {
+		case 'image/gif':
+		case 'image/png':
+			imagecolortransparent($dest, imagecolortransparent($img));
+			imagealphablending($dest, false);
+			imagesavealpha($dest, true);
+			break;
+		default: break;
+	}
+	imagecopyresampled($dest, $img, 0, 0, 0, 0, $nw, $nh, $w, $h);
 
 	$quality_jpeg = Config::read('quality_jpeg');
 	if (isset($quality_jpeg)) $quality_jpeg = (intval($quality_jpeg) < 0 || intval($quality_jpeg) > 100) ? 75 : intval($quality_jpeg);

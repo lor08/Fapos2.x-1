@@ -6,7 +6,7 @@
 ## Project:      CMS                            ##
 ## package       CMS Fapos                      ##
 ## subpackege    Geting profile url function    ##
-## copyright     ©Andrey Brykin 2010-2011       ##
+## copyright     Â©Andrey Brykin 2010-2011       ##
 ##################################################
 
 
@@ -16,15 +16,17 @@
 ## CMS Fapos,without the consent of the         ##
 ## author, is illegal                           ##
 ##################################################
-## Ëşáîå ğàñïğîñòğàíåíèå                        ##
-## CMS Fapos èëè åå ÷àñòåé,                     ##
-## áåç ñîãëàñèÿ àâòîğà, ÿâëÿåòñÿ íå çàêîííûì    ##
+## Ğ›ÑĞ±Ğ¾Ğµ Ñ€Ğ°ÑĞ¿Ñ€Ğ¾ÑÑ‚Ñ€Ğ°Ğ½ĞµĞ½Ğ¸Ğµ                        ##
+## CMS Fapos Ğ¸Ğ»Ğ¸ ĞµĞµ Ñ‡Ğ°ÑÑ‚ĞµĞ¹,                     ##
+## Ğ±ĞµĞ· ÑĞ¾Ğ³Ğ»Ğ°ÑĞ¸Ñ Ğ°Ğ²Ñ‚Ğ¾Ñ€Ğ°, ÑĞ²Ğ»ÑĞµÑ‚ÑÑ Ğ½Ğµ Ğ·Ğ°ĞºĞ¾Ğ½Ğ½Ñ‹Ğ¼    ##
 ##################################################
 
 
 function getProfileUrl($user_id) {
-	if (!empty($_SESSION['user']) && $_SESSION['user']['id'] == $user_id) {
-		$url = '/users/edit_form/';
+    $Register = Register::getInstance();
+
+	if (!$Register['ACL']->turn(array('users', 'view_users'), false)) {
+		$url = '#';
 	} else {
 		$url = '/users/info/' . $user_id . '/' ;
 	}

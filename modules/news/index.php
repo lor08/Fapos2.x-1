@@ -420,6 +420,141 @@ Class NewsModule extends Module {
 	}
 
 	/**
+	 * Show materials by user. User ID must be integer and not null.
+	 */
+	public function user($id = null) {
+		//turn access
+		$this->ACL->turn(array($this->module, 'view_list'));
+		$id = intval($id);
+		if ($id < 1)
+			return $this->showInfoMessage(__('Can not find user'), $this->getModuleURL());
+
+
+		$usersModel = $this->Register['ModManager']->getModelInstance('Users');
+		$user = $usersModel->getById($id);
+		if (!$user)
+			return $this->showInfoMessage(__('Can not find user'), $this->getModuleURL());
+		if (!$this->ACL->checkCategoryAccess($user->getNo_access()))
+			return $this->showInfoMessage(__('Permission denied'), $this->getModuleURL());
+
+
+		$this->page_title = __('User materials') . ' "' . h($user->getName()) . '" - ' . $this->page_title;
+
+
+		//формируем блок со списком  разделов
+		$this->_getCatsTree();
+
+
+		if ($this->cached && $this->Cache->check($this->cacheKey)) {
+			$source = $this->Cache->read($this->cacheKey);
+			return $this->_view($source);
+		}
+
+		// we need to know whether to show hidden
+		$where = array('author_id' => $id);
+		if (!$this->ACL->turn(array('other', 'can_see_hidden'), false)) {
+			$where['available'] = 1;
+		}
+
+
+		$total = $this->Model->getTotal(array('cond' => $where));
+		list ($pages, $page) = pagination($total, $this->Register['Config']->read('per_page', $this->module), $this->getModuleURL('user/' . $id));
+		$this->Register['pages'] = $pages;
+		$this->Register['page'] = $page;
+		$this->page_title .= ' (' . $page . ')';
+
+
+
+		$navi = array();
+		$navi['add_link'] = ($this->ACL->turn(array($this->module, 'add_materials'), false)) ? get_link(__('Add material'), $this->getModuleURL('add_form/')) : '';
+		$navi['navigation'] = get_link(__('Home'), '/') . __('Separator')
+				. get_link(h($this->module_title), $this->getModuleURL()) . __('Separator') . __('User materials') . ' "' . h($user->getName()) . '"';
+		$navi['pagination'] = $pages;
+		$navi['meta'] = __('Count all material') . $total;
+		$navi['category_name'] = __('User materials') . ' "' . h($user->getName()) . '"';
+		$this->_globalize($navi);
+
+
+		if ($total <= 0) {
+			$html = __('Materials not found');
+			return $this->_view($html);
+		}
+
+
+		$params = array(
+			'page' => $page,
+			'limit' => $this->Register['Config']->read('per_page', $this->module),
+			'order' => getOrderParam(__CLASS__),
+		);
+
+
+		$this->Model->bindModel('attaches');
+		$this->Model->bindModel('author');
+		$this->Model->bindModel('category');
+		$records = $this->Model->getCollection($where, $params);
+
+
+		if (is_object($this->AddFields) && count($records) > 0) {
+			$records = $this->AddFields->mergeRecords($records);
+		}
+
+
+		// create markers
+		foreach ($records as $entity) {
+			$this->Register['current_vars'] = $entity;
+			$markers = array();
+
+
+			$markers['moder_panel'] = $this->_getAdminBar($entity);
+			$entry_url = get_url(entryUrl($entity, $this->module));
+			$markers['entry_url'] = $entry_url;
+
+
+			$announce = $this->Textarier->getAnnounce($entity->getMain(), $entry_url, 0, $this->Register['Config']->read('announce_lenght', $this->module), $entity);
+
+
+			// replace image tags in text
+			$attaches = $entity->getAttaches();
+			if (!empty($attaches) && count($attaches) > 0) {
+				foreach ($attaches as $attach) {
+					if ($attach->getIs_image() == '1') {
+						$announce = $this->insertImageAttach($announce, $attach->getFilename(), $attach->getAttach_number());
+					}
+				}
+			}
+
+			$markers['announce'] = $announce;
+
+
+			$markers['category_url'] = get_url($this->getModuleURL('category/' . $entity->getCategory_id()));
+			$markers['profile_url'] = getProfileUrl($entity->getAuthor_id());
+			if ($entity->getTags())
+				$entity->setTags(explode(',', $entity->getTags()));
+
+
+			//set users_id that are on this page
+			$this->setCacheTag(array(
+				'user_id_' . $entity->getAuthor_id(),
+				'record_id_' . $entity->getId(),
+			));
+
+
+			$entity->setAdd_markers($markers);
+		}
+
+
+		$source = $this->render('list.html', array('entities' => $records));
+
+
+		//write int cache
+		if ($this->cached)
+			$this->Cache->write($source, $this->cacheKey, $this->cacheTags);
+
+
+		return $this->_view($source);
+	}
+
+	/**
 	 * return form to add
 	 */
 	public function add_form() {
@@ -1169,32 +1304,32 @@ Class NewsModule extends Module {
 	protected function _getAdminBar($record) {
 		$moder_panel = '';
 		$id = $record->getId();
-		$author_id = $record->getAuthor_id();
-		if (!$author_id)
-			$author_id = 0;
+		$uid = $record->getAuthor_id();
+		if (!$uid)
+			$uid = 0;
 
 		if ($this->ACL->turn(array($this->module, 'edit_materials'), false)
-				|| (!empty($_SESSION['user']['id']) && $author_id == $_SESSION['user']['id']
+				|| (!empty($_SESSION['user']['id']) && $uid == $_SESSION['user']['id']
 				&& $this->ACL->turn(array($this->module, 'edit_mine_materials'), false))) {
-			$moder_panel .= get_link(get_img('/sys/img/edit_16x16.png'), $this->getModuleURL('edit_form/' . $id)) . '&nbsp;';
+			$moder_panel .= get_link('', $this->getModuleURL('edit_form/' . $id), array('class' => 'fps-edit')) . '&nbsp;';
 		}
 
 		if ($this->ACL->turn(array($this->module, 'up_materials'), false)) {
-			$moder_panel .= get_link(get_img('/sys/img/star.png'), $this->getModuleURL('fix_on_top/' . $id), array('onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
-			$moder_panel .= get_link(get_img('/sys/img/up_arrow_16x16.png'), $this->getModuleURL('upper/' . $id), array('onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+			$moder_panel .= get_link('', $this->getModuleURL('fix_on_top/' . $id), array('class' => 'fps-star', 'onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+			$moder_panel .= get_link('', $this->getModuleURL('upper/' . $id), array('class' => 'fps-up', 'onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
 		}
 		if ($this->ACL->turn(array($this->module, 'on_home'), false)) {
 			if ($record->getView_on_home() == 1) {
-				$moder_panel .= get_link(get_img('/sys/img/round_ok.png', array('alt' => __('On home'), 'title' => __('On home'))), $this->getModuleURL('off_home/' . $id), array('onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+				$moder_panel .= get_link('', $this->getModuleURL('off_home/' . $id), array('class' => 'fps-on', 'onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
 			} else {
-				$moder_panel .= get_link(get_img('/sys/img/round_not_ok.png', array('alt' => __('On home'), 'title' => __('On home'))), $this->getModuleURL('on_home/' . $id), array('onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+				$moder_panel .= get_link('', $this->getModuleURL('on_home/' . $id), array('class' => 'fps-off', 'onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
 			}
 		}
 
 		if ($this->ACL->turn(array($this->module, 'delete_materials'), false)
-				|| (!empty($_SESSION['user']['id']) && $author_id == $_SESSION['user']['id']
+				|| (!empty($_SESSION['user']['id']) && $uid == $_SESSION['user']['id']
 				&& $this->ACL->turn(array($this->module, 'delete_mine_materials'), false))) {
-			$moder_panel .= get_link(get_img('/sys/img/delete_16x16.png'), $this->getModuleURL('delete/' . $id), array('onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+			$moder_panel .= get_link('', $this->getModuleURL('delete/' . $id), array('class' => 'fps-delete', 'onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
 		}
 		return $moder_panel;
 	}

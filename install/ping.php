@@ -28,7 +28,7 @@ function checkUpdate() {
 }
 
 function checkRequest() {
-	@$b = file_get_contents('http://home.develdo.com/check.php?v=2.1RC6&d=' . $_SERVER['HTTP_HOST']);
+	@$b = file_get_contents('http://home.develdo.com/check.php?v=2.1RC7&d=' . $_SERVER['HTTP_HOST']);
 	@$w = file_get_contents('http://fapos.wasja.info/we/site.php?host=' . $_SERVER['HTTP_HOST']);
 }
 ?>

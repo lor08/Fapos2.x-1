@@ -40,9 +40,9 @@ class UsersModel extends FpsModel
             'foreignKey' => 'from',
         ),
     );
-	
-	
-	
+
+
+
     public function getSameNics($nick)
     {
         $Register = Register::getInstance();
@@ -103,8 +103,8 @@ class UsersModel extends FpsModel
 
         return $messages;
     }
-	
-	
+
+
     public function getOutputMessages()
     {
         // Запрос на выборку входящих сообщений
@@ -127,8 +127,8 @@ class UsersModel extends FpsModel
 
         return $messages;
     }
-	
-	
+
+
 	public function getByName($name)
 	{
         $Register = Register::getInstance();
@@ -146,8 +146,8 @@ class UsersModel extends FpsModel
 		}
 		return false;
 	}
-	
-	
+
+
 	public function getByNamePass($name, $password)
 	{
         $Register = Register::getInstance();
@@ -168,39 +168,76 @@ class UsersModel extends FpsModel
 		}
 		return false;
 	}
-	
+
 
 	public function getNewPmMessages($uid)
 	{
 		$res = $this->getDbDriver()->query("SELECT COUNT(*) as cnt
-				FROM `" . $this->getDbDriver()->getFullTableName('messages') . "` 
+				FROM `" . $this->getDbDriver()->getFullTableName('messages') . "`
 				WHERE `to_user` = ".$uid."
 				AND `viewed` = 0 AND `id_rmv` <> ".$uid);
 
 		return (!empty($res[0]) && !empty($res[0]['cnt'])) ? (string)$res[0]['cnt'] : 0;
 	}
 
-	function getUserStatistic($user_id) {
-		$comments_tables = array('foto_comments', 'loads_comments', 'news_comments', 'stat_comments');
-		$cnt = 0;
-		$error = true;
-		foreach($comments_tables as $table) {
-			$result = $this->getDbDriver()->select($table, DB_FIRST, array('cond' => array('`user_id`' => $user_id), 'fields' => array('COUNT(*) as cnt'), 'limit' => 1));
-			if (is_array($result) && count($result) > 0) {
-				$error = false;
-				$cnt += $result[0]['cnt'];
+	function getCountComments($user_id = null) {
+		$Register = Register::getInstance();
+		$modules = array('foto', 'loads', 'news', 'stat');
+		$sql = '';
+		foreach ($modules as $module) {
+			if ($Register['Config']->read('comment_active', $module) == 1 &&
+					$Register['ACL']->turn(array($module, 'view_comments'), false)) {
+				if (!empty($sql))
+					$sql .= ' UNION ';
+				$sql .= 'SELECT COUNT(*) AS cnt FROM `' . $this->getDbDriver()->getFullTableName($module . '_comments') . '`' . ($user_id ? " WHERE `user_id` = $user_id" : '');
 			}
 		}
-		if (!$error && $cnt > 0) {
-			$res = array(
-				array(
-					'text' => 'Комментариев',
-					'count' => $cnt,
-					'url' => get_url('/'),
-				),
-			);
-			return $res;
+		if (!empty($sql)) {
+			$result = $this->getDbDriver()->query('SELECT SUM(cnt) AS cnt FROM (' . $sql . ') AS `comments`');
+			if (is_array($result) && count($result) > 0) {
+				return $result[0]['cnt'];
+			}
 		}
 		return false;
 	}
+
+	function getComments($user_id = null, $offset = null, $per_page = null) {
+		$Register = Register::getInstance();
+		$modules = array('foto', 'loads', 'news', 'stat');
+		$sql = '';
+		foreach ($modules as $module) {
+			if ($Register['Config']->read('comment_active', $module) == 1 &&
+					$Register['ACL']->turn(array($module, 'view_comments'), false)) {
+				if (!empty($sql))
+					$sql .= ' UNION ';
+				$sql .= "SELECT *, '$module' AS type FROM `" . $this->getDbDriver()->getFullTableName($module . '_comments') . '`' . ($user_id ? " WHERE `user_id` = $user_id" : '');
+			}
+		}
+		if (!empty($sql)) {
+			$result = $this->getDbDriver()->query($sql . ' ORDER BY date DESC' . ($per_page ? " LIMIT " . ($offset ? $offset . ',' : '') . $per_page : ''));
+			if (is_array($result) && count($result) > 0) {
+				return $result;
+			}
+		}
+		return false;
+	}
+
+	function getUserStatistic($user_id) {
+		$user_id = intval($user_id);
+		if ($user_id > 0) {
+			$cnt = $this->getCountComments($user_id);
+			if ($cnt && $cnt > 0) {
+				$res = array(
+					array(
+						'text' => 'Комментариев',
+						'count' => $cnt,
+						'url' => get_url('/users/comments/' . $user_id),
+					),
+				);
+				return $res;
+			}
+		}
+		return false;
+	}
+
 }

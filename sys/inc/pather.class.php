@@ -67,6 +67,7 @@ Class Pather {
 	function parsePath() {
 		$pathParams = array();
 		$url = (!empty($_GET['url'])) ? $this->decodeUrl($_GET['url']) : '';
+		$page = (!empty($_GET['page'])) ? intval($_GET['page']) : null;
 		
 		
 		if (empty($url)) {
@@ -97,7 +98,7 @@ Class Pather {
 		}
 
 		//may be i need upgrade this...hz
-		if (count($pathParams) == 1 && preg_match('#^\d+$#', $pathParams[0])) {
+		if (count($pathParams) == 1 && !file_exists(ROOT . '/modules/' . $pathParams[0] . '/index.php') /* && preg_match('#^\d+$#', $pathParams[0])*/) { 
 			$pathParams = array(
 				0 => 'pages',
 				1 => 'index',
@@ -117,7 +118,7 @@ Class Pather {
 				if (!empty($hlustr)) {
 					$hlustr .= $this->Register['Config']->read('hlu_extention');
 					header('HTTP/1.0 301 Moved Permanently');
-					redirect('/' . $pathParams[0] . '/' . $hlustr);
+					redirect('/' . $pathParams[0] . '/' . $hlustr . ($page ? '?page=' . $page : ''));
 				}
 			}
 		}

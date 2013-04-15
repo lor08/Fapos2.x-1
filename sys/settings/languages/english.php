@@ -369,6 +369,15 @@ $language = array(
 	'New PM on forum'               => 'У вас новое личное сообщение',
 	'User themes'                   => 'Темы пользователя',
 	'Material not found'            => 'Материал не найден',
+	'User materials'                => 'Материалы пользователя',
+	'User comments'                 => 'Комментарии пользователя',
+	'All comments'                  => 'Комментарии пользователей',
+	'Lock theme'                    => 'Закрыть тему',
+	'Unlock theme'                  => 'Открыть тему',
+	'Important theme'               => 'Закрепить тему',
+	'Unimportant theme'             => 'Открепить тему',
+	'Delete theme'                  => 'Удалить тему',
+	'Theme admin panel'             => 'Панель администрирования',
 	
 	
 	// Templates name

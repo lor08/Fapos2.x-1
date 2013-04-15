@@ -283,8 +283,10 @@ class PrintText {
 
 
 		$ACL = $register['ACL'];
+		$spec = false;
 		if (!$ACL->turn(array('bbcodes', 'html'), false, $ustatus)
 		|| !Config::read('allow_html')) {
+			$spec = true;
 			$message = htmlspecialchars($message);
 		}
 
@@ -360,10 +362,10 @@ class PrintText {
 
 
 
-		$message = nl2br( $message);
+		$message = nl2br($message);
 		//work for smile
 		if (Config::read('allow_smiles')) {
-			$message = $this->smile($message);
+			$message = $this->smile($message, $spec);
 		}
 		//return block
 		if ( isset( $uniqidCode ) ) $message = str_replace( $uniqidsCode, $codeBlocks, $message );
@@ -407,11 +409,11 @@ class PrintText {
 		$preview = (!empty($Register['module'])) ? $Register['Config']->read('use_preview', $Register['module']) : false;
 		$str = preg_replace("#\[img\][\s]*([^\"'\>\<\(\)]+)[\s]*\[\/img\]#isU", 
 				($preview ? '<a href="\\1" class="gallery">' : '') .
-				'<img style="max-width:' . (isset($sizex) ? $sizex : 150) . 'px; max-height:' . (isset($sizey) ? $sizey : 150) . 'px;" src="\\1" alt="' . $title . '" title="' . $title . '" />' .
+				'<img style="max-width:' . (!empty($sizex) ? $sizex : 150) . 'px; max-height:' . (!empty($sizey) ? $sizey : 150) . 'px;" src="\\1" alt="' . $title . '" title="' . $title . '" />' .
 				($preview ? '</a>' : ''), $str);
 		$str = preg_replace("#\[imgl\][\s]*([^\"'\>\<\(\)]+)[\s]*\[\/imgl\]#isU", 
 				($preview ? '<a style="float:left;" href="\\1" class="gallery">' : '') .
-				'<img style="max-width:' . (isset($sizex) ? $sizex : 150) . 'px; max-height:' . (isset($sizey) ? $sizey : 150) . 'px;" src="\\1" alt="' . $title . '" title="' . $title . '" /><div class="clear"></div>' .
+				'<img style="max-width:' . (!empty($sizex) ? $sizex : 150) . 'px; max-height:' . (!empty($sizey) ? $sizey : 150) . 'px;" src="\\1" alt="' . $title . '" title="' . $title . '" /><div class="clear"></div>' .
 				($preview ? '</a>' : ''), $str);
 		return $str;
 	}
@@ -459,7 +461,7 @@ class PrintText {
 	 *
 	 * smiles process
 	 */
-	public function smile($str) {
+	public function smile($str, $spec = false) {
 		$str = Plugins::intercept('before_smiles_parse', $str);
 
 		$Register = Register::getInstance();
@@ -470,10 +472,17 @@ class PrintText {
 
 		$from = array();
 		$to = array();
+		$start_chars = array("\t", "\r", "\n", '>');
 		if (isset($smilesList) && is_array($smilesList)) {
 			foreach ($smilesList as $smile) {
-				$from[] = $smile['from'];
-				$to[] = '<img alt="' . $smile['from'] . '" title="' . $smile['from'] . '" src="' . WWW_ROOT . '/sys/img/smiles/fapos/' . $smile['to'] . '" />';
+				$from_str = ($spec ? htmlspecialchars($smile['from']) : $smile['from']);
+				if (strpos($str, $from_str) === 0) $str = ' ' . $str;
+				foreach ($start_chars as $char) {
+					$str = str_replace($char . $from_str, $char . ' ' . $from_str, $str);
+				}
+				
+				$from[] = ' ' . $from_str;
+				$to[] = '<img alt="' . $from_str . '" title="' . $from_str . '" src="' . WWW_ROOT . '/sys/img/smiles/fapos/' . $smile['to'] . '" />';
 			}
 		}
 		$str = str_replace($from, $to, $str);

@@ -686,7 +686,7 @@ class Module {
 		return str_replace(
 			'{IMAGE' . $number . '}', 
 			(Config::read('use_preview', $this->module) ? '<a class="gallery" href="' . $image_link . '">' : '') .
-			'<img style="max-width:' . (isset($size_x) ? $size_x : 150) . 'px; max-height:' . (isset($size_y) ? $size_y : 150) . 'px;" src="' . $preview_link . '" />' .
+			'<img style="max-width:' . (!empty($size_x) ? $size_x : 150) . 'px; max-height:' . (!empty($size_y) ? $size_y : 150) . 'px;" src="' . $preview_link . '" />' .
 			(Config::read('use_preview', $this->module) ? '</a>' : ''), 
 			$message);
 	}

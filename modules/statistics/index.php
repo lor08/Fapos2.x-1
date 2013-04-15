@@ -210,7 +210,7 @@ Class StatisticsModule {
 				if (!empty($group_info['color']))
 					$color = 'color:#' . $group_info['color'] . ';';
 			}
-			$online_users[] = get_link(h($user['name']), '/users/info/' . $key, array('style' => $color));
+			$online_users[] = get_link(h($user['name']), getProfileUrl($key), array('style' => $color));
 		}
 
 
