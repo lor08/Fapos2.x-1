@@ -814,7 +814,7 @@ Class ForumModule extends Module {
 						$postAuthor->setRank($rank_star['rank']);
 						if ($postAuthor->getState())
 							$postAuthor->setRank($postAuthor->getState());
-						$postAuthor->setUser_rank(get_img('/sys/img/' . $rank_star['img']));
+						$postAuthor->setUser_rank(get_img('/template/' . getTemplateName() . '/img/' . $rank_star['img']));
 
 
 						// Если автор сообщения сейчас "на сайте"
