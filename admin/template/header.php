@@ -6,6 +6,7 @@
 	<meta name="description" content="" />
 	<meta name="keywords" content="" />
 	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+	<link rel="shortcut icon" href="/sys/img/favicon.ico" type="image/x-icon">
 	<script language="JavaScript" type="text/javascript" src="../sys/js/jquery-1.8.1.min.js"></script>
 	
 	<script language="JavaScript" type="text/javascript" src="../sys/js/jquery.validate.js"></script>
