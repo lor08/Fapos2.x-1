@@ -288,13 +288,16 @@ class Document_Parser {
     {
 		$rss = '';
 		if (Config::read('rss_news', 'common')) {
-			$rss .= get_img('/sys/img/rss_icon_mini.png') . get_link(__('News RSS'), '/news/rss/') . '<br />';
+			$rss .= get_img('/template/' . getTemplateName() . '/img/rss_icon_mini.png') . get_link(__('News RSS'), '/news/rss/') . '<br />';
 		}
 		if (Config::read('rss_stat', 'common')) {
-			$rss .= get_img('/sys/img/rss_icon_mini.png') . get_link(__('Stat RSS'), '/stat/rss/') . '<br />';
+			$rss .= get_img('/template/' . getTemplateName() . '/img/rss_icon_mini.png') . get_link(__('Stat RSS'), '/stat/rss/') . '<br />';
 		}
 		if (Config::read('rss_loads', 'common')) {
-			$rss .= get_img('/sys/img/rss_icon_mini.png') . get_link(__('Loads RSS'), '/loads/rss/') . '<br />';
+			$rss .= get_img('/template/' . getTemplateName() . '/img/rss_icon_mini.png') . get_link(__('Loads RSS'), '/loads/rss/') . '<br />';
+		}
+		if (Config::read('rss_foto', 'common')) {
+			$rss .= get_img('/template/' . getTemplateName() . '/img/rss_icon_mini.png') . get_link(__('Foto RSS'), '/foto/rss/') . '<br />';
 		}
 		
 		return $rss;

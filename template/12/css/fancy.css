@@ -39,7 +39,7 @@ div#fancy_loading div {
 	left: 0;
 	width: 40px;
 	height: 480px;
-	background: transparent url('/template/12/img/loading.png') no-repeat;
+	background: transparent url('../img/loading.png') no-repeat;
 }
 
 div#fancy_loading_overlay {
@@ -100,7 +100,7 @@ div#fancy_close {
 	right: -15px;
 	height: 30px;
 	width: 30px;
-	background: url('/template/12/img/fancy_closebox.png') top left no-repeat;
+	background: url('../img/fancy_closebox.png') top left no-repeat;
 	cursor: pointer;
 	z-index: 181;
 	display: none;

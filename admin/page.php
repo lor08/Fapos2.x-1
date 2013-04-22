@@ -338,6 +338,13 @@ $page = array(
 include_once ROOT . '/admin/template/header.php';
 ?>
 
+<link type="text/css" rel="StyleSheet" href="template/css/redactor.css" />
+<script type="text/javascript" src="js/redactor.min.js"></script>
+<script type="text/javascript" src="js/jquery-ui-1.8.14.custom.min.js"></script>
+<script type="text/javascript" src="js/jquery.validate.js"></script>
+<script type="text/javascript" src="js/jquery.cookie.js"></script>
+<script type="text/javascript" src="js/jquery.hotkeys.js"></script>
+<script type="text/javascript" src="js/jstree.min.js"></script>
 
 <div class="white">
 	<div class="pages-tree">
@@ -515,7 +522,7 @@ $("#pageTree")
 			"theme" : "classic",
 			"dots" : true,
 			"icons" : true,
-			"url" : "../sys/js/jstree/themes/classic/style.css"
+			"url" : "template/img/jstree/themes/classic/style.css"
 		},
 		"plugins" : [ 
 			"themes","json_data","ui","crrm","cookies","dnd","search","types","contextmenu" 
@@ -574,7 +581,7 @@ $("#pageTree")
 					//"valid_children" : "none",
 					// If we specify an icon for the default type it WILL OVERRIDE the theme icons
 					"icon" : {
-						"image" : "../sys/js/jstree/img/file.png"
+						"image" : "template/img/jstree/file.png"
 					}
 				},
 				// The `folder` type
@@ -582,7 +589,7 @@ $("#pageTree")
 					// can have files and other folders inside of it, but NOT `drive` nodes
 					"valid_children" : [ "default", "folder" ],
 					"icon" : {
-						"image" : "../sys/js/jstree/img/folder.png"
+						"image" : "template/img/jstree/folder.png"
 					}
 				},
 				// The `drive` nodes 
@@ -590,7 +597,7 @@ $("#pageTree")
 					// can have files and folders inside, but NOT other `drive` nodes
 					"valid_children" : [ "default", "folder" ],
 					"icon" : {
-						"image" : "../sys/js/jstree/img/root.png"
+						"image" : "template/img/jstree/root.png"
 					},
 					// those prevent the functions with the same name to be used on `drive` nodes
 					// internally the `before` event is used

@@ -343,7 +343,7 @@ Class StatisticsModule {
 
 
 		$res = $Model->getCollection(array('date' => $date));
-		if (count($res) > 0) {
+		if ($res && is_array($res) && count($res) > 0) {
 			return;
 		} else {
 			$stats = unserialize(file_get_contents($file));

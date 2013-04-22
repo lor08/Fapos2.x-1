@@ -223,7 +223,7 @@ Class ForumModule extends Module {
 
 
 		/* forum icon */
-		$forum_icon = get_url('/sys/img/guest.gif');
+		$forum_icon = get_url('/template/' . getTemplateName() . '/img/guest.png');
 		if (file_exists(ROOT . '/sys/img/forum_icon_' . $forum->getId() . '.jpg')) {
 			$forum_icon = get_url('/sys/img/forum_icon_' . $forum->getId() . '.jpg');
 		}
@@ -665,7 +665,8 @@ Class ForumModule extends Module {
 								. getTemplateName() . '/img/reply.png', array('alt' => __('Answer'),
 							'title' => __('Answer'))), $this->getModuleURL('view_theme/' . $id_theme . '#sendForm'));
 			} else {
-				$markers['add_link'] = get_img('/sys/img/reply_locked.png', array('alt' => __('Theme is locked'), 'title' => __('Theme is locked')));
+				$markers['add_link'] = get_img('/template/'
+								. getTemplateName() . '/img/reply_locked.png', array('alt' => __('Theme is locked'), 'title' => __('Theme is locked')));
 			}
 			$admin_bar = array();
 			if ($this->ACL->turn(array($this->module, 'edit_themes', $id_forum), false)) {
@@ -885,7 +886,7 @@ Class ForumModule extends Module {
 						$step = false;
 						if (file_exists(ROOT . $this->getFilesPath($attach->getFilename()))) {
 							$attachment .= __('Attachment') . ' ' . $attach->getAttach_number()
-									. ': ' . get_img('/sys/img/file.gif', array('alt' => __('Open file'), 'title' => __('Open file')))
+									. ': ' . get_img('/template/' . getTemplateName() . '/img/file.gif', array('alt' => __('Open file'), 'title' => __('Open file')))
 									. '&nbsp;' . get_link(getSimpleFileSize($attach->getSize()), $this->getModuleURL('download_file/'
 													. $attach->getFilename()), array('target' => '_blank')) . '<br />';
 

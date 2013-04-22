@@ -48,6 +48,15 @@ class Plugins {
 				
 				$pl_obj = new $pl_conf['className']($params);
 				$params = $pl_obj->common($params);
+				
+				// Processign tag {{ plugin_path }}
+				if (mb_strpos($params, 'plugin_path') != false) {
+					$pos = mb_strrpos($plugin, "/");
+					if ($pos >= 0) {
+						$path = get_url('/sys/plugins/' . mb_substr($plugin, $pos + 1));
+						$params = preg_replace('#{{\s*plugin_path\s*}}#i', $path, $params);
+					}
+				}
 			}
 		}
 		

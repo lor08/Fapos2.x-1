@@ -183,8 +183,8 @@ include_once ROOT . '/admin/template/header.php';
 		<tr>
 			<td colspan="2">
 		<link type="text/css" rel="StyleSheet" href="template/css/tcal.css" />
-		<script type="text/javascript" src="../sys/js/graphlib.js"></script>
-		<script type="text/javascript" src="../sys/js/tcal.js"></script>
+		<script type="text/javascript" src="js/graphlib.js"></script>
+		<script type="text/javascript" src="js/tcal.js"></script>
 		<script type="text/javascript">
 		$(document).ready(function(){
 			var data = '<?php echo $json_data; ?>';
@@ -212,9 +212,6 @@ include_once ROOT . '/admin/template/header.php';
 					//formatString:'%b&nbsp;%#d'
 					formatString:'%b-%d'
 				  }
-				},
-				yaxis: {
-				  label: "Y Axis"
 				}
 			  },
 			  highlighter: {
@@ -246,7 +243,7 @@ include_once ROOT . '/admin/template/header.php';
 			],
 			grid: {
 				background: '#282828'
-			},
+			}
 			});
 		});
 		</script>

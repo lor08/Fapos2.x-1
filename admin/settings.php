@@ -104,7 +104,7 @@ function getImgPath($template) {
 	if (file_exists($path)) {
 		return get_url('/template/' . $template . '/screenshot.png');
 	}
-	return get_url('/sys/img/noimage.jpg');
+	return get_url('/admin/template/img/noimage.jpg');
 }
 
 

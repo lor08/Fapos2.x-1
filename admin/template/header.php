@@ -9,20 +9,10 @@
 	<link rel="shortcut icon" href="/sys/img/favicon.ico" type="image/x-icon">
 	<script language="JavaScript" type="text/javascript" src="../sys/js/jquery-1.8.1.min.js"></script>
 	
-	<script language="JavaScript" type="text/javascript" src="../sys/js/jquery.validate.js"></script>
-	<script language="JavaScript" type="text/javascript" src="../sys/js/jquery-ui-1.8.14.custom.min.js"></script>
 	<script type="text/javascript" src="js/drunya.lib.js"></script>
 
-	<script type="text/javascript" src="../sys/js/redactor/redactor.js"></script>
-	<link type="text/css" rel="StyleSheet" href="../sys/js/redactor/css/redactor.css" />
-	
 	<link rel="StyleSheet" type="text/css" href="template/css/style.css" />
 
-	
-	<script type="text/javascript" src="../sys/js/jquery.cookie.js"></script>
-	<script type="text/javascript" src="../sys/js/jquery.hotkeys.js"></script>
-	<script type="text/javascript" src="../sys/js/jstree/jstree.min.js"></script>
-	
 	<script type="text/javascript">
 
 	$(document).ready(function(){

@@ -30,8 +30,8 @@ $('textarea.text-area:not(.processed)').TextAreaResizer();
 */
 </script>
 <!-- FancyBOX -->
-<link type="text/css" rel="StyleSheet" href="{{ www_root }}/sys/js/fancybox/css/fancy.css" />
-<script type="text/javascript" src="{{ www_root }}/sys/js/fancybox/jquery.fancybox.js"></script>
+<link type="text/css" rel="StyleSheet" href="{{ template_path }}/css/fancy.css" />
+<script type="text/javascript" src="{{ template_path }}/js/jquery.fancybox.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
 	$("a.gallery").fancybox();
@@ -67,7 +67,7 @@ $(document).ready(function() {
 <div class="header">
 	<a href="{{ www_root }}/"><img src="{{ template_path }}/img/logo.png" alt="Шаблон UkrTor" style="float:left;position:absolute;"/></a>
 	<div class="feed">
-		<a href="/"><span class="home"></span></a>
+		<a href="{{ www_root }}/"><span class="home"></span></a>
 		<img src="{{ template_path }}/img/listtm.png" alt="" class="gran2"/>
 		<a href="#"><span class="feedback"></span></a>
 		<img src="{{ template_path }}/img/listtm.png" alt="" class="gran2"/>
@@ -79,7 +79,7 @@ $(document).ready(function() {
 	<div class="follow">
 		<noindex><a rel="nofollow" href="http://vkontakte.ru/fapos"><span class="twit"></span></a></noindex>
 		<img src="{{ template_path }}/img/listtm.png" alt="" class="gran3"/>
-		<a href="/news/rss"><span class="rss"></span></a>
+		<a href="{{ www_root }}/news/rss"><span class="rss"></span></a>
 	</div>
 	<div class="mouse">
 		<div class="slide-help" id="disign" style="display:none;margin-left:170px;margin-top:-50px;">
@@ -104,7 +104,7 @@ $(document).ready(function() {
 			</div>
 			<div class="bottom"></div>
 		</div>
-		<a onMouseOver="$('#documentaciya').slideDown('fast');" onMouseOut="$('#documentaciya').slideUp('fast');" href="/documa"><span class="documentaciya"></span></a>
+		<a onMouseOver="$('#documentaciya').slideDown('fast');" onMouseOut="$('#documentaciya').slideUp('fast');" href="{{ www_root }}/documa"><span class="documentaciya"></span></a>
 		
 		<div class="slide-help" id="modules" style="display:none;margin-left:624px;margin-top:-66px;">
 			<div class="top"></div>
@@ -359,7 +359,7 @@ $(document).ready(function() {
 	</div>
 </div>
 	
-	<a href="/"><img src="{{ template_path }}/img/kopy.png" alt="" class="kopy"/></a>
+	<a href="{{ www_root }}/"><img src="{{ template_path }}/img/kopy.png" alt="" class="kopy"/></a>
 	
 	<div class="follow2">
 		<noindex><a rel="nofollow" href="http://vkontakte.ru/fapos"><span class="twit2"></span></a></noindex>

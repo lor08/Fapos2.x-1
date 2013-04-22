@@ -715,7 +715,7 @@ function getGravatar($email, $s = 120, $d = 'mm', $r = 'g') {
 }
 
 function getAvatar($id_user = null, $email_user = null) {
-	$def = get_url('/sys/img/noavatar.png');
+	$def = get_url('/template/' . getTemplateName() . '/img/noavatar.png');
 	
 	if (isset($id_user) && $id_user > 0) {
 		if (is_file(ROOT . '/sys/avatars/' . $id_user . '.jpg')) {

@@ -10,14 +10,14 @@
 
 /* input box in default state */ 
 .tcalInput {
-	background: url('/sys/img/calendar/cal.gif') 100% 50% no-repeat;
+	background: url('../img/calendar/cal.gif') 100% 50% no-repeat;
 	padding-right: 20px;
 	cursor: pointer;
 }
 
 /* additional properties for input boxe in activated state, above still applies unless in conflict */
 .tcalActive {
-	background-image: url('/sys/img/calendar/no_cal.gif');
+	background-image: url('../img/calendar/no_cal.gif');
 }
 /* container of calendar's pop-up */
 #tcal {
@@ -63,10 +63,10 @@
 	font-weight: bold;
 	white-space: nowrap;
 }
-#tcalPrevYear { background-image: url('/sys/img/calendar/prev_year.gif'); }
-#tcalPrevMonth { background-image: url('/sys/img/calendar/prev_mon.gif'); }
-#tcalNextMonth { background-image: url('/sys/img/calendar/next_mon.gif'); }
-#tcalNextYear { background-image: url('/sys/img/calendar/next_year.gif'); }
+#tcalPrevYear { background-image: url('../img/calendar/prev_year.gif'); }
+#tcalPrevMonth { background-image: url('../img/calendar/prev_mon.gif'); }
+#tcalNextMonth { background-image: url('../img/calendar/next_mon.gif'); }
+#tcalNextYear { background-image: url('../img/calendar/next_year.gif'); }
 
 /* table containing week days header and calendar grid */
 #tcalGrid {

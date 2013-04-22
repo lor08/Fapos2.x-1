@@ -3,9 +3,9 @@ $editor_set = array (
   0 => 
   array (
     'title' => 'WysiBB (светлая схема)',
-    'editor_head' => '<script language="JavaScript" type="text/javascript" src="{{ www_root }}/sys/js/wysibb/jquery.wysibb.min.js"></script>
-<script language="JavaScript" type="text/javascript" src="{{ www_root }}/sys/js/wysibb/fapos2.js"></script>
-<link rel="stylesheet" href="{{ www_root }}/sys/js/wysibb/wbbtheme.css" />',
+    'editor_head' => '<script type="text/javascript" src="{{ plugin_path }}/wysibb/js/jquery.wysibb.min.js"></script>
+<script type="text/javascript" src="{{ plugin_path }}/wysibb/js/fapos2.js"></script>
+<link rel="stylesheet" href="{{ plugin_path }}/wysibb/css/wbbtheme.css" />',
     'editor_body' => '<script language="JavaScript" type="text/javascript">
 $(document).ready(function() {
 	var wbbOpt = {
@@ -28,9 +28,9 @@ $(document).ready(function() {
   1 => 
   array (
     'title' => 'WysiBB (темная схема)',
-    'editor_head' => '<script language="JavaScript" type="text/javascript" src="{{ www_root }}/sys/js/wysibb/jquery.wysibb.min.js"></script>
-<script language="JavaScript" type="text/javascript" src="{{ www_root }}/sys/js/wysibb/fapos2.js"></script>
-<link rel="stylesheet" href="{{ www_root }}/sys/js/wysibb/wbbtheme_dark.css" />',
+    'editor_head' => '<script type="text/javascript" src="{{ plugin_path }}/wysibb/js/jquery.wysibb.min.js"></script>
+<script type="text/javascript" src="{{ plugin_path }}/wysibb/js/fapos2.js"></script>
+<link rel="stylesheet" href="{{ plugin_path }}/wysibb/css/wbbtheme_dark.css" />',
     'editor_body' => '<script language="JavaScript" type="text/javascript">
 $(document).ready(function() {
 	var wbbOpt = {
