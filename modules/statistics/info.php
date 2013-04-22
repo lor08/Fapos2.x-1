@@ -20,6 +20,13 @@ $menuInfo = array(
 
 
 $settingsInfo = array(
+    'show_bots' => array(
+        'type' => 'checkbox',
+        'title' => 'Отображать ботов как пользователей',
+        'checked' => '1',
+        'value' => '1',
+        'description' => 'Позволяет в списке пользователей онлайн отображать поисковых роботов',
+    ),
     'active' => array(
         'type' => 'checkbox',
         'title' => 'Статус',

@@ -252,22 +252,22 @@ Class StatisticsModule {
 				'name' => $_SESSION['user']['name'],
 				'status' => $_SESSION['user']['status'],
 			);
-		} else if (strstr($_SERVER["HTTP_USER_AGENT"], "StackRambler")) {
+		} else if (Config::read('show_bots', 'statistics') and strstr($_SERVER["HTTP_USER_AGENT"], "StackRambler")) {
 			$users['bot_rambler'] = array(
 				'expire' => time() + ($Register['Config']->read('time_on_line') * 60),
 				'name' => 'Rambler[bot]',
 			);
-		} else if (strstr($_SERVER["HTTP_USER_AGENT"], "YahooBot")) {
+		} else if (Config::read('show_bots', 'statistics') and strstr($_SERVER["HTTP_USER_AGENT"], "YahooBot")) {
 			$users['bot_yahoo'] = array(
 				'expire' => time() + ($Register['Config']->read('time_on_line') * 60),
 				'name' => 'Yahoo[bot]',
 			);
-		} else if (strstr($_SERVER["HTTP_USER_AGENT"], "Yandex")) {
+		} else if (Config::read('show_bots', 'statistics') and strstr($_SERVER["HTTP_USER_AGENT"], "Yandex")) {
 			$users['bot_yandex'] = array(
 				'expire' => time() + ($Register['Config']->read('time_on_line') * 60),
 				'name' => 'Yandex[bot]',
 			);
-		} else if (strstr($_SERVER["HTTP_USER_AGENT"], "Googlebot")) {
+		} else if (Config::read('show_bots', 'statistics') and strstr($_SERVER["HTTP_USER_AGENT"], "Googlebot")) {
 			$users['bot_google'] = array(
 				'expire' => time() + ($Register['Config']->read('time_on_line') * 60),
 				'name' => 'Google[bot]',
