@@ -211,5 +211,10 @@ $set = array (
   'auto_sitemap' => '1',
   'allow_smiles' => 1,
   'smiles_set' => 'fapos',
+  'redirect_active' => 1,
+  'use_noindex' => 1,
+  'blacklist_sites' => '*.ucoz.ru,*.ucoz.net',
+  'whitelist_sites' => 'fapos.net,www.fapos.net',
+  'url_delay' => '5',
 )
 ?>

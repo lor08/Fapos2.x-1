@@ -139,6 +139,9 @@ if (in_array($module, $sysMods)) {
 		case 'autotags':
 			$pageTitle = __('Auto tags settings');
 			break;
+		case 'links':
+			$pageTitle = __('Links settings');
+			break;
 	}
 } else {
 	$pathToModInfo = ROOT . '/modules/' . $module . '/info.php';

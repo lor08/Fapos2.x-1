@@ -379,6 +379,7 @@ $language = array(
 	'Unimportant theme'             => 'Открепить тему',
 	'Delete theme'                  => 'Удалить тему',
 	'Theme admin panel'             => 'Панель администрирования',
+	'Links settings'                => 'Обработка ссылок',
 	
 	
 	// Templates name

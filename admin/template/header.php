@@ -132,7 +132,8 @@
 		  '<a href="settings.php?m=common"><?php echo __('RSS settings'); ?></a>',
 		  '<a href="settings.php?m=sitemap"><?php echo __('Sitemap settings'); ?></a>',
 		  '<a href="settings.php?m=watermark"><?php echo __('Watermark settings'); ?></a>',
-		  '<a href="settings.php?m=autotags"><?php echo __('Auto tags settings'); ?></a>'
+		  '<a href="settings.php?m=autotags"><?php echo __('Auto tags settings'); ?></a>',
+		  '<a href="settings.php?m=links"><?php echo __('Links settings'); ?></a>'
 		  ]],
 		  
 
