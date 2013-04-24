@@ -98,9 +98,9 @@
 
 			<div id="setRating_{{ post.author.id }}" class="fps-fwin" style="display:none;">
 			<div class="drag_window">
-				<div class="title" onmousedown="drag_object(event, this.parentNode)">Голос для <b>{{ post.author.name }}</b></div>
-				<div onClick="$('#setRating_{{ post.author.id }}').hide()" class="close"></div>
-				<div class="cont">
+				<div class="fps-title" onmousedown="drag_object(event, this.parentNode)">Голос для <b>{{ post.author.name }}</b></div>
+				<div onClick="$('#setRating_{{ post.author.id }}').hide()" class="fps-close"></div>
+				<div class="fps-cont">
 					<form id="ratingForm_{{ post.author.id }}">
 						<input type="radio" name="points" value="1" /><b>&nbsp;1</b><br />
 						<input type="radio" name="points" value="0" /><b>&nbsp;0</b><br />
@@ -116,9 +116,9 @@
 
 			<div id="addWarning_{{ post.author.id }}" class="fps-fwin" style="display:none;">
 			<div class="drag_window">
-				<div class="title" onmousedown="drag_object(event, this.parentNode)">Замечание для <b>{{ post.author.name }}</b></div>
-				<div onClick="$('#addWarning_{{ post.author.id }}').hide()" class="close"></div>
-				<div class="cont">
+				<div class="fps-title" onmousedown="drag_object(event, this.parentNode)">Замечание для <b>{{ post.author.name }}</b></div>
+				<div onClick="$('#addWarning_{{ post.author.id }}').hide()" class="fps-close"></div>
+				<div class="fps-cont">
 					<form id="warningForm_{{ post.author.id }}">
 						<fieldset>
 							<legend><b>Действие</b></legend>
