@@ -87,43 +87,72 @@
    <td>{{ user.lastvisit }}</td>
 </tr>
 
-<tr>
-<td><img src="{{ template_path }}/img/profile/pol.png"/> Пол:</td>
-<td>{{ user.pol }}</td>
-</tr>
 
+{% if user.pol %}
+<tr>
+  <td><img src="{{ template_path }}/img/profile/pol.png"/> Пол:</td>
+  <td>{{ user.pol }}</td>
+</tr>
+{% endif %}
+
+
+{% if user.age %}
 <tr>
    <td><img src="{{ template_path }}/img/profile/vozrast.png"/> Возраст:</td>
    <td>{{ user.age }}</td>
 </tr>
+{% endif %}
+
+
+{% if user.city %}
 <tr>
    <td><img src="{{ template_path }}/img/profile/building.png"/> Город:</td>
    <td>{{ user.city }}</td>
 </tr>
+{% endif %}
+
 <tr>
    <td><img src="{{ template_path }}/img/profile/telephone.png"/> Телефон:</td>
    <td>{{ user.telephone }}</td>
 </tr>
+
 <tr>
 	<td><img src="{{ template_path }}/img/profile/email.png"/> E-mail:</td>
 	<td>{{ user.email }}</td>
 </tr>
+
+
+{% if user.url %}
 <tr>
-   <td><img src="{{ template_path }}/img/profile/sait.png"/> Сайт:</td>
-   <td>{{ user.url }}</td>
+  <td><img src="{{ template_path }}/img/profile/sait.png"/> Сайт:</td>
+  <td>{{ user.url }}</td>
 </tr>
+{% endif %}
+
+
+{% if user.icq %}
 <tr>
    <td><img src="{{ template_path }}/img/profile/icq.png"/> Номер в ICQ:</td>
    <td>{{ user.icq }}</td>
 </tr>
+{% endif %}
+
+
+{% if user.jabber %}
 <tr>
    <td><img src="{{ template_path }}/img/profile/jabber.png"/> Jabber:</td>
    <td>{{ user.jabber }}</td>
 </tr>
+{% endif %}
+
+
+{% if user.about %}
 <tr>
    <td><img src="{{ template_path }}/img/profile/interesi.png"/> Интересы:</td>
    <td>{{ user.about }}</td>
 </tr>
+{% endif %}
+
 
 <tr>
    <td><img src="{{ template_path }}/img/profile/last_message.png"/> Последнее сообщение:</td>

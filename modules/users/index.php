@@ -1590,8 +1590,6 @@ Class UsersModule extends Module {
 			$markers['pol'] = __('f');
 		else if ($user->getPol() === 'm')
 			$markers['pol'] = __('m');
-		else
-			$markers['pol'] = __('no sex');
 
 		$markers['fpol'] = ($user->getPol() && ($user->getPol() === 'f' || $user->getPol() === '0')) ? ' checked="checked"' : '';
 		$markers['mpol'] = ($user->getPol() && $user->getPol() !== 'f') ? ' checked="checked"' : '';
