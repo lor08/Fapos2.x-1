@@ -155,10 +155,9 @@ class FpsSitemapGen {
 								}
 							}
 							
-							$per_page = Config::read('per_page', $mkey);
-							$per_page = intval($per_page); 
-							if ($per_page < 1) $per_page = 1;
-							$pages = ceil($cntmat / $per_page);
+							$perPage = intval(Config::read('per_page', $mkey));
+							if ($perPage < 1) $perPage = 10;
+							$pages = ceil($cntmat / $perPage);
 							
 							for ($i = 2; $i <= $pages; $i++) {
 								$this->uniqUrl[] = $this->host . $mkey . $action . $entityc['id'] . '?page=' . $i;
@@ -201,10 +200,9 @@ class FpsSitemapGen {
 				foreach ($forums as $forum) {
 					$this->uniqUrl[] = $this->host . 'forum/view_forum/' . $forum['id'];
 					if ($forum['themes'] > 1) {
-						$per_page = Config::read('themes_per_page', 'forum');
-						$per_page = intval($per_page); 
-						if ($per_page < 1) $per_page = 1;
-						$pages = ceil($forum['themes'] / $per_page);
+						$perPage = intval(Config::read('themes_per_page', 'forum'));
+						if ($perPage < 1) $perPage = 10;
+						$pages = ceil($forum['themes'] / $perPage);
 						
 						for ($i = 2; $i <= $pages; $i++) {
 							$this->uniqUrl[] = $this->host . 'forum/view_forum/' . $forum['id'] . '?page=' . $i;
@@ -218,10 +216,9 @@ class FpsSitemapGen {
 					$this->uniqUrl[] = $this->host . 'forum/view_theme/' . $theme['id'];
 					$this->uniqUrl[] = $this->host . 'forum/view_theme/' . $theme['id'] . '?page=99999/';
 					if ($theme['posts'] > 1) {
-						$per_page = Config::read('posts_per_page', 'forum');
-						$per_page = intval($per_page); 
-						if ($per_page < 1) $per_page = 1;
-						$pages = ceil($theme['posts'] / $per_page);
+						$perPage = intval(Config::read('posts_per_page', 'forum'));
+						if ($perPage < 1) $perPage = 10;
+						$pages = ceil($theme['posts'] / $perPage);
 						
 						for ($i = 2; $i <= $pages; $i++) {
 							$this->uniqUrl[] = $this->host . 'forum/view_theme/' . $theme['id'] . '?page=' . $i;
@@ -230,10 +227,9 @@ class FpsSitemapGen {
 				}
 				
 				$cnt = count($themes);
-				$per_page = Config::read('themes_per_page', 'forum');
-				$per_page = intval($per_page); 
-				if ($per_page < 1) $per_page = 1;
-				$pages = ceil($cnt / $per_page);
+				$perPage = intval(Config::read('themes_per_page', 'forum'));
+				if ($perPage < 1) $perPage = 10;
+				$pages = ceil($cnt / $perPage);
 				
 				$this->uniqUrl[] = $this->host . 'forum/last_posts/';
 				for ($i = 2; $i <= $pages; $i++) {
@@ -268,10 +264,9 @@ class FpsSitemapGen {
 				foreach ($users as $user) {
 					$this->uniqUrl[] = $this->host . 'forum/user_posts/' . $user['id'];
 
-					$per_page = Config::read('themes_per_page', 'forum');
-					$per_page = intval($per_page); 
-					if ($per_page < 1) $per_page = 1;
-					$pages = ceil($user['cnt'] / $per_page);
+					$perPage = intval(Config::read('themes_per_page', 'forum'));
+					if ($perPage < 1) $perPage = 10;
+					$pages = ceil($user['cnt'] / $perPage);
 					
 					for ($i = 2; $i <= $pages; $i++) {
 						$this->uniqUrl[] = $this->host . 'forum/user_posts/' . $user['id'] . '/?page=' . $i;
@@ -294,10 +289,9 @@ class FpsSitemapGen {
 					$this->uniqUrl[] = $this->host . 'users/info/' . $user['id'];
 				}
 				
-				$per_page = Config::read('users_per_page', 'users');
-				$per_page = intval($per_page); 
-				if ($per_page < 1) $per_page = 1;
-				$pages = ceil(count($users) / $per_page);
+				$perPage = intval(Config::read('users_per_page', 'users'));
+				if ($perPage < 1) $perPage = 10;
+				$pages = ceil(count($users) / $perPage);
 				
 				for ($i = 2; $i <= $pages; $i++) {
 					$this->uniqUrl[] = $this->host . 'users/index/?page=' . $i;

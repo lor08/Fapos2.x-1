@@ -60,7 +60,11 @@
 						&nbsp;
 					</td>
 					<td class="posttdMessage" valign="top">{{ post.message }}
+						{% if post.attachment %}
 						<div align="left" class="eAttach">{{ post.attachment }}</div>
+						{% else %}
+						<br />
+						{% endif %}
                         {% if post.id_author != 0 %}
 						<br><hr size="1" width="150" align="left" class="signatureHr"><span style="clear:both;" class="signatureView">{{ post.author.signature }}</span>
 						{% endif %}

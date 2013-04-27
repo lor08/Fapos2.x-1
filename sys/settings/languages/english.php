@@ -380,6 +380,11 @@ $language = array(
 	'Delete theme'                  => 'Удалить тему',
 	'Theme admin panel'             => 'Панель администрирования',
 	'Links settings'                => 'Обработка ссылок',
+	'Empty field "poll_question"'   => 'не указан вопрос для голосования',
+	'Empty field "poll_ansvers"'    => 'не заданы ответы для голосования',
+	'Very small "poll_question"'    => 'вопрос для голосования слишком короткий',
+	'Few "poll_question"'           => 'должно быть указано не менее 2 возможных ответов',
+	'Many "poll_question"'          => 'должно быть указано не более 20 возможных ответов',
 	
 	
 	// Templates name

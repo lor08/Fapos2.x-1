@@ -755,7 +755,7 @@ border: 1px solid #7c7c7c;
 	padding-left: 5px;
 	border:none;
 }
-.cat-tb td {border-left:1px solid #64757C;border-bottom:1px solid #64757C;border-top:1px solid #141B1E;border-right:1px solid #141B1E;background: url('../img/forum-td-bg.jpg') repeat-x #36474E;}
+.cat-tb td {border-left:1px solid #64757C;border-bottom:1px solid #64757C;border-top:1px solid #141B1E;border-right:1px solid #141B1E;background: url('../img/forum-td-bg.jpg') repeat-x #36474E; padding: 3px;}
 .cat-tb .title a{
 	color: #87A637;
 	font-size: 14px;
@@ -1241,4 +1241,7 @@ background-image: -webkit-gradient(linear,left bottom,right bottom,color-stop(0,
 table.admin_bar {width:100%}
 table.admin_bar td+td {width:40px;text-align:right;}
 table.admin_bar input {width:100%;}
+
+.themeicon {max-width:19px; max-height:19px;}
+.eAttach {margin: 0; padding: 10px 0 0 30px; background: url('../img/file.gif') no-repeat 0px 0px; min-height:22px; vertical-align:middle;}
 /* ---------- END FAPOS CMS SYSTEM ---- */

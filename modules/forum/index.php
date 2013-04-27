@@ -305,10 +305,10 @@ Class ForumModule extends Module {
 			$total = $themesClass->getTotal(array('cond' => array('id_forum' => $id_forum)));
 
 
-
-			list($pages, $page) = pagination(
-					$total, $this->Register['Config']->read('themes_per_page', $this->module), $this->getModuleURL('view_forum/' . $id_forum)
-			);
+			$perPage = intval($this->Register['Config']->read('themes_per_page', $this->module));
+			if ($perPage < 1)
+				$perPage = 10;
+			list($pages, $page) = pagination($total, $perPage, $this->getModuleURL('view_forum/' . $id_forum));
 			$this->page_title .= ' (' . $page . ')';
 
 
@@ -317,7 +317,7 @@ Class ForumModule extends Module {
 				'id_forum' => $id_forum
 					), array(
 				'page' => $page,
-				'limit' => $this->Register['Config']->read('themes_per_page', $this->module),
+				'limit' => $perPage,
 				'order' => 'important DESC, last_post DESC, id DESC',
 					)
 			);
@@ -329,13 +329,14 @@ Class ForumModule extends Module {
 					. get_link(__('Forums list'), $this->getModuleURL()) . __('Separator')
 					. get_link(h($forum->getTitle()), $this->getModuleURL('view_forum/' . $id_forum));
 
-			$perPage = $this->Register['Config']->read('themes_per_page', $this->module);
 			$cntPages = ceil($total / $perPage);
 			$recOnPage = ($page == $cntPages) ? ($total % $perPage) : $perPage;
+			$firstOnPage = ($page - 1) * $perPage + 1;
+			$lastOnPage = $firstOnPage + $recOnPage - 1;
 
 			$markers['pagination'] = $pages;
 			$markers['add_link'] = $addLink;
-			$markers['meta'] = __('Count all topics') . ' ' . $total . '. ' . __('Count visible') . ' ' . $recOnPage;
+			$markers['meta'] = __('Count all topics') . ' ' . $total . '. ' . __('Count visible') . ' ' . $firstOnPage . '-' . $lastOnPage;
 			$this->_globalize($markers);
 
 
@@ -497,14 +498,14 @@ Class ForumModule extends Module {
 				$near_pages .= '&nbsp;(';
 				for ($n = 1; $n < ($cnt_near_pages + 1); $n++) {
 					if ($cnt_near_pages > 5 && $n > 3) {
-						$near_pages .= '...&nbsp;' . get_link(($cnt_near_pages - 1), $this->getModuleURL('view_theme/' . $theme->getId() . '?page='
+						$near_pages .= '&nbsp;...&nbsp;' . get_link(($cnt_near_pages - 1), $this->getModuleURL('view_theme/' . $theme->getId() . '?page='
 												. ($cnt_near_pages - 1))) . '&nbsp;' . get_link($cnt_near_pages, $this->getModuleURL('view_theme/'
-												. $theme->getId() . '?page=' . $cnt_near_pages)) . '&nbsp;';
+												. $theme->getId() . '?page=' . $cnt_near_pages));
 						break;
 					} else {
 						if ($n > 5)
 							break;
-						$near_pages .= get_link($n, $this->getModuleURL('view_theme/' . $theme->getId() . '?page=' . $n)) . '&nbsp;';
+						$near_pages .= ($n > 1 ? '&nbsp;' : '') . get_link($n, $this->getModuleURL('view_theme/' . $theme->getId() . '?page=' . $n));
 					}
 				}
 				$near_pages .= ')';
@@ -538,36 +539,36 @@ Class ForumModule extends Module {
 				if ($theme->getLocked() == 0) // тема открыта
 					if ($theme->getPosts() > $hot_theme_limit)
 						$themeicon = get_img('/template/' . getTemplateName() . '/img/folder_hot_new.gif'
-								, array('width' => '19', 'height' => '18', 'alt' => __('New posts'), 'title' => __('New posts')));
+								, array('class' => 'themeicon', 'alt' => __('New posts'), 'title' => __('New posts')));
 					else
 						$themeicon = get_img('/template/' . getTemplateName() . '/img/folder_new.gif'
-								, array('width' => '19', 'height' => '18', 'alt' => __('New posts'), 'title' => __('New posts')));
+								, array('class' => 'themeicon', 'alt' => __('New posts'), 'title' => __('New posts')));
 				else // тема закрыта
 					$themeicon = get_img('/template/' . getTemplateName() . '/img/folder_lock_new.gif'
-							, array('width' => '19', 'height' => '18', 'alt' => __('New posts'), 'title' => __('New posts')));
+							, array('class' => 'themeicon', 'alt' => __('New posts'), 'title' => __('New posts')));
 			} else {
 				if ($theme->getLocked() == 0) // тема открыта
 					if ($theme->getPosts() > $hot_theme_limit)
 						$themeicon = get_img('/template/' . getTemplateName() . '/img/folder_hot.gif'
-								, array('width' => '19', 'height' => '18', 'alt' => __('No new posts'), 'title' => __('No new posts')));
+								, array('class' => 'themeicon', 'alt' => __('No new posts'), 'title' => __('No new posts')));
 					else
 						$themeicon = get_img('/template/' . getTemplateName() . '/img/folder.gif'
-								, array('width' => '19', 'height' => '18', 'alt' => __('No new posts'), 'title' => __('No new posts')));
+								, array('class' => 'themeicon', 'alt' => __('No new posts'), 'title' => __('No new posts')));
 				else // тема закрыта
 					$themeicon = get_img('/template/' . getTemplateName() . '/img/folder_lock.gif'
-							, array('width' => '19', 'height' => '18', 'alt' => __('No new posts'), 'title' => __('No new posts')));
+							, array('class' => 'themeicon', 'alt' => __('No new posts'), 'title' => __('No new posts')));
 			}
 		} else { // это для не зарегистрированного пользователя
 			if ($theme->getLocked() == 0) // тема открыта
 				if ($theme->getPosts() > $hot_theme_limit)
 					$themeicon = get_img('/template/' . getTemplateName() . '/img/folder_hot.gif'
-							, array('width' => '19', 'height' => '18'));
+							, array('class' => 'themeicon'));
 				else
 					$themeicon = get_img('/template/' . getTemplateName() . '/img/folder.gif'
-							, array('width' => '19', 'height' => '18'));
+							, array('class' => 'themeicon'));
 			else // тема закрыта
 				$themeicon = get_img('/template/' . getTemplateName() . '/img/folder_lock.gif'
-						, array('width' => '19', 'height' => '18'));
+						, array('class' => 'themeicon'));
 		}
 
 		return $themeicon;
@@ -666,7 +667,7 @@ Class ForumModule extends Module {
 							'title' => __('Answer'))), $this->getModuleURL('view_theme/' . $id_theme . '#sendForm'));
 			} else {
 				$markers['add_link'] = get_img('/template/'
-								. getTemplateName() . '/img/reply_locked.png', array('alt' => __('Theme is locked'), 'title' => __('Theme is locked')));
+						. getTemplateName() . '/img/reply_locked.png', array('alt' => __('Theme is locked'), 'title' => __('Theme is locked')));
 			}
 			$admin_bar = array();
 			if ($this->ACL->turn(array($this->module, 'edit_themes', $id_forum), false)) {
@@ -692,12 +693,12 @@ Class ForumModule extends Module {
 				}
 			}
 			/*
-			// Необходимо добавить подтверждение удаления темы
-			if ($this->ACL->turn(array($this->module, 'delete_themes', $theme->getId_forum()), false)
-					|| (!empty($_SESSION['user']['id']) && $theme->getId_author() == $_SESSION['user']['id']
-					&& $this->ACL->turn(array($this->module, 'delete_mine_themes', $theme->getId_forum()), false))) {
-				$admin_bar[] = array('url' => get_url($this->getModuleURL('delete_theme/' . $theme->getId())), 'title' => __('Delete theme'));
-			}
+			  // Необходимо добавить подтверждение удаления темы
+			  if ($this->ACL->turn(array($this->module, 'delete_themes', $theme->getId_forum()), false)
+			  || (!empty($_SESSION['user']['id']) && $theme->getId_author() == $_SESSION['user']['id']
+			  && $this->ACL->turn(array($this->module, 'delete_mine_themes', $theme->getId_forum()), false))) {
+			  $admin_bar[] = array('url' => get_url($this->getModuleURL('delete_theme/' . $theme->getId())), 'title' => __('Delete theme'));
+			  }
 			 */
 			if ($admin_bar && is_array($admin_bar) && count($admin_bar) > 0) {
 				$markers['admin_bar'] = '<form name="admin_bar"><table class="admin_bar"><tr><td><select id="admin_bar_select"><option value="">' . __('Theme admin panel') . ':</option>';
@@ -882,12 +883,12 @@ Class ForumModule extends Module {
 				$attach_list = $post->getAttacheslist();
 				if (is_array($attach_list)) {
 					$collizion = true;
+					sort($attach_list);
 					foreach ($attach_list as $attach) {
 						$step = false;
 						if (file_exists(ROOT . $this->getFilesPath($attach->getFilename()))) {
 							$attachment .= __('Attachment') . ' ' . $attach->getAttach_number()
-									. ': ' . get_img('/template/' . getTemplateName() . '/img/file.gif', array('alt' => __('Open file'), 'title' => __('Open file')))
-									. '&nbsp;' . get_link(getSimpleFileSize($attach->getSize()), $this->getModuleURL('download_file/'
+									. ': ' . get_link(getSimpleFileSize($attach->getSize()), $this->getModuleURL('download_file/'
 													. $attach->getFilename()), array('target' => '_blank')) . '<br />';
 
 
@@ -1062,9 +1063,13 @@ Class ForumModule extends Module {
 	}
 
 	private function __savePoll($theme) {
-		if (!empty($_POST['poll']) && !empty($_POST['poll_ansvers'])) {
+		$poll = isset($_POST['poll']) ? '1' : '0';
+		$poll_question = isset($_POST['poll_question']) ? h(trim(mb_substr($_POST['poll_question'], 0, 250))) : '';
+		$poll_ansvers = isset($_POST['poll_ansvers']) ? h(trim(mb_substr($_POST['poll_ansvers'], 0, 1000))) : '';
 
-			$ansvers = explode("\n", trim($_POST['poll_ansvers']));
+		if ($poll && $poll_ansvers) {
+
+			$ansvers = explode("\n", $poll_ansvers);
 
 			$variants = array();
 			if (count($ansvers) && is_array($ansvers)) {
@@ -1076,13 +1081,9 @@ Class ForumModule extends Module {
 				}
 			}
 
-
-			$question = (!empty($_POST['poll_question'])) ? trim((string) $_POST['poll_question']) : '';
-
-
 			$data = array(
 				'variants' => json_encode($variants),
-				'question' => $question,
+				'question' => $poll_question,
 				'theme_id' => $theme->getId(),
 				'voted_users' => '',
 			);
@@ -1097,13 +1098,13 @@ Class ForumModule extends Module {
 
 	protected function _renderPoll($poll) {
 		if (!$poll) {
-
+			
 		}
 
 
 		$questions = json_decode($poll->getVariants(), true);
 		if (!$questions && !is_array($questions)) {
-
+			
 		}
 
 
@@ -1262,7 +1263,9 @@ Class ForumModule extends Module {
 		$nav = array();
 		$themesModel = $this->Register['ModManager']->getModelInstance('Themes');
 		$total = $themesModel->getTotal();
-		$perPage = $this->Register['Config']->read('themes_per_page', $this->module);
+		$perPage = intval($this->Register['Config']->read('themes_per_page', $this->module));
+		if ($perPage < 1)
+			$perPage = 10;
 		list($pages, $page) = pagination($total, $perPage, $this->getModuleURL('last_posts/'));
 		$nav['pagination'] = $pages;
 		$this->page_title .= ' (' . $page . ')';
@@ -1270,9 +1273,12 @@ Class ForumModule extends Module {
 
 		$cntPages = ceil($total / $perPage);
 		$recOnPage = ($page == $cntPages) ? ($total % $perPage) : $perPage;
+		$firstOnPage = ($page - 1) * $perPage + 1;
+		$lastOnPage = $firstOnPage + $recOnPage - 1;
+
 		$nav['navigation'] = get_link(__('Home'), '/') . __('Separator')
 				. get_link(__('Forums list'), $this->getModuleURL()) . __('Separator') . __('Last update');
-		$nav['meta'] = __('Count all topics') . $total . '. ' . __('Count visible') . $recOnPage;
+		$nav['meta'] = __('Count all topics') . ' ' . $total . '. ' . __('Count visible') . ' ' . $firstOnPage . '-' . $lastOnPage;
 		$this->_globalize($nav);
 
 		if ($total < 1)
@@ -1287,7 +1293,7 @@ Class ForumModule extends Module {
 		$themes = $themesModel->getCollection(array(), array(
 			'order' => 'last_post DESC',
 			'page' => $page,
-			'limit' => $this->Register['Config']->read('themes_per_page', $this->module),
+			'limit' => $perPage,
 				));
 
 
@@ -1636,6 +1642,9 @@ Class ForumModule extends Module {
 			$message = $_SESSION['viewMessage']['message'];
 			$gr_access = $_SESSION['viewMessage']['gr_access'];
 			$first_top = $_SESSION['viewMessage']['first_top'];
+			$poll = $_SESSION['viewMessage']['poll'];
+			$poll_question = h($_SESSION['viewMessage']['poll_question']);
+			$poll_ansvers = h($_SESSION['viewMessage']['poll_ansvers']);
 			unset($_SESSION['viewMessage']);
 		}
 
@@ -1652,6 +1661,9 @@ Class ForumModule extends Module {
 			$message = $_SESSION['addThemeForm']['message'];
 			$gr_access = $_SESSION['addThemeForm']['gr_access'];
 			$first_top = $_SESSION['addThemeForm']['first_top'];
+			$poll = $_SESSION['addThemeForm']['poll'];
+			$poll_question = h($_SESSION['addThemeForm']['poll_question']);
+			$poll_ansvers = h($_SESSION['addThemeForm']['poll_ansvers']);
 			unset($_SESSION['addThemeForm']);
 		}
 
@@ -1662,7 +1674,10 @@ Class ForumModule extends Module {
 			'description' => (!empty($description)) ? $description : '',
 			'main_text' => (!empty($message)) ? $message : '',
 			'gr_access' => (!empty($gr_access)) ? $gr_access : array(),
-			'first_top' => (!empty($first_top)) ? first_top : '0',
+			'first_top' => (!empty($first_top)) ? $first_top : '0',
+			'poll' => (!empty($poll)) ? $poll : '0',
+			'poll_question' => (!empty($poll_question)) ? $poll_question : '',
+			'poll_ansvers' => (!empty($poll_ansvers)) ? $poll_ansvers : '',
 		);
 
 		// nav block
@@ -1712,6 +1727,9 @@ Class ForumModule extends Module {
 		$description = trim(mb_substr($_POST['description'], 0, 128));
 		$message = trim($_POST['mainText']);
 		$first_top = isset($_POST['first_top']) ? '1' : '0';
+		$poll = isset($_POST['poll']) ? '1' : '0';
+		$poll_question = isset($_POST['poll_question']) ? h(trim(mb_substr($_POST['poll_question'], 0, 250))) : '';
+		$poll_ansvers = isset($_POST['poll_ansvers']) ? h(trim(mb_substr($_POST['poll_ansvers'], 0, 1000))) : '';
 
 		$gr_access = array();
 		$groups = $this->ACL->getGroups();
@@ -1728,6 +1746,9 @@ Class ForumModule extends Module {
 			$_SESSION['viewMessage']['message'] = $message;
 			$_SESSION['viewMessage']['gr_access'] = $gr_access;
 			$_SESSION['viewMessage']['first_top'] = $first_top;
+			$_SESSION['viewMessage']['poll'] = $poll;
+			$_SESSION['viewMessage']['poll_question'] = $poll_question;
+			$_SESSION['viewMessage']['poll_ansvers'] = $poll_ansvers;
 			redirect($this->getModuleURL('add_theme_form/' . $id_forum));
 		}
 
@@ -1743,6 +1764,22 @@ Class ForumModule extends Module {
 		if (mb_strlen($message) > $this->Register['Config']->read('max_post_lenght', $this->module))
 			$error = $error . '<li>' . sprintf(__('Field "message" contains more symbols')
 							, $this->Register['Config']->read('max_post_lenght', $this->module)) . '</li>' . "\n";
+
+		if ($poll) {
+			if (empty($poll_question))
+				$error = $error . '<li>' . __('Empty field "poll_question"') . '</li>' . "\n";
+			elseif (mb_strlen($poll_question) < 5)
+				$error = $error . '<li>' . __('Very small "poll_question"') . '</li>' . "\n";
+			if (empty($poll_ansvers))
+				$error = $error . '<li>' . __('Empty field "poll_ansvers"') . '</li>' . "\n";
+			else {
+				$answers = explode("\n", $poll_ansvers);
+				if (!$answers || !is_array($answers) || count($answers) < 2)
+					$error = $error . '<li>' . __('Few "poll_question"') . '</li>' . "\n";
+				elseif (count($answers) > 20)
+					$error = $error . '<li>' . __('Many "poll_question"') . '</li>' . "\n";
+			}
+		}
 
 		for ($i = 1; $i < 6; $i++) {
 			if (!empty($_FILES['attach' . $i]['name'])) {
@@ -1761,6 +1798,9 @@ Class ForumModule extends Module {
 			$_SESSION['addThemeForm']['message'] = $message;
 			$_SESSION['addThemeForm']['gr_access'] = $gr_access;
 			$_SESSION['addThemeForm']['first_top'] = $first_top;
+			$_SESSION['addThemeForm']['poll'] = $poll;
+			$_SESSION['addThemeForm']['poll_question'] = $poll_question;
+			$_SESSION['addThemeForm']['poll_ansvers'] = $poll_ansvers;
 			redirect($this->getModuleURL('add_theme_form/' . $id_forum));
 		}
 
@@ -2606,7 +2646,7 @@ Class ForumModule extends Module {
 		$navi = array();
 		$navi['navigation'] = get_link(__('Home'), '/') . __('Separator')
 				. get_link(__('Forums list'), $this->getModuleURL()) . __('Separator')
-				. get_link('Просмотр темы', $this->getModuleURL('view_theme/' . $id_theme) . __('Separator') . __('Edit message'));
+				. get_link('Просмотр темы', $this->getModuleURL('view_theme/' . $id_theme)) . __('Separator') . __('Edit message');
 		$this->_globalize($navi);
 
 
@@ -2941,7 +2981,9 @@ Class ForumModule extends Module {
 
 		$themesModel = $this->Register['ModManager']->getModelInstance('Themes');
 		$total = $themesModel->getTotal(array('cond' => array('id_author' => $user_id)));
-		$perPage = $this->Register['Config']->read('themes_per_page', $this->module);
+		$perPage = intval($this->Register['Config']->read('themes_per_page', $this->module));
+		if ($perPage < 1)
+			$perPage = 10;
 		list($pages, $page) = pagination($total, $perPage, $this->getModuleURL('user_themes/' . $user_id));
 
 
@@ -2951,13 +2993,14 @@ Class ForumModule extends Module {
 		$this->page_title .= ' (' . $page . ')';
 
 
+		$cntPages = ceil($total / $perPage);
+		$recOnPage = ($page == $cntPages) ? ($total % $perPage) : $perPage;
+		$firstOnPage = ($page - 1) * $perPage + 1;
+		$lastOnPage = $firstOnPage + $recOnPage - 1;
 
-		$recOnPage = ($page == $this->Register['pagecnt']) ? ($total % $perPage) : $perPage;
-		if ($recOnPage > $total)
-			$recOnPage = $total;
 		$nav['navigation'] = get_link(__('Home'), '/') . __('Separator')
 				. get_link(__('Forums list'), $this->getModuleURL()) . __('Separator') . __('User themes') . ' "' . h($user->getName()) . '"';
-		$nav['meta'] = __('Count all topics') . $total . '. ' . __('Count visible') . $recOnPage;
+		$nav['meta'] = __('Count all topics') . ' ' . $total . '. ' . __('Count visible') . ' ' . $firstOnPage . '-' . $lastOnPage;
 		$this->_globalize($nav);
 
 		if ($total < 1)
@@ -2976,7 +3019,7 @@ Class ForumModule extends Module {
 			'order' => 'time DESC',
 			'group' => 'id',
 			'page' => $page,
-			'limit' => $this->Register['Config']->read('themes_per_page', $this->module),
+			'limit' => $perPage,
 				));
 
 
@@ -3479,7 +3522,7 @@ Class ForumModule extends Module {
 			$_SESSION['editThemeForm']['gr_access'] = $gr_access;
 			$_SESSION['editThemeForm']['posts_select'] = $posts_select;
 			$_SESSION['editThemeForm']['first_top'] = $first_top;
-			redirect($this->getModuleURL('split_theme_form/' . $id_theme . isset($_GET['page']) ? '?page=' . $_GET['page'] : ''));
+			redirect($this->getModuleURL('split_theme_form/' . $id_theme . (isset($_GET['page']) ? '?page=' . $_GET['page'] : '')));
 		}
 
 
@@ -3743,7 +3786,7 @@ Class ForumModule extends Module {
 					. '</p>' . "\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
 			$_SESSION['editThemeForm']['theme'] = $id_new_theme;
 			$_SESSION['editThemeForm']['posts_select'] = $posts_select;
-			redirect($this->getModuleURL('move_posts_form/' . $id_theme . isset($_GET['page']) ? '?page=' . $_GET['page'] : ''));
+			redirect($this->getModuleURL('move_posts_form/' . $id_theme . (isset($_GET['page']) ? '?page=' . $_GET['page'] : '')));
 		}
 
 
@@ -3929,7 +3972,7 @@ Class ForumModule extends Module {
 			$_SESSION['editThemeForm']['error'] = '<p class="errorMsg">' . __('Some error in form')
 					. '</p>' . "\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
 			$_SESSION['editThemeForm']['theme'] = $id_new_theme;
-			redirect($this->getModuleURL('unite_themes_form/' . $id_theme . isset($_GET['page']) ? '?page=' . $_GET['page'] : ''));
+			redirect($this->getModuleURL('unite_themes_form/' . $id_theme));
 		}
 
 

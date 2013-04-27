@@ -1,5 +1,4 @@
 <?php
-
 /* ---------------------------------------------\
   |											   |
   | @Author:       Andrey Brykin (Drunya)        |
@@ -48,7 +47,10 @@ Class UsersModule extends Module {
 		// Выбираем из БД количество пользователей - это нужно для
 		// построения постраничной навигации
 		$total = $this->Model->getTotal(array());
-		list($pages, $page) = pagination($total, $this->Register['Config']->read('users_per_page', $this->module), $this->getModuleURL());
+		$perPage = intval($this->Register['Config']->read('users_per_page', $this->module));
+		if ($perPage < 1)
+			$perPage = 10;
+		list($pages, $page) = pagination($total, $perPage, $this->getModuleURL());
 
 
 		// Navigation Panel
@@ -56,7 +58,13 @@ Class UsersModule extends Module {
 		$nav['navigation'] = get_link(__('Home'), '/') . __('Separator')
 				. get_link(h($this->module_title), $this->getModuleURL()) . __('Separator') . __('Users list');
 		$nav['pagination'] = $pages;
-		$nav['meta'] = __('All users') . $total;
+
+		$cntPages = ceil($total / $perPage);
+		$recOnPage = ($page == $cntPages) ? ($total % $perPage) : $perPage;
+		$firstOnPage = ($page - 1) * $perPage + 1;
+		$lastOnPage = $firstOnPage + $recOnPage - 1;
+
+		$nav['meta'] = __('All users') . ' ' . $total . '. ' . __('Count visible') . ' ' . $firstOnPage . '-' . $lastOnPage;
 		$this->_globalize($nav);
 
 
@@ -69,7 +77,7 @@ Class UsersModule extends Module {
 		$queryParams = array(
 			'order' => mysql_real_escape_string($order),
 			'page' => $page,
-			'limit' => $this->Register['Config']->read('users_per_page', $this->module)
+			'limit' => $perPage
 		);
 		$records = $this->Model->getCollection(array(), $queryParams);
 
@@ -2964,7 +2972,7 @@ Class UsersModule extends Module {
 		$per_page = 25;
 
 		/* pages nav */
-		list($pages, $page) = pagination($total, $per_page,  $this->getModuleURL('comments/' . ($id ? $id : '')));
+		list($pages, $page) = pagination($total, $per_page, $this->getModuleURL('comments/' . ($id ? $id : '')));
 		$this->_globalize(array('comments_pagination' => $pages));
 
 		$offset = ($page - 1) * $per_page;
@@ -3005,8 +3013,8 @@ Class UsersModule extends Module {
 
 
 					if ($entity->getUser_id()) {
-						$markers['name_a'] = get_link(h($entity->getName()), getProfileUrl((int)$entity->getUser_id()));
-						$markers['user_url'] = get_url(getProfileUrl((int)$entity->getUser_id()));
+						$markers['name_a'] = get_link(h($entity->getName()), getProfileUrl((int) $entity->getUser_id()));
+						$markers['user_url'] = get_url(getProfileUrl((int) $entity->getUser_id()));
 						$markers['avatar'] = get_link($markers['avatar'], $markers['user_url']);
 					} else {
 						$markers['name_a'] = h($entity->getName());
@@ -3017,8 +3025,8 @@ Class UsersModule extends Module {
 					$markers['moder_panel'] = $moder_panel;
 					$markers['message'] = $this->Textarier->print_page($entity->getMessage());
 
-					if ($entity->getEditdate()!='0000-00-00 00:00:00') {
-						$markers['editdate'] = 'Комментарий был изменён '.$entity->getEditdate();
+					if ($entity->getEditdate() != '0000-00-00 00:00:00') {
+						$markers['editdate'] = 'Комментарий был изменён ' . $entity->getEditdate();
 					} else {
 						$markers['editdate'] = '';
 					}

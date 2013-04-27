@@ -247,7 +247,9 @@ class SearchModule extends Module {
 		$string = resc(implode('* ', $_words) . '*');
 
 		//query
-		$limit = $this->Register['Config']->read('per_page', $this->module);
+		$limit = intval($this->Register['Config']->read('per_page', $this->module));
+		if ($limit < 1)
+			$limit = 10;
 		$results = $this->Model->getSearchResults($string, $limit, $modules);
 		return $results;
 	}

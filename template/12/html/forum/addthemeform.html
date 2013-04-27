@@ -122,13 +122,13 @@ enctype="multipart/form-data" onsubmit="return checkForm(this)">
 						<input style="position:absolute; left:-339px; top:-16px;" type="button" value=":)" onClick="$('#smiles-cont').show();" class="codeButtons" />
 						</div>
 						{% for group in fps_users_groups %}
-						<input type="checkbox"
+						<label><input type="checkbox"
 							{% for curr in context.gr_access %}
 								{% if curr == group.id %}
 								 checked="checked" 
 								{% endif %}
 							{% endfor %}
-						  value="{{ group.id }}" name="gr_access_{{ group.id }}" />&nbsp;{{ group.title }}<br />
+						  value="{{ group.id }}" name="gr_access_{{ group.id }}" />&nbsp;{{ group.title }}</label><br />
 						{% endfor %}
 					</td>
 				</tr>
@@ -146,23 +146,35 @@ enctype="multipart/form-data" onsubmit="return checkForm(this)">
 						Добавить опрос:
 					</td>
 					<td>
-						<input type="checkbox" name="poll" value="1" onClick="pollForm(this);" />
+						<input type="checkbox" name="poll" value="1" onClick="pollForm(this);" 
+						{% if context.poll %}
+						checked="checked"
+						{% endif %}
+						/>
 					</td>
 				</tr>
-				<tr id="poll_question" style="display:none;">
+				<tr id="poll_question" 
+					{% if context.poll == 0 %}
+					style="display:none;"
+					{% endif %}
+					>
 					<td>
 						Тема опроса:
 					</td>
 					<td>
-						<input style="width:100%; padding: 2px;" type="text" name="poll_question" />
+						<input style="width:100%; padding: 2px;" type="text" name="poll_question" value="{{ context.poll_question }}" />
 					</td>
 				</tr>
-				<tr id="poll_ansvers" style="display:none;">
+				<tr id="poll_ansvers" 
+					{% if context.poll == 0 %}
+					style="display:none;"
+					{% endif %}
+					>
 					<td>
 						Варианты ответов(каждый с новой строки):
 					</td>
 					<td>
-						<textarea name="poll_ansvers" style="width:100%; height:200px;"></textarea>
+						<textarea name="poll_ansvers" style="width:100%; height:200px;">{{ context.poll_ansvers }}</textarea>
 					</td>
 				</tr>
 				
@@ -172,7 +184,11 @@ enctype="multipart/form-data" onsubmit="return checkForm(this)">
 						Закрепить первое сообщение темы:
 					</td>
 					<td>
-						<input type="checkbox" name="first_top" value="1" />
+						<input type="checkbox" name="first_top"
+						{% if context.first_top %}
+						checked="checked"
+						{% endif %}
+						/>
 					</td>
 				</tr>
 

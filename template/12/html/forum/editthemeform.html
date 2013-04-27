@@ -25,13 +25,13 @@
 	<td>Закрыть доступ:</td>
 	<td>
 		{% for group in fps_users_groups %}
-		<input type="checkbox"
+		<label><input type="checkbox"
 			{% for curr in context.gr_access %}
 				{% if curr == group.id %}
 				 checked="checked" 
 				{% endif %}
 			{% endfor %}
-		  value="{{ group.id }}" name="gr_access_{{ group.id }}" />&nbsp;{{ group.title }}<br />
+		  value="{{ group.id }}" name="gr_access_{{ group.id }}" />&nbsp;{{ group.title }}</label><br />
 		{% endfor %}
 	</td>
 </tr>

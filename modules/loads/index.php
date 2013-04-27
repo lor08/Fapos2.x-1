@@ -81,7 +81,10 @@ Class LoadsModule extends Module {
 
 
 		$total = $this->Model->getTotal(array('cond' => $where));
-		list ($pages, $page) = pagination($total, $this->Register['Config']->read('per_page', $this->module), $this->getModuleURL());
+		$perPage = intval($this->Register['Config']->read('per_page', $this->module));
+		if ($perPage < 1)
+			$perPage = 10;
+		list ($pages, $page) = pagination($total, $perPage, $this->getModuleURL());
 		$this->Register['pages'] = $pages;
 		$this->Register['page'] = $page;
 		$this->page_title .= ' (' . $page . ')';
@@ -92,7 +95,13 @@ Class LoadsModule extends Module {
 		$navi['add_link'] = ($this->ACL->turn(array($this->module, 'add_materials'), false)) ? get_link(__('Add material'), $this->getModuleURL('add_form/')) : '';
 		$navi['navigation'] = $this->_buildBreadCrumbs();
 		$navi['pagination'] = $pages;
-		$navi['meta'] = __('Count all material') . $total;
+
+		$cntPages = ceil($total / $perPage);
+		$recOnPage = ($page == $cntPages) ? ($total % $perPage) : $perPage;
+		$firstOnPage = ($page - 1) * $perPage + 1;
+		$lastOnPage = $firstOnPage + $recOnPage - 1;
+
+		$navi['meta'] = __('Count all material') . ' ' . $total . '. ' . __('Count visible') . ' ' . $firstOnPage . '-' . $lastOnPage;
 		$this->_globalize($navi);
 
 
@@ -104,7 +113,7 @@ Class LoadsModule extends Module {
 
 		$params = array(
 			'page' => $page,
-			'limit' => $this->Register['Config']->read('per_page', $this->module),
+			'limit' => $perPage,
 			'order' => getOrderParam(__CLASS__),
 		);
 
@@ -221,7 +230,10 @@ Class LoadsModule extends Module {
 
 
 		$total = $this->Model->getTotal(array('cond' => $where));
-		list ($pages, $page) = pagination($total, $this->Register['Config']->read('per_page', $this->module), $this->getModuleURL('category/' . $id));
+		$perPage = intval($this->Register['Config']->read('per_page', $this->module));
+		if ($perPage < 1)
+			$perPage = 10;
+		list ($pages, $page) = pagination($total, $perPage, $this->getModuleURL('category/' . $id));
 		$this->Register['pages'] = $pages;
 		$this->Register['page'] = $page;
 		$this->page_title .= ' (' . $page . ')';
@@ -232,7 +244,13 @@ Class LoadsModule extends Module {
 		$navi['add_link'] = ($this->ACL->turn(array($this->module, 'add_materials'), false)) ? get_link(__('Add material'), $this->getModuleURL('add_form/')) : '';
 		$navi['navigation'] = $this->_buildBreadCrumbs($id);
 		$navi['pagination'] = $pages;
-		$navi['meta'] = __('Count material in cat') . $total;
+
+		$cntPages = ceil($total / $perPage);
+		$recOnPage = ($page == $cntPages) ? ($total % $perPage) : $perPage;
+		$firstOnPage = ($page - 1) * $perPage + 1;
+		$lastOnPage = $firstOnPage + $recOnPage - 1;
+
+		$navi['meta'] = __('Count material in cat') . ' ' . $total . '. ' . __('Count visible') . ' ' . $firstOnPage . '-' . $lastOnPage;
 		$navi['category_name'] = h($category->getTitle());
 		$this->_globalize($navi);
 
@@ -245,7 +263,7 @@ Class LoadsModule extends Module {
 
 		$params = array(
 			'page' => $page,
-			'limit' => $this->Register['Config']->read('per_page', $this->module),
+			'limit' => $perPage,
 			'order' => getOrderParam(__CLASS__),
 		);
 
@@ -492,7 +510,10 @@ Class LoadsModule extends Module {
 
 
 		$total = $this->Model->getTotal(array('cond' => $where));
-		list ($pages, $page) = pagination($total, $this->Register['Config']->read('per_page', $this->module), $this->getModuleURL('user/' . $id));
+		$perPage = intval($this->Register['Config']->read('per_page', $this->module));
+		if ($perPage < 1)
+			$perPage = 10;
+		list ($pages, $page) = pagination($total, $perPage, $this->getModuleURL('user/' . $id));
 		$this->Register['pages'] = $pages;
 		$this->Register['page'] = $page;
 		$this->page_title .= ' (' . $page . ')';
@@ -504,7 +525,13 @@ Class LoadsModule extends Module {
 		$navi['navigation'] = get_link(__('Home'), '/') . __('Separator')
 				. get_link(h($this->module_title), $this->getModuleURL()) . __('Separator') . __('User materials') . ' "' . h($user->getName()) . '"';
 		$navi['pagination'] = $pages;
-		$navi['meta'] = __('Count all material') . $total;
+
+		$cntPages = ceil($total / $perPage);
+		$recOnPage = ($page == $cntPages) ? ($total % $perPage) : $perPage;
+		$firstOnPage = ($page - 1) * $perPage + 1;
+		$lastOnPage = $firstOnPage + $recOnPage - 1;
+
+		$navi['meta'] = __('Count all material') . ' ' . $total . '. ' . __('Count visible') . ' ' . $firstOnPage . '-' . $lastOnPage;
 		$navi['category_name'] = __('User materials') . ' "' . h($user->getName()) . '"';
 		$this->_globalize($navi);
 
@@ -517,7 +544,7 @@ Class LoadsModule extends Module {
 
 		$params = array(
 			'page' => $page,
-			'limit' => $this->Register['Config']->read('per_page', $this->module),
+			'limit' => $perPage,
 			'order' => getOrderParam(__CLASS__),
 		);
 
