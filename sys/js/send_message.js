@@ -628,6 +628,9 @@ function check_pm(uid){
 		$.get('/users/get_count_new_pm/'+uid, {}, function(data){
 			if (typeof data != 'undefined' && parseInt(data) == data && data > 0) {
 				$('body').append(createFpsWin('Новые сообщения', '<div style="text-align:center;">' + data + ' Новых сообщений!<br><br><a href="/users/in_msg_box/'+uid+'">Прочитать</a></div>'));
+				if(typeof available_new_pm == 'function') {
+					available_new_pm(data);
+				}
 			} else {
 				setTimeout("check_pm("+uid+")", 20000);
 			}
