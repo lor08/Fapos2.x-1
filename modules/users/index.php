@@ -64,7 +64,7 @@ Class UsersModule extends Module {
 		$firstOnPage = ($page - 1) * $perPage + 1;
 		$lastOnPage = $firstOnPage + $recOnPage - 1;
 
-		$nav['meta'] = __('All users') . ' ' . $total . '. ' . __('Count visible') . ' ' . $firstOnPage . '-' . $lastOnPage;
+		$nav['meta'] = __('All users') . ' ' . $total . '. ' . ($total > 1 ? __('Count visible') . ' ' . $firstOnPage . '-' . $lastOnPage : '');
 		$this->_globalize($nav);
 
 

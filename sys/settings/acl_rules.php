@@ -24,6 +24,12 @@ $acl_rules = array (
       2 => 3,
       3 => 4,
     ),
+    'need_check_materials' => 
+    array (
+      0 => 0,
+      1 => 1,
+      2 => 2,
+    ),
     'edit_mine_materials' => 
     array (
       2 => 3,
@@ -116,6 +122,12 @@ $acl_rules = array (
       3 => 4,
       4 => 3,
     ),
+    'need_check_materials' => 
+    array (
+      0 => 0,
+      1 => 1,
+      2 => 2,
+    ),
     'edit_mine_materials' => 
     array (
       2 => 3,
@@ -202,12 +214,26 @@ $acl_rules = array (
       4 => 3,
       5 => 0,
     ),
+    'download_files' => 
+    array (
+      0 => 1,
+      1 => 2,
+      2 => 3,
+      3 => 4,
+      4 => 5,
+    ),
     'add_materials' => 
     array (
       0 => 1,
       1 => 2,
       3 => 4,
       4 => 3,
+    ),
+    'need_check_materials' => 
+    array (
+      0 => 0,
+      1 => 1,
+      2 => 2,
     ),
     'edit_mine_materials' => 
     array (
@@ -388,6 +414,14 @@ $acl_rules = array (
       3 => 4,
       4 => 3,
       5 => 0,
+    ),
+    'download_files' => 
+    array (
+      0 => 1,
+      1 => 2,
+      2 => 3,
+      3 => 4,
+      4 => 5,
     ),
     'add_themes' => 
     array (

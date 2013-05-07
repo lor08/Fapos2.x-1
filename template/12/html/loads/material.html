@@ -7,7 +7,15 @@
         <br />
         <br />
         <img src="{{ template_path }}/img/file.gif" alt="Открыть файл" title="Открыть файл" align="absmiddle" />
-        [Скачать &nbsp;{{ entity.add_markers.attachment }} ]&nbsp;&nbsp;&nbsp;Загрузок: {{ entity.downloads }}<br>
+		{% if checkAccess([module,'download_files']) %}
+        {% if entity.add_markers.attachment %}
+		[Скачать &nbsp;{{ entity.add_markers.attachment }}]&nbsp;&nbsp;&nbsp;Загрузок: {{ entity.downloads }}<br />
+		{% else %}
+		Файл не найден<br />
+		{% endif %}
+		{% else %}
+		Скачивание запрещено
+		{% endif %}
 		{% if entity.tags %}
 		<br />
 		<br />

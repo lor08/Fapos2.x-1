@@ -25,7 +25,27 @@ include_once '../sys/boot.php';
 include_once ROOT . '/admin/inc/adm_boot.php';
 
 
-$date = (!empty($_GET['date'])) ? $_GET['date'] : time();
+$first_date = $FpsDB->query("SELECT `date` FROM `" . $FpsDB->getFullTableName('statistics') . "` ORDER BY `date` ASC LIMIT 1");
+$first_date = ($first_date && is_array($first_date) && count($first_date) > 0 && isset($first_date[0]['date'])) ? strtotime($first_date[0]['date']) : time();
+
+$date = (!empty($_GET['date'])) ? strtotime(date("Y-m-d", intval($_GET['date']))) : 0;
+if ($date > time()) $date = strtotime(date("Y-m-d"));
+elseif ($date < $first_date) $date = $first_date;
+
+
+if (!empty($_POST['grfrom'])) $_POST['grfrom'] = preg_replace('#^(\d{1,2})/(\d{1,2})/(\d{4})$#', '$3-$1-$2', $_POST['grfrom']);
+if (!empty($_POST['grto'])) $_POST['grto'] = preg_replace('#^(\d{1,2})/(\d{1,2})/(\d{4})$#', '$3-$1-$2', $_POST['grto']);
+$graph_to = (!empty($_POST['grto']) && preg_match('#^\d{4}-\d{2}-\d{2}$#', $_POST['grto'])) ? $_POST['grto'] : date("Y-m-d", $date);
+if (strtotime($graph_to) > time()) {
+	$graph_to = date("Y-m-d");
+	$date = strtotime(date("Y-m-d"));
+}
+$graph_from = (!empty($_POST['grfrom']) && preg_match('#^\d{4}-\d{2}-\d{2}$#', $_POST['grfrom'])) ? $_POST['grfrom'] : date("Y-m-d", $date - 2592000);
+if (strtotime($graph_from) < $first_date) {
+	$graph_from = date("Y-m-d", $first_date);
+}
+
+
 $_date = mysql_real_escape_string(date("Y-m-d", $date));
 if ($_date == date("Y-m-d")) {
 	if (file_exists(ROOT . '/sys/logs/counter/' . $_date . '.dat')) {
@@ -36,39 +56,16 @@ if ($_date == date("Y-m-d")) {
 }
 
 
-if (!empty($_POST['grfrom'])) $_POST['grfrom'] = preg_replace('#^(\d{1,2})/(\d{1,2})/(\d{4})$#', '$3-$1-$2', $_POST['grfrom']);
-if (!empty($_POST['grto'])) $_POST['grto'] = preg_replace('#^(\d{1,2})/(\d{1,2})/(\d{4})$#', '$3-$1-$2', $_POST['grto']);
-$graph_from = (!empty($_POST['grfrom']) && preg_match('#^\d{4}-\d{2}-\d{2}$#', $_POST['grfrom'])) ? $_POST['grfrom'] : '0000-00-00';
-$graph_to = (!empty($_POST['grto']) && preg_match('#^\d{4}-\d{2}-\d{2}$#', $_POST['grto'])) ? $_POST['grto'] : date("Y-m-d");
-
-
-$UsersModel = $Register['ModManager']->getModelInstance('Users');
 $Model = $Register['ModManager']->getModelInstance('Statistics');
 $all = $Model->getCollection(array(
 	"date >= '{$graph_from}'",
 	"date <= '{$graph_to}'",
-));
-$users = $UsersModel->getCollection(array(
-	
 ), array(
-	'joins' => array(
-		array(
-			'alias' => 'b',
-			'type' => 'LEFT',
-			'table' => 'users',
-			'cond' => array("`b`.`puttime` = `a`.`puttime`"),
-		),
-	),
-	'fields' => array(
-		"COUNT(b.id) as cnt",
-		"a.puttime as date",
-	),
-	'group' => '`date`',
-	'alias' => 'a',
+	'order' => 'date ASC',
 ));
 $json_data_v = array();
 $json_data_h = array();
-if (!empty($all)) {
+if (!empty($all) && is_array($all) && count($all) > 1) {
 	foreach ($all as $item) {
 		//$json_data[] = (int)$item->getViews();
 		$json_data_v[] = array(
@@ -86,14 +83,14 @@ if (!empty($all)) {
 
 
 
-if (!empty($stats)) {
-	$t_views = 0;
-	$t_hosts = $stats[0]['ips'];
-	$t_visitors = 0;
-	$t_views = $stats[0]['views'];
-	$t_visitors = $stats[0]['cookie'];
-	$views_on_visit = number_format(($t_views / $t_visitors), 1);
+if ($stats && is_array($stats) && count($stats) > 0) {
+	$t_hosts = isset($stats[0]['ips']) ? $stats[0]['ips'] : 0;
+	$t_views = isset($stats[0]['views']) ? $stats[0]['views'] : 0;
+	$t_visitors = isset($stats[0]['cookie']) ? $stats[0]['cookie'] : 0;
+	$views_on_visit = ($t_visitors > 0) ? number_format(($t_views / $t_visitors), 1) : '-';
 	$bot_views = $stats[0]['yandex_bot_views'] + $stats[0]['google_bot_views'] + $stats[0]['other_bot_views'];
+	$json_data_v[] = array(date("Y-m-d"), (int)$t_views);
+	$json_data_h[] = array(date("Y-m-d"), (int)$t_hosts);
 }
 
 
@@ -116,17 +113,25 @@ include_once ROOT . '/admin/template/header.php';
 	<div class="title">
 		<table cellspacing="0" width="100%">
 			<tr>
-			<td><a style="color:#8BB35B;" href="statistic.php?date=<?php echo $date - 168000 ?>"><?php echo '&laquo; ' . date("Y-m-d", $date - 168000) ?></a></td>
-			<td><a style="color:#8BB35B;" href="statistic.php?date=<?php echo $date - 84000 ?>"><?php echo '&laquo; ' . date("Y-m-d", $date - 84000) ?></a></td>
-			<td align="center"><a href="statistic.php?date=<?php echo $date ?>"><span style="color:#8BB35B;"><?php echo date("Y-m-d", $date) ?></span></a></td>
-			<td align="right" width="20%"> 
-			<?php  if (($date + 84000) < time()): ?>
-			<a style="color:#8BB35B;" href="statistic.php?date=<?php echo $date + 84000 ?>"><?php echo date("Y-m-d", $date + 84000) . ' &raquo;' ?></a>
+			<td width="20%">
+			<?php if (($date - 172800) >= $first_date): ?>
+			<a style="color:#8BB35B;" href="statistic.php?date=<?php echo $date - 172800 ?>"><?php echo '&laquo; ' . date("Y-m-d", $date - 172800) ?></a>
+			<?php endif; ?>
+			</td>
+			<td width="20%">
+			<?php if (($date - 86400) >= $first_date): ?>
+			<a style="color:#8BB35B;" href="statistic.php?date=<?php echo $date - 86400 ?>"><?php echo '&laquo; ' . date("Y-m-d", $date - 86400) ?></a>
+			<?php endif; ?>
+			</td>
+			<td width="20%" align="center"><a href="statistic.php?date=<?php echo $date ?>"><span style="color:#8BB35B;"><?php echo date("Y-m-d", $date) ?></span></a></td>
+			<td width="20%" align="right"> 
+			<?php if (($date + 86400) < time()): ?>
+			<a style="color:#8BB35B;" href="statistic.php?date=<?php echo $date + 86400 ?>"><?php echo date("Y-m-d", $date + 86400) . ' &raquo;' ?></a>
 			<?php endif; ?>
 			</td>
 			<td width="20%" align="right"> 
-			<?php  if (($date + 168000) < time()): ?>
-			<a style="color:#8BB35B;" href="statistic.php?date=<?php echo $date + 168000 ?>"><?php echo date("Y-m-d", $date + 168000) . ' &raquo;' ?></a>
+			<?php if (($date + 172800) < time()): ?>
+			<a style="color:#8BB35B;" href="statistic.php?date=<?php echo $date + 172800 ?>"><?php echo date("Y-m-d", $date + 172800) . ' &raquo;' ?></a>
 			<?php endif; ?>
 			</td>
 			</tr>
@@ -136,7 +141,7 @@ include_once ROOT . '/admin/template/header.php';
 		<?php if (!empty($stats)): ?>
 		<tr>
 			<td>Просмотров</td>
-			<td><?php echo $t_views ?></td>
+			<td width="150"><?php echo $t_views ?></td>
 		</tr>
 		<tr>
 			<td>Хостов</td>
@@ -179,7 +184,7 @@ include_once ROOT . '/admin/template/header.php';
 		
 
 
-		<?php if(!empty($json_data)): ?>
+		<?php if(count($json_data_v) > 1 && count($json_data_h) > 1 && !empty($json_data)): ?>
 		<tr>
 			<td colspan="2">
 		<link type="text/css" rel="StyleSheet" href="template/css/tcal.css" />
@@ -207,6 +212,8 @@ include_once ROOT . '/admin/template/header.php';
 			  axes: {
 				// options for each axis are specified in seperate option objects.
 				xaxis: {
+				  min: '<?php echo $graph_from; ?>',
+				  max: '<?php echo $graph_to; ?>',
 				  renderer:$.jqplot.DateAxisRenderer,
 				  tickOptions:{
 					//formatString:'%b&nbsp;%#d'

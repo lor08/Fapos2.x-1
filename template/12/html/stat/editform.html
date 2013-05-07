@@ -1,4 +1,7 @@
 {{ editor_body }}
+<script type="text/javascript">
+maxAttachedFiles = {{ context.max_attaches }};
+</script>
 {{ context.errors }}
 {{ context.preview }}
 <form name="sendForm" id="sendForm" action="{{ context.action }}" method="POST" 
@@ -50,14 +53,18 @@ enctype="multipart/form-data" onsubmit="return checkForm(this)">
 		<td>Сайт автора:</td>
 		<td class="right"><input size="70" type="text" name="sourse_site" value="{{ context.sourse_site }}" /></td>
 	</tr>
+	{% if checkAccess([module,'record_comments_management']) %}
 	<tr>
 		<td>Комментарии:</td>
 		<td class="right"><input type="checkbox" name="commented" value="1" {{ context.commented }} /></td>
 	</tr>
+	{% endif %}
+	{% if checkAccess([module,'hide_material']) %}
 	<tr>
 		<td>Доступен для просмотра:</td>
 		<td class="right"><input type="checkbox" name="available" value="1" {{ context.available }} /></td>
 	</tr>
+	{% endif %}
 	<tr>
 		<td colspan="2">
 			<input class="subm" type="submit" name="submitForm" value="Отправить" />

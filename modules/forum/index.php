@@ -336,7 +336,7 @@ Class ForumModule extends Module {
 
 			$markers['pagination'] = $pages;
 			$markers['add_link'] = $addLink;
-			$markers['meta'] = __('Count all topics') . ' ' . $total . '. ' . __('Count visible') . ' ' . $firstOnPage . '-' . $lastOnPage;
+			$markers['meta'] = __('Count all topics') . ' ' . $total . '. ' . ($total > 1 ? __('Count visible') . ' ' . $firstOnPage . '-' . $lastOnPage : '');
 			$this->_globalize($markers);
 
 
@@ -820,8 +820,7 @@ Class ForumModule extends Module {
 
 
 						// Если автор сообщения сейчас "на сайте"
-						$users_on_line = getOnlineUsers();
-						if (isset($users_on_line) && isset($users_on_line[$post->getId_author()])) {
+						if (checkUserOnline($post->getId_author())) {
 							$postAuthor->setStatus_on(__('Online'));
 							$postAuthor->setStatus_line('Online');
 						} else {
@@ -1278,7 +1277,7 @@ Class ForumModule extends Module {
 
 		$nav['navigation'] = get_link(__('Home'), '/') . __('Separator')
 				. get_link(__('Forums list'), $this->getModuleURL()) . __('Separator') . __('Last update');
-		$nav['meta'] = __('Count all topics') . ' ' . $total . '. ' . __('Count visible') . ' ' . $firstOnPage . '-' . $lastOnPage;
+		$nav['meta'] = __('Count all topics') . ' ' . $total . '. ' . ($total > 1 ? __('Count visible') . ' ' . $firstOnPage . '-' . $lastOnPage : '');
 		$this->_globalize($nav);
 
 		if ($total < 1)
@@ -1642,6 +1641,7 @@ Class ForumModule extends Module {
 			$message = $_SESSION['viewMessage']['message'];
 			$gr_access = $_SESSION['viewMessage']['gr_access'];
 			$first_top = $_SESSION['viewMessage']['first_top'];
+			$locked = $_SESSION['viewMessage']['locked'];
 			$poll = $_SESSION['viewMessage']['poll'];
 			$poll_question = h($_SESSION['viewMessage']['poll_question']);
 			$poll_ansvers = h($_SESSION['viewMessage']['poll_ansvers']);
@@ -1661,6 +1661,7 @@ Class ForumModule extends Module {
 			$message = $_SESSION['addThemeForm']['message'];
 			$gr_access = $_SESSION['addThemeForm']['gr_access'];
 			$first_top = $_SESSION['addThemeForm']['first_top'];
+			$locked = $_SESSION['addThemeForm']['locked'];
 			$poll = $_SESSION['addThemeForm']['poll'];
 			$poll_question = h($_SESSION['addThemeForm']['poll_question']);
 			$poll_ansvers = h($_SESSION['addThemeForm']['poll_ansvers']);
@@ -1675,6 +1676,7 @@ Class ForumModule extends Module {
 			'main_text' => (!empty($message)) ? $message : '',
 			'gr_access' => (!empty($gr_access)) ? $gr_access : array(),
 			'first_top' => (!empty($first_top)) ? $first_top : '0',
+			'locked' => (!empty($locked)) ? $locked : '0',
 			'poll' => (!empty($poll)) ? $poll : '0',
 			'poll_question' => (!empty($poll_question)) ? $poll_question : '',
 			'poll_ansvers' => (!empty($poll_ansvers)) ? $poll_ansvers : '',
@@ -1727,6 +1729,7 @@ Class ForumModule extends Module {
 		$description = trim(mb_substr($_POST['description'], 0, 128));
 		$message = trim($_POST['mainText']);
 		$first_top = isset($_POST['first_top']) ? '1' : '0';
+		$locked = isset($_POST['locked']) ? '1' : '0';
 		$poll = isset($_POST['poll']) ? '1' : '0';
 		$poll_question = isset($_POST['poll_question']) ? h(trim(mb_substr($_POST['poll_question'], 0, 250))) : '';
 		$poll_ansvers = isset($_POST['poll_ansvers']) ? h(trim(mb_substr($_POST['poll_ansvers'], 0, 1000))) : '';
@@ -1746,6 +1749,7 @@ Class ForumModule extends Module {
 			$_SESSION['viewMessage']['message'] = $message;
 			$_SESSION['viewMessage']['gr_access'] = $gr_access;
 			$_SESSION['viewMessage']['first_top'] = $first_top;
+			$_SESSION['viewMessage']['locked'] = $locked;
 			$_SESSION['viewMessage']['poll'] = $poll;
 			$_SESSION['viewMessage']['poll_question'] = $poll_question;
 			$_SESSION['viewMessage']['poll_ansvers'] = $poll_ansvers;
@@ -1798,6 +1802,7 @@ Class ForumModule extends Module {
 			$_SESSION['addThemeForm']['message'] = $message;
 			$_SESSION['addThemeForm']['gr_access'] = $gr_access;
 			$_SESSION['addThemeForm']['first_top'] = $first_top;
+			$_SESSION['addThemeForm']['locked'] = $locked;
 			$_SESSION['addThemeForm']['poll'] = $poll;
 			$_SESSION['addThemeForm']['poll_question'] = $poll_question;
 			$_SESSION['addThemeForm']['poll_ansvers'] = $poll_ansvers;
@@ -1820,6 +1825,9 @@ Class ForumModule extends Module {
 			'group_access' => $gr_access,
 			'first_top' => $first_top,
 		);
+		if ($this->ACL->turn(array($this->module, 'close_themes', $id_forum), false)) {
+			$data['locked'] = $locked;
+		}
 		$theme = new ThemesEntity($data);
 		$id_theme = $theme->save();
 		if (!is_int($id_theme)) {
@@ -1978,12 +1986,14 @@ Class ForumModule extends Module {
 			$description = h($_SESSION['editThemeForm']['description']);
 			$gr_access = $_SESSION['editThemeForm']['gr_access'];
 			$first_top = $_SESSION['editThemeForm']['first_top'];
+			$locked = $_SESSION['editThemeForm']['locked'];
 			unset($_SESSION['editThemeForm']);
 		} else {
 			$name = h($theme->getTitle());
 			$description = h($theme->getDescription());
 			$gr_access = $theme->getGroup_access();
 			$first_top = $theme->getFirst_top();
+			$locked = $theme->getLocked();
 		}
 
 
@@ -2011,6 +2021,7 @@ Class ForumModule extends Module {
 			'options' => $options,
 			'gr_access' => (!empty($gr_access)) ? $gr_access : array(),
 			'first_top' => (!empty($first_top)) ? $first_top : '0',
+			'locked' => (!empty($locked)) ? $locked : '0',
 		);
 
 		// nav block
@@ -2055,6 +2066,7 @@ Class ForumModule extends Module {
 		$name = trim(mb_substr($_POST['theme'], 0, 55));
 		$description = trim(mb_substr($_POST['description'], 0, 128));
 		$first_top = isset($_POST['first_top']) ? '1' : '0';
+		$locked = isset($_POST['locked']) ? '1' : '0';
 
 		$gr_access = array();
 		$groups = $this->ACL->getGroups();
@@ -2081,6 +2093,7 @@ Class ForumModule extends Module {
 			$_SESSION['editThemeForm']['description'] = $description;
 			$_SESSION['editThemeForm']['gr_access'] = $gr_access;
 			$_SESSION['editThemeForm']['first_top'] = $first_top;
+			$_SESSION['editThemeForm']['locked'] = $locked;
 			redirect($this->getModuleURL('edit_theme_form/' . $id_theme));
 		}
 
@@ -2100,6 +2113,9 @@ Class ForumModule extends Module {
 		$theme->setId_forum($id_forum);
 		$theme->setGroup_access($gr_access);
 		$theme->setFirst_top($first_top);
+		if ($this->ACL->turn(array($this->module, 'close_themes', $id_forum), false)) {
+			$theme->setLocked($locked);
+		}
 		$theme->save();
 
 
@@ -2589,18 +2605,20 @@ Class ForumModule extends Module {
 
 
 		$message = $post->getMessage();
+		$add_editor = '1';
 		$html = '';
 		$markers = array();
 
 		//if user vant preview message
-		if (isset($_SESSION['viewMessage']) and !empty($_SESSION['viewMessage'])) {
+		if (isset($_SESSION['viewMessage']) and !empty($_SESSION['viewMessage']['message'])) {
 			$view = $this->render('previewmessage.html', array(
 				'context' => array(
-					'message' => $this->Textarier->print_page($_SESSION['viewMessage'], $writer_status),
+					'message' => $this->Textarier->print_page($_SESSION['viewMessage']['message'], $writer_status),
 				),
 					));
 			$html = $html . $view . "\n";
-			$message = $_SESSION['viewMessage'];
+			$message = $_SESSION['viewMessage']['message'];
+			$add_editor = !empty($_SESSION['viewMessage']['add_editor']) ? '1' : '0';
 			unset($_SESSION['viewMessage']);
 		}
 
@@ -2613,6 +2631,7 @@ Class ForumModule extends Module {
 					));
 			$html = $info . $html . "\n";
 			$message = $_SESSION['editPostForm']['message'];
+			$add_editor = !empty($_SESSION['editPostForm']['add_editor']) ? '1' : '0';
 			unset($_SESSION['editPostForm']);
 		}
 
@@ -2621,6 +2640,7 @@ Class ForumModule extends Module {
 		$markers = array(
 			'action' => get_url($this->getModuleURL('update_post/' . $id)),
 			'main_text' => h($message),
+			'add_editor' => (!empty($add_editor) ? $add_editor : ''),
 		);
 
 
@@ -2650,7 +2670,7 @@ Class ForumModule extends Module {
 		$this->_globalize($navi);
 
 
-		setReferer();
+		// setReferer();
 		$source = $this->render('editpostform.html', array('context' => $markers));
 		$html = $html . $source;
 		return $this->_view($html);
@@ -2692,10 +2712,12 @@ Class ForumModule extends Module {
 
 		// Обрезаем сообщение до длины $set['forum']['max_post_lenght']
 		$message = trim($_POST['mainText']);
+		$add_editor = isset($_POST['add_editor']) ? '1' : '0';
 
 		// Preview
 		if (isset($_POST['viewMessage'])) {
-			$_SESSION['viewMessage'] = $message;
+			$_SESSION['viewMessage']['message'] = $message;
+			$_SESSION['viewMessage']['add_editor'] = $add_editor;
 			redirect($this->getModuleURL('edit_post_form/' . $id));
 		}
 
@@ -2803,8 +2825,10 @@ Class ForumModule extends Module {
 		$message = mb_substr($message, 0, $this->Register['Config']->read('max_post_lenght', $this->module));
 		$post->setMessage($message);
 		$post->setAttaches($attach_exists);
-		$post->setId_editor($user_id);
-		$post->setEdittime(new Expr('NOW()'));
+		if (!$this->ACL->turn(array($this->module, 'edit_posts', $theme->getId_forum()), false) || $add_editor) {
+			$post->setId_editor($user_id);
+			$post->setEdittime(new Expr('NOW()'));
+		}
 		$post->save();
 
 
@@ -2813,7 +2837,7 @@ Class ForumModule extends Module {
 		$this->DB->cleanSqlCache();
 		if ($this->Log)
 			$this->Log->write('editing post', 'post id(' . $id . '), theme id(' . $id_theme . ')');
-		return $this->showInfoMessage(__('Operation is successful'), getReferer());
+		return $this->showInfoMessage(__('Operation is successful'), $this->getModuleURL('view_post/' . $id) /*getReferer()*/);
 	}
 
 	/**
@@ -2946,7 +2970,7 @@ Class ForumModule extends Module {
 				$forum->setLast_theme_id($last_theme ? $last_theme->getId() : '0');
 				$forum->save();
 			}
-			return $this->showInfoMessage(__('Operation is successful'), getReferer());
+			return $this->showInfoMessage(__('Operation is successful'), $this->getModuleURL('view_theme/' . $theme->getId()) /*getReferer()*/);
 		}
 	}
 
@@ -3000,7 +3024,7 @@ Class ForumModule extends Module {
 
 		$nav['navigation'] = get_link(__('Home'), '/') . __('Separator')
 				. get_link(__('Forums list'), $this->getModuleURL()) . __('Separator') . __('User themes') . ' "' . h($user->getName()) . '"';
-		$nav['meta'] = __('Count all topics') . ' ' . $total . '. ' . __('Count visible') . ' ' . $firstOnPage . '-' . $lastOnPage;
+		$nav['meta'] = __('Count all topics') . ' ' . $total . '. ' . ($total > 1 ? __('Count visible') . ' ' . $firstOnPage . '-' . $lastOnPage : '');
 		$this->_globalize($nav);
 
 		if ($total < 1)
@@ -3075,6 +3099,9 @@ Class ForumModule extends Module {
 	}
 
 	public function download_file($file = null, $mimetype = 'application/octet-stream') {
+		//turn access
+		$this->ACL->turn(array($this->module, 'download_files'));
+
 		if (empty($file))
 			return $this->showInfoMessage(__('File not found'), $this->getModuleURL());
 
@@ -3362,6 +3389,7 @@ Class ForumModule extends Module {
 			$gr_access = $_SESSION['editThemeForm']['gr_access'];
 			$posts_select = $_SESSION['editThemeForm']['posts_select'];
 			$first_top = $_SESSION['editThemeForm']['first_top'];
+			$locked = $_SESSION['editThemeForm']['locked'];
 			unset($_SESSION['editThemeForm']);
 		} else {
 			$name = '';
@@ -3369,6 +3397,7 @@ Class ForumModule extends Module {
 			$gr_access = array();
 			$posts_select = array();
 			$first_top = '';
+			$locked = '';
 		}
 
 
@@ -3451,6 +3480,7 @@ Class ForumModule extends Module {
 			'gr_access' => (!empty($gr_access)) ? $gr_access : array(),
 			'posts_select' => (!empty($posts_select)) ? $posts_select : array(),
 			'first_top' => (!empty($first_top)) ? $first_top : '0',
+			'locked' => (!empty($locked)) ? $locked : '0',
 		);
 
 
@@ -3484,6 +3514,7 @@ Class ForumModule extends Module {
 		$name = trim(mb_substr($_POST['theme'], 0, 55));
 		$description = trim(mb_substr($_POST['description'], 0, 128));
 		$first_top = isset($_POST['first_top']) ? '1' : '0';
+		$locked = isset($_POST['locked']) ? '1' : '0';
 
 		$gr_access = array();
 		$groups = $this->ACL->getGroups();
@@ -3522,6 +3553,7 @@ Class ForumModule extends Module {
 			$_SESSION['editThemeForm']['gr_access'] = $gr_access;
 			$_SESSION['editThemeForm']['posts_select'] = $posts_select;
 			$_SESSION['editThemeForm']['first_top'] = $first_top;
+			$_SESSION['editThemeForm']['locked'] = $locked;
 			redirect($this->getModuleURL('split_theme_form/' . $id_theme . (isset($_GET['page']) ? '?page=' . $_GET['page'] : '')));
 		}
 
@@ -3555,6 +3587,9 @@ Class ForumModule extends Module {
 			'group_access' => $gr_access,
 			'first_top' => $first_top,
 		);
+		if ($this->ACL->turn(array($this->module, 'close_themes', $id_forum), false)) {
+			$data['locked'] = $locked;
+		}
 		$new_theme = new ThemesEntity($data);
 		$id_new_theme = $new_theme->save();
 		if (!is_int($id_new_theme)) {

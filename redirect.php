@@ -25,16 +25,18 @@ if (!$delay || $delay < 1) $delay = 10;
 
 $in_white = false;
 $in_black = false;
-if ($redirect) {
-	$info = parse_url($url);
-	if (isset($info['host'])) {
+
+$info = parse_url($url);
+if (isset($info['host'])) {
+	$in_white = (mb_strtolower($info['host']) === mb_strtolower($_SERVER['SERVER_NAME']));
+	if (!$in_white && $redirect) {
 		$site = trim(mb_strtolower($info['host']));
 		$in_white = siteInList($site, $whitelist);
 		$in_black = (!$in_white) ? siteInList($site, $blacklist) : false;
 	}
 }
 
-if ($in_white) {
+if ($in_white || !$redirect) {
 	header('Refresh: 0; url=' . $url);
 } else {
 	if (!$in_black) header('Refresh: ' . $delay . '; url=' . $url);

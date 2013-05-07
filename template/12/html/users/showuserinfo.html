@@ -17,27 +17,31 @@
 {% endif %}
 
 <tr>
-   <td colspan="2"><br><center><img title="{{ user.name }}" class="userAvatar" border="0" src="{{ user.avatar }}"><br><!--{USER_RANK}--><br>
-   <table>
+   <td colspan="2"><br><center><img title="{{ user.name }}" class="userAvatar" border="0" src="{{ user.avatar }}"><br>
+		{% if checkUserOnline(user.id) %}
+		<img src="{{ template_path }}/img/online.png" title="online" alt="online" />
+		{% else %}
+		<img src="{{ template_path }}/img/offline.png" title="offline" alt="offline" />
+		{% endif %}
+	   <br>
+	   <table>
 		<tr><td style="border: 1px solid #000;">{{ user.privatemessage }}</td></tr>
 		<center>{{ user.edit_profile_link }}</center>
-	</table>
+		</table>
 		</center>
 	</td>
 </tr>
 
-<!--
 <tr>
 <td>
 <img src="{{ template_path }}/img/profile/status.png"/> Статус:</td>
-<td>{USER_STATUS}</td>
+<td>{{ getUserRatingText(user.posts) }}<br /><img border="0" src="{{ template_path }}/img/{{ getUserRatingImg(user.posts) }}" alt="" /></td>
 </tr>
--->
 
 <tr>
 <td><img src="{{ template_path }}/img/profile/group.png"/> Группа:</td>
 <td>
-	{% if fps_users_edit %}
+	{% if checkAccess([module,'edit_users']) %}
 		{% if fps_user_id == user.id %}
 			{{ user.group }}
 		{% else %}
@@ -176,7 +180,7 @@
 <div class="drag_window">
     <div class="title" onmousedown="drag_object(event, this.parentNode)">Голос для <b>{{ user.name }}</b></div>
     <div onClick="$('#setRating_{{ user.user_id }}').hide()" class="close"></div>
-    <div class="fps-cont">
+    <div class="cont">
         <form id="ratingForm_{{ user.user_id }}">
             <input type="radio" name="points" value="1" /><b>&nbsp;1</b><br />
             <input type="radio" name="points" value="0" /><b>&nbsp;0</b><br />

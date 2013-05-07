@@ -13,6 +13,18 @@ enctype="multipart/form-data" onsubmit="return checkForm(this)">
 						<textarea {{ editor_text }} class="text-area" name="mainText">{{ context.main_text }}</textarea>
 					</td>
 				</tr>
+				{% if checkAccess([module,'edit_posts']) %}
+				<tr>
+					<td>Добавить строку "Отредактировано":</td>
+					<td class="right">
+						<input type="checkbox" name="add_editor"
+						{% if context.add_editor %}
+						checked="checked"
+						{% endif %}
+						/>
+					</td>
+				</tr>
+				{% endif %}
 				<tr>
 					<td align="left" class="gTableRight">
 						<div id="attachments">

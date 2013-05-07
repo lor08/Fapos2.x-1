@@ -1,24 +1,24 @@
 <?php 
 ##################################################
-##												##
+##                                              ##
 ## Author:       Andrey Brykin (Drunya)         ##
 ## Version:      0.7                            ##
 ## Project:      CMS                            ##
 ## package       CMS Fapos                      ##
 ## subpackege    Geting user rating function    ##
-## copyright     ©Andrey Brykin 2010-2011       ##
+## copyright     Â©Andrey Brykin 2010-2011       ##
 ##################################################
 
 
 ##################################################
-##												##
+##                                              ##
 ## any partial or not partial extension         ##
 ## CMS Fapos,without the consent of the         ##
 ## author, is illegal                           ##
 ##################################################
-## Ëþáîå ðàñïðîñòðàíåíèå                        ##
-## CMS Fapos èëè åå ÷àñòåé,                     ##
-## áåç ñîãëàñèÿ àâòîðà, ÿâëÿåòñÿ íå çàêîííûì    ##
+## Ð›ÑŽÐ±Ð¾Ðµ Ñ€Ð°ÑÐ¿Ñ€Ð¾ÑÑ‚Ñ€Ð°Ð½ÐµÐ½Ð¸Ðµ                        ##
+## CMS Fapos Ð¸Ð»Ð¸ ÐµÐµ Ñ‡Ð°ÑÑ‚ÐµÐ¹,                     ##
+## Ð±ÐµÐ· ÑÐ¾Ð³Ð»Ð°ÑÐ¸Ñ Ð°Ð²Ñ‚Ð¾Ñ€Ð°, ÑÐ²Ð»ÑÐµÑ‚ÑÑ Ð½Ðµ Ð·Ð°ÐºÐ¾Ð½Ð½Ñ‹Ð¼    ##
 ##################################################
 
 /**
@@ -28,12 +28,12 @@
 
 function getUserRating($rating, $settings) {
 	
-	if (!is_numeric($rating)) return 'star0.gif';
+	if (!is_numeric($rating)) return array('rank' => '', 'img' => 'star0.gif');
 	
-	if (empty($settings) || !is_string($settings)) return 'star0.gif';
+	if (empty($settings) || !is_string($settings)) return array('rank' => '', 'img' => 'star0.gif');
 	
 	$params = unserialize($settings);
-	if (!is_array($params)) return 'star0.gif';
+	if (!is_array($params)) return array('rank' => '', 'img' => 'star0.gif');
 	
 	if ( $rating < $params['cond1'] ) {
 		$rank = $params['rat0'];
@@ -74,6 +74,24 @@ function getUserRating($rating, $settings) {
 	
 	return $result;
 	
+}
+
+function getUserRatingImg($rating) {
+	$Register = Register::getInstance();
+	$settingsModel = $Register['ModManager']->getModelInstance('UsersSettings');
+	$settings = $settingsModel->getFirst(array('type' => 'rating'));
+	$settings = $settings ? $settings->getValues() : '';
+	$info = getUserRating($rating, $settings);
+	return (isset($info['img']) ? $info['img'] : 'star0.gif');
+}
+
+function getUserRatingText($rating) {
+	$Register = Register::getInstance();
+	$settingsModel = $Register['ModManager']->getModelInstance('UsersSettings');
+	$settings = $settingsModel->getFirst(array('type' => 'rating'));
+	$settings = $settings ? $settings->getValues() : '';
+	$info = getUserRating($rating, $settings);
+	return (isset($info['rank']) ? $info['rank'] : '');
 }
 
 ?>

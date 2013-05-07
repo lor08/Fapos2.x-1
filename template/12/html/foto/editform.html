@@ -15,10 +15,12 @@ enctype="multipart/form-data">
 			<textarea {{ editor_text }} class="text-area" name="mainText">{{ context.main_text }}</textarea>
 		</td>
 	</tr>
+	{% if checkAccess([module,'record_comments_management']) %}
 	<tr>
 		<td>Комментарии:</td>
 		<td class="right"><input type="checkbox" name="commented" value="1" {{ context.commented }} /></td>
 	</tr>
+	{% endif %}
 	<tr>
 		<td colspan="2">
 			<input class="subm" type="submit" name="submitForm" value="Отправить" />

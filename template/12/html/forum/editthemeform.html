@@ -45,6 +45,18 @@
 		/>
 	</td>
 </tr>
+{% if checkAccess([module,'close_themes']) %}
+<tr>
+	<td>Закрыть тему:</td>
+	<td>
+		<input type="checkbox" name="locked"
+		{% if context.locked %}
+		checked="checked"
+		{% endif %}
+		/>
+	</td>
+</tr>
+{% endif %}
 <tr>
   <td>Автор:</td>
   <td><input type="text" name="author" value="{{ context.author }}" disabled style="width:400px" /></td>

@@ -15,7 +15,14 @@ $(document).ready(function() {
 		{% endfor %}
 		]
 	}
-	$("#editor").wysibb(wbbOpt)
+	$("#editor").wysibb(wbbOpt);
+	
+	// Отправка сообщения по Ctrl+Enter
+	$("#editor").add($(\'body\', $("#editor").getDoc())).keydown(function(event) {
+		if (event.keyCode == 13 && event.ctrlKey) {
+			$("#editor").parents("form").submit();
+		}
+	});
 });
 </script>',
     'editor_buttons' => '',
@@ -40,7 +47,14 @@ $(document).ready(function() {
 		{% endfor %}
 		]
 	}
-	$("#editor").wysibb(wbbOpt)
+	$("#editor").wysibb(wbbOpt);
+	
+	// Отправка сообщения по Ctrl+Enter
+	$("#editor").add($(\'body\', $("#editor").getDoc())).keydown(function(event) {
+		if (event.keyCode == 13 && event.ctrlKey) {
+			$("#editor").parents("form").submit();
+		}
+	});
 });
 </script>',
     'editor_buttons' => '',

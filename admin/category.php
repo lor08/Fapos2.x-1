@@ -65,7 +65,7 @@ function deleteCatsCollision()
 		'group' => '`a`.`parent_id`',
 	));
 	
-	if (count($collision)) {
+	if ($collision && is_array($collision) && count($collision)) {
 		foreach ($collision as $key => $cat) {
 			if (!empty($cat['parent_id']) && empty($cat['cnt'])) {
 				$FpsDB->save(getCurrMod() . '_sections', 
@@ -177,20 +177,23 @@ function buildCatsList($catsTree, $catsList, $indent = '') {
     $acl_groups = $Register['ACL']->get_group_info();
 	$out = '';
 	
+	if (!$catsTree || !is_array($catsTree)) return $out;
 	
 	foreach ($catsTree as $id => $node) {
+		if (!isset($node['category'])) continue;
+		
 		$cat = $node['category'];
-		$no_access = ($cat['no_access'] !== '') ? explode(',', $cat['no_access']) : array();
+		$no_access = (isset($cat['no_access']) && $cat['no_access'] !== '') ? explode(',', $cat['no_access']) : array();
 
 		
-		$_catList = (count($catsList)) ? $catsList : array();
+		$catsList = ($catsList && is_array($catsList) && count($catsList)) ? $catsList : array();
 		$cat_selector = '<select  name="id_sec" id="cat_secId">';
 		if (empty($cat['parent_id'])) {
 			$cat_selector .= '<option value="0" selected="selected">&nbsp;</option>';
 		} else {
 			$cat_selector .= '<option value="0">&nbsp;</option>';
 		}
-		foreach ($_catList as $selector_result) {
+		foreach ($catsList as $selector_result) {
 			if ($selector_result['id'] == $cat['id']) continue;
 			if ($cat['parent_id'] == $selector_result['id']) {
 				$cat_selector .= '<option value="' . $selector_result['id'] 
@@ -259,13 +262,11 @@ function buildCatsList($catsTree, $catsList, $indent = '') {
 						<div class="right"><table class="checkbox-collection"><tr>';
 						$n = 0;
 						if ($acl_groups && is_array($acl_groups)) {
-							foreach ($acl_groups as $id => $group) {
+							foreach ($acl_groups as $gid => $group) {
 								if (($n % 3) == 0) $popups .= '</tr><tr>';
-								$checked = (in_array($id, $no_access)) ? '' : ' checked="checked"';
-								
+								$checked = (in_array($gid, $no_access)) ? '' : ' checked="checked"';
 								$id = md5(rand(0, 99999) . $n);
-								
-								$popups .= '<td><input id="' . $id . '" type="checkbox" name="access[' . $id . ']" value="' . $id 
+								$popups .= '<td><input id="' . $id . '" type="checkbox" name="access[' . $gid . ']" value="' . $id 
 								. '"' . $checked . '  /><label for="' . $id . '">' . h($group['title']) . '</label></td>';
 								$n++;
 							}
@@ -286,7 +287,7 @@ function buildCatsList($catsTree, $catsList, $indent = '') {
 			</div>';
 			
 		
-		if (count($node['subcategories'])) {
+		if (isset($node['subcategories']) && is_array($node['subcategories']) && count($node['subcategories'])) {
 			$out .= buildCatsList($node['subcategories'], $catsList, $indent . '<div class="cat-indent">&nbsp;</div>');
 		}
 	}
@@ -320,6 +321,8 @@ function index(&$page_title) {
 		'alias' => 'a',
 		'group' => 'a.`id`',
 	));
+	if (!$all_sections || !is_array($all_sections)) $all_sections = array();
+	
 	foreach ($all_sections as $result) {
 		$cat_selector .= '<option value="' . $result['id'] . '">' . h($result['title']) . '</option>';
 	}
@@ -334,12 +337,6 @@ function index(&$page_title) {
 	
 	
 	$cats_tree = getTreeNode($all_sections);
-	if (count($cats_tree)) {
-		foreach ($cats_tree as $catid => $cat) {
-		
-		}
-	}
-	
 
 	
 	
@@ -374,11 +371,11 @@ function index(&$page_title) {
 					<div class="right">
 						<table class="checkbox-collection"><tr>';
 						$n = 0;
-						$id = md5(rand(0, 99999) . $n);
 						if ($acl_groups && is_array($acl_groups)) {
-							foreach ($acl_groups as $id => $group) {
+							foreach ($acl_groups as $gid => $group) {
 								if (($n % 3) == 0) $popups .= '</tr><tr>';
-								$popups .= '<td><input type="checkbox" name="access[' . $id . ']" value="' . $id 
+								$id = md5(rand(0, 99999) . $n);
+								$popups .= '<td><input type="checkbox" name="access[' . $gid . ']" value="' . $id 
 								. '"  checked="checked" /><label for="' . $id . '">' . h($group['title']) . '</label></td>';
 								$n++;
 							}
@@ -477,8 +474,7 @@ function edit() {
 			}
 		}
 	}
-	$no_access = (count($no_access)) ? implode(',', $no_access) : '';
-	if ($no_access !== '') $no_access = New Expr($no_access);
+	$no_access = (count($no_access) == 1 && $no_access[0] !== '') ? intval($no_access[0]) : implode(',', $no_access);
 	
 	
 	/* prepare data to save */
@@ -487,7 +483,7 @@ function edit() {
 		'title' => substr($_POST['title'], 0, 100), 
 		'no_access' => $no_access,
 	);
-	if (!empty($parent_id)) $data['parent_id'] = (int)$parent_id;
+	if (isset($parent_id)) $data['parent_id'] = (int)$parent_id;
 	$FpsDB->save(getCurrMod() . '_sections', $data);
 		
 
@@ -552,7 +548,7 @@ function delete() {
 	$childrens = $FpsDB->select(getCurrMod() . '_sections', DB_ALL, array('cond' => array('parent_id' => $id)));
 
 	
-	if (!count($childrens)) {
+	if (!$childrens || !is_array($childrens) || !count($childrens)) {
 		delete_category($id);
 	} else {
 		foreach ($childrens as $category) {
@@ -568,7 +564,7 @@ function delete() {
 function delete_category($id) {
 	global $FpsDB;
 	$records = $FpsDB->select(getCurrMod(), DB_ALL, array('cond' => array('category_id' => $id)));
-	if (count($records) > 0) {
+	if ($records || is_array($records) || count($records) > 0) {
 		foreach ($records as $record) {
 			mysql_query("DELETE FROM `" . $FpsDB->getFullTableName(getCurrMod()) . "` WHERE `id`='{$record['id']}'");
 			
@@ -591,7 +587,7 @@ function delete_category($id) {
 					
 			} else {
 				$attaches = $FpsDB->select(getCurrMod() . '_attaches', DB_ALL, array('cond' => array('entity_id' => $record['id'])));
-				if (count($attaches)) {
+				if ($attaches && is_array($attaches) && count($attaches)) {
 					foreach ($attaches as $attach) {
 						mysql_query("DELETE FROM `" . $FpsDB->getFullTableName(getCurrMod() . '_attaches') 
 						. "` WHERE `id`='{$attach['id']}'");
@@ -627,7 +623,7 @@ function on_home($cid = false) {
 
 	
 	$childs = $FpsDB->select(getCurrMod() . '_sections', DB_ALL, array('cond' => array('parent_id' => $id)));
-	if (count($childs)) {
+	if ($childs && is_array($childs) && count($childs)) {
 		foreach ($childs as $child) {
 			on_home($child['id']);
 		}
@@ -656,7 +652,7 @@ function off_home($cid = false) {
 
 	
 	$childs = $FpsDB->select(getCurrMod() . '_sections', DB_ALL, array('cond' => array('parent_id' => $id)));
-	if (count($childs)) {
+	if ($childs && is_array($childs) && count($childs)) {
 		foreach ($childs as $child) {
 			off_home($child['id']);
 		}

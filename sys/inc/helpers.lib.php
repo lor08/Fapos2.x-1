@@ -192,10 +192,10 @@ function getAge($y = 1970, $m = 1, $d = 1) {
 /**
  * Check and return order param
  */
-function getOrderParam($claas_name) {
+function getOrderParam($class_name) {
 	$order = (!empty($_GET['order'])) ? trim($_GET['order']) : '';
 	
-	switch ($claas_name) {
+	switch ($class_name) {
 		case 'FotoModule':
 		case 'StatModule':
 		case 'NewsModule':
@@ -775,4 +775,27 @@ function cmpText($a, $b) {
 	} else {
 		return 0;
 	}
+}
+
+function checkAccess($params = null) {
+	if (isset($params) && is_array($params)) {
+		$Register = Register::getInstance();
+		return $Register['ACL']->turn($params, false);
+	}
+	return false;
+}
+
+function checkUserOnline($user_id) {
+	if (!$user_id || !is_numeric($user_id)) return false;
+	$users_on_line = getOnlineUsers();
+	return (isset($users_on_line) && isset($users_on_line[$user_id]));
+}
+
+function getOrderLink($params) {
+	if (!$params || !is_array($params) || count($params) < 2) return '';
+	$order = (!empty($_GET['order'])) ? strtolower(trim($_GET['order'])) : '';
+	$new_order = strtolower($params[0]);
+	$active = ($order === $new_order);
+	$asc = ($active && isset($_GET['asc']));
+	return '<a href="?order=' . $new_order . ($asc ? '' : '&asc=1') . '">' . $params[1] . ($active ? ' ' . ($asc ? '↑' : '↓') : '') . '</a>';
 }

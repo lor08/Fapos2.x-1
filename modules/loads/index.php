@@ -101,7 +101,7 @@ Class LoadsModule extends Module {
 		$firstOnPage = ($page - 1) * $perPage + 1;
 		$lastOnPage = $firstOnPage + $recOnPage - 1;
 
-		$navi['meta'] = __('Count all material') . ' ' . $total . '. ' . __('Count visible') . ' ' . $firstOnPage . '-' . $lastOnPage;
+		$navi['meta'] = __('Count all material') . ' ' . $total . '. ' . ($total > 1 ? __('Count visible') . ' ' . $firstOnPage . '-' . $lastOnPage : '');
 		$this->_globalize($navi);
 
 
@@ -250,7 +250,7 @@ Class LoadsModule extends Module {
 		$firstOnPage = ($page - 1) * $perPage + 1;
 		$lastOnPage = $firstOnPage + $recOnPage - 1;
 
-		$navi['meta'] = __('Count material in cat') . ' ' . $total . '. ' . __('Count visible') . ' ' . $firstOnPage . '-' . $lastOnPage;
+		$navi['meta'] = __('Count material in cat') . ' ' . $total . '. ' . ($total > 1 ? __('Count visible') . ' ' . $firstOnPage . '-' . $lastOnPage : '');
 		$navi['category_name'] = h($category->getTitle());
 		$this->_globalize($navi);
 
@@ -431,7 +431,7 @@ Class LoadsModule extends Module {
 		} else {
 			$attach_rem_url = '';
 		}
-		$markers['attachment'] = $attach_serv . ' | ' . $attach_rem_url;
+		$markers['attachment'] = $attach_serv . (!empty($attach_serv) && !empty($attach_rem_url) ? ' | ' : '') . $attach_rem_url;
 
 
 		$announce = $this->Textarier->print_page($entity->getMain(), $entity->getAuthor() ? $entity->getAuthor()->getStatus() : 0, $entity->getTitle());
@@ -531,7 +531,7 @@ Class LoadsModule extends Module {
 		$firstOnPage = ($page - 1) * $perPage + 1;
 		$lastOnPage = $firstOnPage + $recOnPage - 1;
 
-		$navi['meta'] = __('Count all material') . ' ' . $total . '. ' . __('Count visible') . ' ' . $firstOnPage . '-' . $lastOnPage;
+		$navi['meta'] = __('Count all material') . ' ' . $total . '. ' . ($total > 1 ? __('Count visible') . ' ' . $firstOnPage . '-' . $lastOnPage : '');
 		$navi['category_name'] = __('User materials') . ' "' . h($user->getName()) . '"';
 		$this->_globalize($navi);
 
@@ -638,7 +638,7 @@ Class LoadsModule extends Module {
 
 
 		// Check for preview or errors
-		$data = array('title' => null, 'mainText' => null, 'in_cat' => null, 'description' => null, 'tags' => null, 'sourse' => null, 'sourse_email' => null, 'sourse_site' => null, 'commented' => null, 'available' => null, 'download_url' => null, 'download_url_size' => null);
+		$data = array('title' => null, 'mainText' => null, 'in_cat' => null, 'description' => null, 'tags' => null, 'sourse' => null, 'sourse_email' => null, 'sourse_site' => null, 'commented' => 1, 'available' => ($this->ACL->turn(array($this->module, 'need_check_materials'), false) ? 0 : 1), 'download_url' => null, 'download_url_size' => null);
 		$data = array_merge($data, $markers);
 		$data = Validate::getCurrentInputsValues($data);
 		$data['main_text'] = $data['mainText'];
@@ -658,10 +658,10 @@ Class LoadsModule extends Module {
 
 
 		//comments and hide
-		$data['commented'] = (!empty($data['commented']) || !isset($_POST['submitForm'])) ? 'checked="checked"' : '';
+		$data['commented'] = (!empty($data['commented'])) ? 'checked="checked"' : '';
 		if (!$this->ACL->turn(array($this->module, 'record_comments_management'), false))
 			$data['commented'] .= ' disabled="disabled"';
-		$data['available'] = (!empty($data['available']) || !isset($_POST['submitForm'])) ? 'checked="checked"' : '';
+		$data['available'] = (!empty($data['available'])) ? 'checked="checked"' : '';
 		if (!$this->ACL->turn(array($this->module, 'hide_material'), false))
 			$data['available'] .= ' disabled="disabled"';
 
@@ -720,7 +720,7 @@ Class LoadsModule extends Module {
 				$error .= '<li>' . __('Empty field') . ' "' . $field . '"</li>' . "\n";
 				$$field = null;
 			} else {
-				$$field = h(trim($_POST[$field]));
+				$$field = isset($_POST[$field]) ? h(trim($_POST[$field])) : '';
 			}
 		}
 
@@ -733,13 +733,13 @@ Class LoadsModule extends Module {
 		if (!$this->ACL->turn(array($this->module, 'record_comments_management'), false))
 			$commented = 1;
 		if (!$this->ACL->turn(array($this->module, 'hide_material'), false))
-			$available = 1;
+			$available = ($this->ACL->turn(array($this->module, 'need_check_materials'), false) ? 0 : 1);
 
 		// Если пользователь хочет посмотреть на сообщение перед отправкой
 		if (isset($_POST['viewMessage'])) {
 			$_SESSION['viewMessage'] = array_merge(array('title' => null, 'mainText' => null, 'in_cat' => $in_cat,
 				'description' => null, 'tags' => null, 'sourse' => null, 'sourse_email' => null,
-				'sourse_site' => null, 'download_url' => null, 'download_url_size' => null, 'commented' => null, 'available' => null), $_POST);
+				'sourse_site' => null, 'download_url' => null, 'download_url_size' => null, 'commented' => $commented, 'available' => $available), $_POST);
 			redirect($this->getModuleURL('add_form/'));
 		}
 
@@ -763,10 +763,8 @@ Class LoadsModule extends Module {
 			$error .= '<li>' . sprintf(__('Very big "material"'), $max_lenght) . '</li>' . "\n";
 		elseif (mb_strlen($main_text) < $min_lenght)
 			$error .= '<li>' . sprintf(__('Very small "material"'), $min_lenght) . '</li>' . "\n";
-		if ($this->Register['Config']->read('require_file', $this->module) == 1) {
-			if (empty($_FILES['attach']['name']))
-				$error .= '<li>' . __('No attachment') . '</li>' . "\n";
-		}
+		if (($this->Register['Config']->read('require_file', $this->module) == 1 || empty($download_url)) && empty($_FILES['attach']['name']))
+			$error .= '<li>' . __('No attachment') . '</li>' . "\n";
 		if (isset($_FILES['attach']['name']) && $_FILES['attach']['size'] > $this->getMaxSize())
 			$error .= '<li>' . sprintf(__('Very big file2'), round($this->getMaxSize() / 1024, 2)) . '</li>' . "\n";
 		if (!empty($tags) && !$valobj->cha_val($tags, V_TITLE))
@@ -777,7 +775,7 @@ Class LoadsModule extends Module {
 			$error .= '<li>' . __('Wrong chars in "email"') . '</li>' . "\n";
 		if (!empty($sourse_site) && !$valobj->cha_val($sourse_site, V_URL))
 			$error .= '<li>' . __('Wrong chars in "sourse site"') . '</li>' . "\n";
-		if (!empty($download_url) && !$valobj->cha_val($download_url, V_TITLE))
+		if (!empty($download_url) && !$valobj->cha_val($download_url, V_URL))
 			$error .= '<li>' . __('Wrong chars in "download_url"') . '</li>' . "\n";
 		if (!empty($download_url_size) && !$valobj->cha_val($download_url_size, V_INT))
 			$error .= '<li>' . __('Wrong chars in "download_url_size"') . '</li>' . "\n";
@@ -816,7 +814,7 @@ Class LoadsModule extends Module {
 		if (!empty($error)) {
 			$_SESSION['FpsForm'] = array_merge(array('title' => null, 'mainText' => null, 'in_cat' => $in_cat,
 				'description' => null, 'tags' => null, 'sourse' => null, 'sourse_email' => null,
-				'sourse_site' => null, 'download_url' => null, 'download_url_size' => null, 'commented' => null, 'available' => null), $_POST);
+				'sourse_site' => null, 'download_url' => null, 'download_url_size' => null, 'commented' => $commented, 'available' => $available), $_POST);
 			$_SESSION['FpsForm']['error'] = '<p class="errorMsg">' . __('Some error in form') . '</p>'
 					. "\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
 			redirect($this->getModuleURL('add_form/'));
@@ -1009,7 +1007,7 @@ Class LoadsModule extends Module {
 		$this->_globalize($navi);
 
 
-		setReferer();
+		// setReferer();
 		$source = $this->render('editform.html', array('context' => $markers));
 		return $this->_view($source);
 	}
@@ -1066,7 +1064,7 @@ Class LoadsModule extends Module {
 				$error .= '<li>' . __('Empty field') . ' "' . $field . '"</li>' . "\n";
 				$$field = null;
 			} else {
-				$$field = h(trim($_POST[$field]));
+				$$field = isset($_POST[$field]) ? h(trim($_POST[$field])) : '';
 			}
 		}
 
@@ -1081,14 +1079,14 @@ Class LoadsModule extends Module {
 		if (!$this->ACL->turn(array($this->module, 'record_comments_management'), false))
 			$commented = 1;
 		if (!$this->ACL->turn(array($this->module, 'hide_material'), false))
-			$available = 1;
+			$available = ($this->ACL->turn(array($this->module, 'need_check_materials'), false) ? 0 : 1);
 
 
 		// Если пользователь хочет посмотреть на сообщение перед отправкой
 		if (isset($_POST['viewMessage'])) {
 			$_SESSION['viewMessage'] = array_merge(array('title' => null, 'mainText' => null, 'in_cat' => $in_cat,
 				'description' => null, 'tags' => null, 'sourse' => null, 'sourse_email' => null,
-				'sourse_site' => null, 'download_url' => null, 'download_url_size' => null, 'commented' => null, 'available' => null), $_POST);
+				'sourse_site' => null, 'download_url' => null, 'download_url_size' => null, 'commented' => $commented, 'available' => $available), $_POST);
 			redirect($this->getModuleURL('edit_form/' . $id));
 		}
 
@@ -1110,10 +1108,8 @@ Class LoadsModule extends Module {
 			$error .= '<li>' . sprintf(__('Very big "material"'), $max_lenght) . '</li>' . "\n";
 		elseif (mb_strlen($main_text) < $min_lenght)
 			$error .= '<li>' . sprintf(__('Very small "material"'), $min_lenght) . '</li>' . "\n";
-		if ($this->Register['Config']->read('require_file', $this->module) == 1) {
-			if (empty($_FILES['attach']['name']))
-				$error .= '<li>' . __('No attachment') . '</li>' . "\n";
-		}
+		if (($this->Register['Config']->read('require_file', $this->module) == 1 || empty($download_url)) && empty($_FILES['attach']['name']) && !empty($_POST['delete_file']))
+			$error .= '<li>' . __('No attachment') . '</li>' . "\n";
 		if (isset($_FILES['attach']['name']) && $_FILES['attach']['size'] > $this->getMaxSize())
 			$error .= '<li>' . sprintf(__('Very big file2'), round($this->getMaxSize() / 1024, 2)) . '</li>' . "\n";
 		if (!empty($tags) && !$valobj->cha_val($tags, V_TITLE))
@@ -1124,7 +1120,7 @@ Class LoadsModule extends Module {
 			$error .= '<li>' . __('Wrong chars in "email"') . '</li>' . "\n";
 		if (!empty($sourse_site) && !$valobj->cha_val($sourse_site, V_URL))
 			$error .= '<li>' . __('Wrong chars in "sourse site"') . '</li>' . "\n";
-		if (!empty($download_url) && !$valobj->cha_val($download_url, V_TITLE))
+		if (!empty($download_url) && !$valobj->cha_val($download_url, V_URL))
 			$error .= '<li>' . __('Wrong chars in "download_url"') . '</li>' . "\n";
 		if (!empty($download_url_size) && !$valobj->cha_val($download_url_size, V_INT))
 			$error .= '<li>' . __('Wrong chars in "download_url_size"') . '</li>' . "\n";
@@ -1179,6 +1175,7 @@ Class LoadsModule extends Module {
 				}
 				if (!isImageFile($_FILES[$attach_name]['type'], $ext)) {
 					$error .= '<li>' . __('Wrong file format') . '</li>' . "\n";
+					unset($_FILES[$attach_name]);
 				}
 			}
 		}
@@ -1189,7 +1186,7 @@ Class LoadsModule extends Module {
 		if (!empty($error)) {
 			$_SESSION['FpsForm'] = array_merge(array('title' => null, 'mainText' => null, 'in_cat' => $in_cat,
 				'description' => null, 'tags' => null, 'sourse' => null, 'sourse_email' => null,
-				'sourse_site' => null, 'download_url' => null, 'download_url_size' => null, 'commented' => null, 'available' => null), $_POST);
+				'sourse_site' => null, 'download_url' => null, 'download_url_size' => null, 'commented' => $commented, 'available' => $available), $_POST);
 			$_SESSION['FpsForm']['error'] = '<p class="errorMsg">' . __('Some error in form') . '</p>'
 					. "\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
 			redirect($this->getModuleURL('edit_form/' . $id));
@@ -1238,7 +1235,7 @@ Class LoadsModule extends Module {
 
 		if ($this->Log)
 			$this->Log->write('editing ' . $this->module, $this->module . ' id(' . $id . ')');
-		return $this->showInfoMessage(__('Operation is successful'), getReferer());
+		return $this->showInfoMessage(__('Operation is successful'), $this->getModuleURL('view/' . $id) /*getReferer()*/);
 	}
 
 	/**
@@ -1430,6 +1427,8 @@ Class LoadsModule extends Module {
 	}
 
 	function download_file($id = null, $mimetype = 'application/octet-stream') {
+		//turn access
+		$this->ACL->turn(array($this->module, 'download_files'));
 
 		if (empty($id))
 			return $this->showInfoMessage(__('File not found'), $this->getModuleURL());
@@ -1535,6 +1534,9 @@ Class LoadsModule extends Module {
 	}
 
 	function download_file_url($id = null, $mimetype = 'application/octet-stream') {
+		//turn access
+		$this->ACL->turn(array($this->module, 'download_files'));
+
 		$entity = $this->Model->getById($id);
 		if (!$entity)
 			return $this->showInfoMessage(__('File not found'), $this->getModuleURL());

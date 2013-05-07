@@ -161,6 +161,8 @@ function getAddTitle($title) {
 		'hide_material' => 'Скрывать материалы',
 		'record_comments_management' => 'Разрешать/запрещать комментирование',
 
+		'download_files' => 'Скачивать файлы',
+		
 		'view_forums_list' => 'Просматривать список форумов',
 		'view_forums' => 'Просматривать форумы',
 		'view_themes' => 'Просматривать темы',

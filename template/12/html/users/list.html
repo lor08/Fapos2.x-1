@@ -25,10 +25,10 @@
     <tr>
         <td class="meta" align="center" colspan="5">
             Сортировать по:&nbsp;&nbsp;
-            <a href="?sort=puttime">Дата регистрации</a>&nbsp;&nbsp;&nbsp;&nbsp;
-            <a href="?sort=name">Имя</a>&nbsp;&nbsp;&nbsp;&nbsp;
-            <a href="?sort=last_visit">Последний визит</a>&nbsp;&nbsp;&nbsp;&nbsp;
-            <a href="?sort=status">Статус</a>
+			{{ getOrderLink(['puttime','Дата регистрации']) }}&nbsp;&nbsp;&nbsp;&nbsp;
+            {{ getOrderLink(['name','Имя']) }}&nbsp;&nbsp;&nbsp;&nbsp;
+            {{ getOrderLink(['last_visit','Последний визит']) }}&nbsp;&nbsp;&nbsp;&nbsp;
+            {{ getOrderLink(['status','Статус']) }}
         </td>
     </tr>
 </table>
