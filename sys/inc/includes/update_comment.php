@@ -2,13 +2,13 @@
 //turn access
 $this->ACL->turn(array($this->module, 'edit_comments'));
 $id = (!empty($id)) ? (int)$id : 0;
-if ($id < 1) redirect($this->getModuleURL());
+if ($id < 1) return $this->showInfoMessage(__('Unknown error'), $this->getModuleURL(), 1);
 
 
 $commentsModel = $this->Register['ModManager']->getModelInstance($this->module . 'Comments');
-if (!$commentsModel) return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL());
+if (!$commentsModel) return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL(), 1);
 $comment = $commentsModel->getById($id);
-if (!$comment) return $this->showInfoMessage(__('Comment not found'), $this->getModuleURL());
+if (!$comment) return $this->showInfoMessage(__('Comment not found'), $this->getModuleURL(), 1);
 
 
 /* cut and trim values */
@@ -43,7 +43,7 @@ if (!empty($error)) {
 		. "\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
 	$_SESSION['editCommentForm']['message'] = $message;
 	$_SESSION['editCommentForm']['name'] = $name;
-	redirect($this->getModuleURL('/edit_comment_form/' . $id));
+	return $this->showInfoMessage($_SESSION['editCommentForm']['error'], $this->getModuleURL('/edit_comment_form/' . $id), 1);
 }
 
 

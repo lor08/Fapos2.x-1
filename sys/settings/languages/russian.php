@@ -387,7 +387,8 @@ $language = array(
 	'Very small "poll_question"'    => 'вопрос для голосования слишком короткий',
 	'Few "poll_question"'           => 'должно быть указано не менее 2 возможных ответов',
 	'Many "poll_question"'          => 'должно быть указано не более 20 возможных ответов',
-	
+	'Unknown error'                 => 'Неизвестная ошибка',
+
 	
 	// Templates name
 	'Add form'  					=> 'Форма добавления',

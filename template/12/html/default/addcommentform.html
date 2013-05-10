@@ -1,7 +1,7 @@
 {{ editor_body }}
 <div class="comm-pagi">{{ comments_pagination }}</div>
 <div class="addcomments-block">
-	<form method="POST" action="{{ data.action }}">
+	<form method="POST" action="{{ data.action }}" onsubmit="sendu('{{ context.action }}');return false;">
 		<table style="">
 			<tr>
 				<td><b>Имя:</b></td>

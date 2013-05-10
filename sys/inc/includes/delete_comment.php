@@ -2,7 +2,7 @@
 //turn access
 $this->ACL->turn(array($this->module, 'delete_comments'));
 $id = (!empty($id)) ? (int)$id : 0;
-if ($id < 1) redirect($this->getModuleURL());
+if ($id < 1) return $this->showInfoMessage(__('Unknown error'), $this->getModuleURL(), 1);
 
 $commentsModel = $this->Register['ModManager']->getModelInstance($this->module . 'Comments');
 if ($commentsModel) {
@@ -21,5 +21,5 @@ if ($commentsModel) {
 		}
 	}
 }
-return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL('/view/' . $entityID));
+return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL('/view/' . $entityID), 1);
 ?>

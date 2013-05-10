@@ -1,12 +1,16 @@
-<table class="error" align="center">
-<tr>
-  <th>Информация</th>
-</tr>
-<tr>
-  <td>
-  {{ info_message }}
-  </td>
-</tr>
-</table>
+<div style="text-align: center;">
+	{{ data.info_message }}
 
+	{% if data.url %}
+		<div>
+			<a href="{{ data.url }}">Продолжить</a>
+		</div>
 
+		{% if data.jsredirect %}
+			<script>
+				setTimeout("document.location.href='{{ data.url }}'", 3000);
+			</script>
+		{% endif %}
+
+	{% endif %}
+</div>

@@ -652,3 +652,23 @@ function setGroup(uid, formId) {
 		});
 	}
 }
+
+// Функция для отправки формы на сервер и открытия окошка со статусом выполненного действия
+function sendu(url) {
+    var idrand = 'fpswin_'+Math.round(Math.random()*9999);
+    var fpswin = createFpsWin('Информация', 'Пожалуйста, подождите...', '');
+    $('body').append('<div id="'+idrand+'">'+fpswin+'</div>');
+
+    jQuery.ajax({
+        url:     url,
+        type:     "POST",
+        dataType: "html",
+        data: jQuery("#sendForm").serialize(), 
+        success: function(response) {
+            $('#'+idrand+' .fps-cont').html(response);
+        },
+        error: function(response) {
+            $('#'+idrand+' .fps-cont').html("Ошибка при отправке формы");
+        }
+    });
+}

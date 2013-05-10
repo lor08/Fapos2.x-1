@@ -1,7 +1,7 @@
 {{ editor_body }}
 {{ form.errors }}
 <div class="addcomments-block">
-<form method="POST" action="{{ form.action }}">
+<form method="POST" action="{{ form.action }}" onsubmit="sendu('{{ context.action }}');return false;">
 <table>
 	<tr>
 		<td><b>Имя:</b></td>

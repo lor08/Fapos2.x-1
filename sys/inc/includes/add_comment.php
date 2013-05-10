@@ -2,12 +2,12 @@
 //turn access
 $this->ACL->turn(array($this->module, 'add_comments'));
 $id = (int)$id;
-if ($id < 1) redirect($this->getModuleURL());
+if ($id < 1) return $this->showInfoMessage(__('Unknown error'), $this->getModuleURL(), 1);
 
 
 $target_new = $this->Model->getById($id);
-if (!$target_new) redirect($this->getModuleURL());
-if (!$target_new->getCommented()) return $this->showInfoMessage(__('Comments are denied here'), $this->getModuleURL('/view/' . $id));
+if (!$target_new) return $this->showInfoMessage(__('Unknown error'), $this->getModuleURL(), 1);
+if (!$target_new->getCommented()) return $this->showInfoMessage(__('Comments are denied here'), $this->getModuleURL('/view/' . $id), 1);
 
 
 /* cut and trim values */
@@ -68,13 +68,13 @@ if (!empty($error)) {
 		"\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
 	$_SESSION['addCommentForm']['name'] = $name;
 	$_SESSION['addCommentForm']['message'] = $message;
-	redirect($this->getModuleURL('/view/' . $id));
+	return $this->showInfoMessage($_SESSION['addCommentForm']['error'], $this->getModuleURL('/view/' . $id), 1);
 }
 
 
 /* SPAM DEFENCE */
 if (isset($_SESSION['unix_last_post']) and (time()-$_SESSION['unix_last_post'] < 10)) {
-	return $this->showInfoMessage(__('Your message has been added'), $this->getModuleURL('/view/' . $id));
+	return $this->showInfoMessage(__('Your message has been added'), $this->getModuleURL('/view/' . $id), 1);
 } else {
 	$_SESSION['unix_last_post'] = time();
 }
@@ -109,5 +109,5 @@ if ($entityComm) {
 		return $this->showInfoMessage(__('Comment is added'), $this->getModuleURL('/view/' . $id));
 	}
 }
-return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL('/view/' . $id));
+return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL('/view/' . $id), 1);
 ?>

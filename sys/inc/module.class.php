@@ -202,7 +202,7 @@ class Module {
 		
 		if ($this->Register['Config']->read('active', $params[0]) == 0) {
 			if ('chat' === $params[0]) die(__('This module disabled'));
-			return $this->showInfoMessage(__('This module disabled'), '/');
+			return $this->showInfoMessageFull(__('This module disabled'), '/');
 		}
 		
 		$this->page_title = ($this->Register['Config']->read('title', $this->module))
@@ -631,7 +631,22 @@ class Module {
 	
 	// Вспомогательная функция - после выполнения пользователем каких-либо действий
 	// выдает информационное сообщение и делает редирект на нужную страницу с задержкой
-	function showInfoMessage($message, $queryString = null) 
+	function showInfoMessage($message, $queryString = null, $urlMode = null) 
+	{
+		$jsredirect = '';
+		if ($urlMode == 1) {
+			$queryString = null;
+		} elseif ($urlMode == 2) {
+			$jsredirect = '1';
+		}
+		header( 'Refresh: ' . $this->Register['Config']->read('redirect_delay') . '; url=http://' . $_SERVER['SERVER_NAME'] . get_url($queryString));
+		$output = $this->render('infomessage.html', array('data' => array('info_message' => $message, 'error_message' => null, 'url' => $queryString, 'jsredirect' => $jsredirect)));
+		echo $output;
+		die();
+	}
+
+
+	function showInfoMessageFull($message, $queryString = null) 
 	{
 		header( 'Refresh: ' . $this->Register['Config']->read('redirect_delay') . '; url=http://' . $_SERVER['SERVER_NAME'] . get_url($queryString));
 		$output = $this->render('infomessagegrand.html', array('data' => array('info_message' => $message, 'error_message' => null)));
