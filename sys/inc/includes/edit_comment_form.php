@@ -2,7 +2,7 @@
 //turn access
 $this->ACL->turn(array($this->module, 'edit_comments'));
 $id = (!empty($id)) ? (int)$id : 0;
-if ($id < 1) redirect($this->getModuleURL());
+if ($id < 1) return $this->showInfoMessage(__('Unknown error'), $this->getModuleURL(), 1);
 
 
 $commentsModel = $this->Register['ModManager']->getModelInstance($this->module . 'Comments');

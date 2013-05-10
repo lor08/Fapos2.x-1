@@ -450,13 +450,10 @@ Class BlogModule extends Module {
         $data = array('title' => null, 'mainText' => null, 'in_cat' => null, 'description' => null, 'tags' => null, 'commented' => null, 'available' => null);
 		$data = array_merge($data, $markers);
         $data = Validate::getCurrentInputsValues($data);
-        $add = $data['mainText'];
         
 		
 		
-        $data['preview'] = $this->Parser->getPreview($data['mainText']);
         $data['errors'] = $this->Parser->getErrors();
-        if (isset($_SESSION['viewMessage'])) unset($_SESSION['viewMessage']);
         if (isset($_SESSION['FpsForm'])) unset($_SESSION['FpsForm']);
 		
 		
@@ -535,13 +532,6 @@ Class BlogModule extends Module {
 		$in_cat = intval($_POST['cats_selector']);
 		$commented = (!empty($_POST['commented'])) ? 1 : 0;
 		$available = (!empty($_POST['available'])) ? 1 : 0;
-
-		// Если пользователь хочет посмотреть на сообщение перед отправкой
-		if ( isset( $_POST['viewMessage'] ) ) {
-			$_SESSION['viewMessage'] = array_merge(array('title' => null, 'mainText' => null, 'in_cat' => $in_cat,
-				'description' => null, 'tags' => null, 'commented' => null, 'available' => null), $_POST);
-			redirect($this->getModuleURL('add_form/'));
-		}
 
 		// Check fields
 		$valobj = new Validate;
@@ -715,14 +705,11 @@ Class BlogModule extends Module {
 		$data = Validate::getCurrentInputsValues($entity, $data);
 
 		
-        $preview = $this->Parser->getPreview($data->getMain());
         $errors = $this->Parser->getErrors();
-        if (isset($_SESSION['viewMessage'])) unset($_SESSION['viewMessage']);
         if (isset($_SESSION['FpsForm'])) unset($_SESSION['FpsForm']);
 		
 		$html = '';
-        if (!empty($preview)) $html .= $preview;
-        else if (!empty($errors)) $html .= $errors;
+        if (!empty($errors)) $html .= $errors;
 
 		
 		$className = $this->Register['ModManager']->getModelNameFromModule($this->module . 'Sections');
@@ -833,13 +820,6 @@ Class BlogModule extends Module {
 		$available = (!empty($_POST['available'])) ? 1 : 0;
         $in_cat = intval($_POST['cats_selector']);
 
-		
-		// Если пользователь хочет посмотреть на сообщение перед отправкой
-		if (isset($_POST['viewMessage'])) {
-			$_SESSION['viewMessage'] = array_merge(array('title' => null, 'mainText' => null, 'in_cat' => $in_cat,
-				'description' => null, 'tags' => null, 'commented' => null, 'available' => null), $_POST);
-			redirect($this->getModuleURL('edit_form/' . $id));
-		}
 		
 		
 		// Check fields

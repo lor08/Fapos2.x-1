@@ -1628,26 +1628,6 @@ Class ForumModule extends Module {
 
 		$html = '';
 
-		// preview
-		if (isset($_SESSION['viewMessage']) and !empty($_SESSION['viewMessage']['message'])) {
-			$view = $this->render('previewmessage.html', array(
-				'context' => array(
-					'message' => $this->Textarier->print_page($_SESSION['viewMessage']['message'], $writer_status),
-				),
-					));
-			$html = $html . $view . "\n";
-			$theme = h($_SESSION['viewMessage']['theme']);
-			$description = h($_SESSION['viewMessage']['description']);
-			$message = $_SESSION['viewMessage']['message'];
-			$gr_access = $_SESSION['viewMessage']['gr_access'];
-			$first_top = $_SESSION['viewMessage']['first_top'];
-			$locked = $_SESSION['viewMessage']['locked'];
-			$poll = $_SESSION['viewMessage']['poll'];
-			$poll_question = h($_SESSION['viewMessage']['poll_question']);
-			$poll_ansvers = h($_SESSION['viewMessage']['poll_ansvers']);
-			unset($_SESSION['viewMessage']);
-		}
-
 		// errors
 		if (isset($_SESSION['addThemeForm'])) {
 			$info = $this->render('infomessage.html', array(
@@ -1742,19 +1722,6 @@ Class ForumModule extends Module {
 		}
 
 
-		// preview
-		if (isset($_POST['viewMessage'])) {
-			$_SESSION['viewMessage']['theme'] = $name;
-			$_SESSION['viewMessage']['description'] = $description;
-			$_SESSION['viewMessage']['message'] = $message;
-			$_SESSION['viewMessage']['gr_access'] = $gr_access;
-			$_SESSION['viewMessage']['first_top'] = $first_top;
-			$_SESSION['viewMessage']['locked'] = $locked;
-			$_SESSION['viewMessage']['poll'] = $poll;
-			$_SESSION['viewMessage']['poll_question'] = $poll_question;
-			$_SESSION['viewMessage']['poll_ansvers'] = $poll_ansvers;
-			redirect($this->getModuleURL('add_theme_form/' . $id_forum));
-		}
 
 		// Check fields of empty values and valid chars
 		$error = '';
@@ -2283,18 +2250,6 @@ Class ForumModule extends Module {
 
 				$message = '';
 				$html = '';
-				if (isset($_SESSION['viewMessage']) and !empty($_SESSION['viewMessage'])) {
-					$view = $this->render('previewmessage.html', array(
-						'context' => array(
-							'message' => $this->Textarier->print_page($_SESSION['viewMessage'], $writer_status),
-						),
-							));
-					$html = $html . $view . "<script>window.location.href=\"#preview\";</script>\n";
-					$message = h($_SESSION['viewMessage']);
-					unset($_SESSION['viewMessage']);
-				}
-
-
 				// Если при заполнении формы были допущены ошибки
 				if (isset($_SESSION['addPostForm'])) {
 					$info = $this->render('infomessage.html', array(
@@ -2362,11 +2317,6 @@ Class ForumModule extends Module {
 
 		// Обрезаем сообщение (пост) до длины $set['forum']['max_post_lenght']
 		$message = trim($_POST['mainText']);
-		// Если пользователь хочет посмотреть на сообщение перед отправкой
-		if (isset($_POST['viewMessage'])) {
-			$_SESSION['viewMessage'] = $message;
-			redirect($this->getModuleURL('view_theme/' . $id_theme));
-		}
 
 
 
@@ -2608,20 +2558,6 @@ Class ForumModule extends Module {
 		$add_editor = '1';
 		$html = '';
 		$markers = array();
-
-		//if user vant preview message
-		if (isset($_SESSION['viewMessage']) and !empty($_SESSION['viewMessage']['message'])) {
-			$view = $this->render('previewmessage.html', array(
-				'context' => array(
-					'message' => $this->Textarier->print_page($_SESSION['viewMessage']['message'], $writer_status),
-				),
-					));
-			$html = $html . $view . "\n";
-			$message = $_SESSION['viewMessage']['message'];
-			$add_editor = !empty($_SESSION['viewMessage']['add_editor']) ? '1' : '0';
-			unset($_SESSION['viewMessage']);
-		}
-
 		// errors
 		if (isset($_SESSION['editPostForm'])) {
 			$info = $this->render('infomessage.html', array(
@@ -2713,13 +2649,6 @@ Class ForumModule extends Module {
 		// Обрезаем сообщение до длины $set['forum']['max_post_lenght']
 		$message = trim($_POST['mainText']);
 		$add_editor = isset($_POST['add_editor']) ? '1' : '0';
-
-		// Preview
-		if (isset($_POST['viewMessage'])) {
-			$_SESSION['viewMessage']['message'] = $message;
-			$_SESSION['viewMessage']['add_editor'] = $add_editor;
-			redirect($this->getModuleURL('edit_post_form/' . $id));
-		}
 
 
 

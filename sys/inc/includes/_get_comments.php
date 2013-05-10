@@ -35,7 +35,7 @@ if (empty($html) && $commentsModel) {
 			}
 
 			if ($this->ACL->turn(array($this->module, 'delete_comments'), false)) {
-				$moder_panel .= get_link('', $this->getModuleURL('/delete_comment/' . $comment->getId()), array('class' => 'fps-delete', 'title' => __('Delete'), 'onClick' => "return confirm('" . __('Are you sure') . "')"));
+				$moder_panel .= get_link('', $this->getModuleURL('/delete_comment/' . $comment->getId()), array('class' => 'fps-delete', 'title' => __('Delete'), 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('/delete_comment/' . $comment->getId())."')}; return false"));
 			}
 
 			if (!empty($moder_panel)) {

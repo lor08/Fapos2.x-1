@@ -11,16 +11,6 @@ if ($id < 1) {
 	$message = '';	
 	$info = '';
 	
-
-	/* if an error */
-	if (isset($_SESSION['addCommentForm'])) {
-		$info = $this->render('infomessage.html', array('info_message' => $_SESSION['addCommentForm']['error']));
-		$name = h($_SESSION['addCommentForm']['name']);
-		$message = h($_SESSION['addCommentForm']['message']);
-		unset($_SESSION['addCommentForm']);
-	}
-
-
 	$markers['action'] = get_url($this->getModuleURL('/add_comment/' . $id));
 	
 	//$kcaptcha = get_img('/sys/inc/kcaptcha/kc.php?'.session_name().'='.session_id());

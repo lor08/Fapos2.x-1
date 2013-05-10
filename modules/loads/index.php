@@ -644,10 +644,7 @@ Class LoadsModule extends Module {
 		$data['main_text'] = $data['mainText'];
 
 
-		$data['preview'] = $this->Parser->getPreview($data['mainText']);
 		$data['errors'] = $this->Parser->getErrors();
-		if (isset($_SESSION['viewMessage']))
-			unset($_SESSION['viewMessage']);
 		if (isset($_SESSION['FpsForm']))
 			unset($_SESSION['FpsForm']);
 
@@ -734,14 +731,6 @@ Class LoadsModule extends Module {
 			$commented = 1;
 		if (!$this->ACL->turn(array($this->module, 'hide_material'), false))
 			$available = ($this->ACL->turn(array($this->module, 'need_check_materials'), false) ? 0 : 1);
-
-		// Если пользователь хочет посмотреть на сообщение перед отправкой
-		if (isset($_POST['viewMessage'])) {
-			$_SESSION['viewMessage'] = array_merge(array('title' => null, 'mainText' => null, 'in_cat' => $in_cat,
-				'description' => null, 'tags' => null, 'sourse' => null, 'sourse_email' => null,
-				'sourse_site' => null, 'download_url' => null, 'download_url_size' => null, 'commented' => $commented, 'available' => $available), $_POST);
-			redirect($this->getModuleURL('add_form/'));
-		}
 
 		// Проверяем, заполнены ли обязательные поля
 		$valobj = $this->Register['Validate'];  //validation data class
@@ -959,10 +948,7 @@ Class LoadsModule extends Module {
 		$markers->setMain_text($markers->getMaintext());
 
 
-		$markers->setPreview($this->Parser->getPreview($markers->getMain()));
 		$markers->setErrors($this->Parser->getErrors());
-		if (isset($_SESSION['viewMessage']))
-			unset($_SESSION['viewMessage']);
 		if (isset($_SESSION['FpsForm']))
 			unset($_SESSION['FpsForm']);
 
@@ -1081,14 +1067,6 @@ Class LoadsModule extends Module {
 		if (!$this->ACL->turn(array($this->module, 'hide_material'), false))
 			$available = ($this->ACL->turn(array($this->module, 'need_check_materials'), false) ? 0 : 1);
 
-
-		// Если пользователь хочет посмотреть на сообщение перед отправкой
-		if (isset($_POST['viewMessage'])) {
-			$_SESSION['viewMessage'] = array_merge(array('title' => null, 'mainText' => null, 'in_cat' => $in_cat,
-				'description' => null, 'tags' => null, 'sourse' => null, 'sourse_email' => null,
-				'sourse_site' => null, 'download_url' => null, 'download_url_size' => null, 'commented' => $commented, 'available' => $available), $_POST);
-			redirect($this->getModuleURL('edit_form/' . $id));
-		}
 
 
 		// Проверяем, заполнены ли обязательные поля

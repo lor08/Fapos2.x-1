@@ -96,8 +96,6 @@ class FpsAdditionalFields {
 
 
                     if ($inputs === true) {
-                        if (isset($_SESSION['viewMessage'][$field]))
-                            $viewData = h($_SESSION['viewMessage'][$field]);
                         if (isset($_SESSION['FpsForm'][$field]))
                             $viewData = h($_SESSION['FpsForm'][$field]);
                     }
@@ -182,8 +180,6 @@ class FpsAdditionalFields {
 				$value = '';
 				
 				if ($setValues) {
-					if (!empty($_SESSION['viewMessage'][$_addFields[$key]])) 
-						$value = h($_SESSION['viewMessage'][$_addFields[$key]]);
 					if (!empty($_SESSION['FpsForm'][$_addFields[$key]])) 
 						$value = h($_SESSION['FpsForm'][$_addFields[$key]]);
 				}

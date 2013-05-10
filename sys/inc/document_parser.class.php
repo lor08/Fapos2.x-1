@@ -79,25 +79,7 @@ class Document_Parser {
 		$this->Cache->cacheDir = ROOT . '/sys/cache/blocks/';
 		$this->Cache->lifeTime = 3600;
 	}
-	
 
-    /**
-     * @param $message
-     * @return mixed|string
-     */
-    public function getPreview($message)
-    {
-        $outputContent = '';
-		
-		if (!empty($_SESSION['viewMessage'])) {
-			$viewer = new Fps_Viewer_Manager;
-			$context = array(
-				'message' => $this->Register['PrintText']->print_page($message),
-			);
-			$outputContent = $viewer->view('previewmessage.html', $context);
-		}
-        return $outputContent;
-    }
 
 
     /**

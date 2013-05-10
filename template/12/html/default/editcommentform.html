@@ -1,22 +1,21 @@
 {{ editor_body }}
-{{ form.errors }}
 <div class="addcomments-block">
-<form method="POST" action="{{ form.action }}" onsubmit="sendu('{{ context.action }}');return false;">
-<table>
-	<tr>
-		<td><b>Имя:</b></td>
-		<td><input {{ form.disabled }} type="text" name="login" value="{{ form.name }}" /></td>
-	</tr>
-	<tr>
-		<td colspan="2">
-			<textarea {{ editor_text }} name="message">
-			{{ form.message }}
-			</textarea>
-		</td>
-	</tr>
-	<tr>
-		<td colspan="2"><input type="submit" name="send" value="Сохранить" /></td>
-	</tr>
-</table>
-</form>
+	<form method="POST" id="sendForm" action="{{ form.action }}" onsubmit="sendu('{{ form.action }}');return false;">
+		<table>
+			<tr>
+				<td><b>Имя:</b></td>
+				<td><input {{ form.disabled }} type="text" name="login" value="{{ form.name }}" /></td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<textarea {{ editor_text }} name="message">
+					{{ form.message }}
+					</textarea>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2"><input type="submit" name="send" value="Сохранить" /></td>
+			</tr>
+		</table>
+	</form>
 </div>

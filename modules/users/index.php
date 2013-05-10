@@ -1701,14 +1701,6 @@ Class UsersModule extends Module {
 		$message = ''; // TODO
 
 
-		if (isset($_SESSION['viewMessage']) && !empty($_SESSION['viewMessage']['message'])) {
-			$prevMessage = $this->Textarier->print_page($_SESSION['viewMessage']['message'], $writer_status);
-			$prevSource = $this->render('previewmessage.html', array('message' => $prevMessage));
-			$toUser = h($_SESSION['viewMessage']['toUser']);
-			$subject = h($_SESSION['viewMessage']['subject']);
-			$message = h($_SESSION['viewMessage']['message']);
-			unset($_SESSION['viewMessage']);
-		}
 
 		$action = get_url($this->getModuleURL('send_message'));
 		$error = '';
@@ -1728,7 +1720,6 @@ Class UsersModule extends Module {
 		$markers['touser'] = $toUser;
 		$markers['subject'] = $subject;
 		$markers['main_text'] = $message;
-		$markers['preview'] = (!empty($prevSource)) ? $prevSource : '';
 		$source = $this->render('sendmessageform.html', array('context' => $markers));
 
 
@@ -1766,14 +1757,6 @@ Class UsersModule extends Module {
 		$subject = trim($subject);
 		$message = trim($message);
 
-		// Если пользователь хочет посмотреть на сообщение перед отправкой
-		if (isset($_POST['viewMessage'])) {
-			$_SESSION['viewMessage'] = array();
-			$_SESSION['viewMessage']['toUser'] = $toUser;
-			$_SESSION['viewMessage']['subject'] = $subject;
-			$_SESSION['viewMessage']['message'] = $message;
-			redirect($this->getModuleURL('send_msg_form/'));
-		}
 
 		// Проверяем, заполнены ли обязательные поля
 		$error = '';

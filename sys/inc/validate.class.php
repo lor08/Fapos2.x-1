@@ -42,9 +42,6 @@ class Validate {
 	public static function getCurrentInputsValues($entity, $pattern = array())
     {
 		$session = array();
-        if (!empty($_SESSION['viewMessage'])) {
-			$session = $_SESSION['viewMessage'];
-        }
 		if (!empty($_SESSION['FpsForm'])) {
             $session = array_merge($session, $_SESSION['FpsForm']);
         }
