@@ -2486,14 +2486,14 @@ Class ForumModule extends Module {
 				$this->Log->write('adding post', 'post id(' . $post_id . '), theme id(' . $id_theme . ')');
 			return $this->showInfoMessage(__('Your message has been added'), $this->getModuleURL(
 									$post_id ? 'view_post/' . $post_id :
-											'view_theme/' . $id_theme . '?page=999#post' . $cnt_posts_from_theme));
+											'view_theme/' . $id_theme . '?page=999#post' . $cnt_posts_from_theme), 2);
 		} else {
 			if ($this->Log)
 				$this->Log->write('adding post', 'post id(*gluing), theme id(' . $id_theme . ')');
 			$id_last_post = $prev_post->getId_last_post();
 			return $this->showInfoMessage(__('Your message has been added'), $this->getModuleURL(
 									$id_last_post ? 'view_post/' . $id_last_post :
-											'view_theme/' . $id_theme . '?page=999#post' . $prev_post->getPosts()));
+											'view_theme/' . $id_theme . '?page=999#post' . $prev_post->getPosts()), 2);
 		}
 	}
 
@@ -2736,7 +2736,7 @@ Class ForumModule extends Module {
 		$this->DB->cleanSqlCache();
 		if ($this->Log)
 			$this->Log->write('editing post', 'post id(' . $id . '), theme id(' . $id_theme . ')');
-		return $this->showInfoMessage(__('Operation is successful'), $this->getModuleURL('view_post/' . $id) /*getReferer()*/);
+		return $this->showInfoMessage(__('Operation is successful'), $this->getModuleURL('view_post/' . $id)/*getReferer()*/, 2);
 	}
 
 	/**
