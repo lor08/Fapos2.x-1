@@ -49,18 +49,18 @@ Class PagesModule extends Module {
 			if (is_numeric($id)) {
 				$id = intval($id);
 				if ($id < 2)
-					return $this->showInfoMessage(__('Can not find this page'), $this->getModuleURL());
+					return $this->showInfoMessageFull(__('Can not find this page'), $this->getModuleURL());
 
 				$page = $this->Model->getById($id);
 				if (!$page)
-					return $this->showInfoMessage(__('Can not find this page'), '/');
+					return $this->showInfoMessageFull(__('Can not find this page'), '/');
 			} else {
 				if (!preg_match('#^[\da-z_\-.]+$#i', $id))
-					return $this->showInfoMessage(__('Can not find this page'), $this->getModuleURL());
+					return $this->showInfoMessageFull(__('Can not find this page'), $this->getModuleURL());
 
 				$page = $this->Model->getByUrl($id);
 				if (!$page)
-					return $this->showInfoMessage(__('Can not find this page'), $this->getModuleURL());
+					return $this->showInfoMessageFull(__('Can not find this page'), $this->getModuleURL());
 				$id = $page->getId();
 			}
 
@@ -260,7 +260,7 @@ Class PagesModule extends Module {
 					$html = __('Materials not found');
 				return $this->_view($html);
 			}
-			return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Some error occurred'), $this->getModuleURL());
 		}
 	}
 
@@ -277,13 +277,13 @@ Class PagesModule extends Module {
 			$moder_panel .= get_link('', '/' . $module . '/edit_form/' . $id, array('class' => 'fps-edit')) . '&nbsp;';
 		}
 		if ($this->ACL->turn(array($module, 'up_materials'), false)) {
-			$moder_panel .= get_link('', '/' . $module . '/upper/' . $id, array('class' => 'fps-up', 'onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+			$moder_panel .= get_link('', '/' . $module . '/upper/' . $id, array('class' => 'fps-up', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('/" . $module . "/upper/" . $id."')}; return false")) . '&nbsp;';
 		}
 		if ($this->ACL->turn(array($module, 'on_home'), false)) {
-			$moder_panel .= get_link('', '/' . $module . '/off_home/' . $id, array('class' => 'fps-on', 'onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+			$moder_panel .= get_link('', '/' . $module . '/off_home/' . $id, array('class' => 'fps-on', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('/" . $module . "/off_home/" . $id."')}; return false")) . '&nbsp;';
 		}
 		if ($this->ACL->turn(array($module, 'delete_materials'), false)) {
-			$moder_panel .= get_link('', '/' . $module . '/delete/' . $id, array('class' => 'fps-delete', 'onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+			$moder_panel .= get_link('', '/' . $module . '/delete/' . $id, array('class' => 'fps-delete', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('/" . $module . "/delete/" . $id."')}; return false")) . '&nbsp;';
 		}
 
 		return $moder_panel;

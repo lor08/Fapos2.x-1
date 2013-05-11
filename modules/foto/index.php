@@ -155,15 +155,15 @@ Class FotoModule extends Module {
 		$this->ACL->turn(array($this->module, 'view_list'));
 		$id = intval($id);
 		if ($id < 1)
-			return $this->showInfoMessage(__('Can not find category'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Can not find category'), $this->getModuleURL());
 
 
 		$sectionsModel = $this->Register['ModManager']->getModelInstance($this->module . 'Sections');
 		$category = $sectionsModel->getById($id);
 		if (!$category)
-			return $this->showInfoMessage(__('Can not find category'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Can not find category'), $this->getModuleURL());
 		if (!$this->ACL->checkCategoryAccess($category->getNo_access()))
-			return $this->showInfoMessage(__('Permission denied'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Permission denied'), $this->getModuleURL());
 
 
 		$this->page_title = h($category->getTitle()) . ' - ' . $this->page_title;
@@ -282,7 +282,7 @@ Class FotoModule extends Module {
 		$this->ACL->turn(array($this->module, 'view_materials'));
 		$id = intval($id);
 		if ($id < 1)
-			return $this->showInfoMessage(__('Material not found'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Material not found'), $this->getModuleURL());
 
 
 
@@ -292,9 +292,9 @@ Class FotoModule extends Module {
 
 
 		if (!$entity)
-			return $this->showInfoMessage(__('Material not found'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Material not found'), $this->getModuleURL());
 		if (!$this->ACL->checkCategoryAccess($entity->getCategory()->getNo_access()))
-			return $this->showInfoMessage(__('Permission denied'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Permission denied'), $this->getModuleURL());
 
 
 		//category block
@@ -370,15 +370,15 @@ Class FotoModule extends Module {
 		$this->ACL->turn(array($this->module, 'view_list'));
 		$id = intval($id);
 		if ($id < 1)
-			return $this->showInfoMessage(__('Can not find user'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Can not find user'), $this->getModuleURL());
 
 
 		$usersModel = $this->Register['ModManager']->getModelInstance('Users');
 		$user = $usersModel->getById($id);
 		if (!$user)
-			return $this->showInfoMessage(__('Can not find user'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Can not find user'), $this->getModuleURL());
 		if (!$this->ACL->checkCategoryAccess($user->getNo_access()))
-			return $this->showInfoMessage(__('Permission denied'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Permission denied'), $this->getModuleURL());
 
 
 		$this->page_title = __('User materials') . ' "' . h($user->getName()) . '" - ' . $this->page_title;
@@ -604,7 +604,7 @@ Class FotoModule extends Module {
 				'description' => null, 'commented' => $commented), $_POST);
 			$_SESSION['FpsForm']['error'] = '<p class="errorMsg">' . __('Some error in form') . '</p>'
 					. "\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
-			redirect($this->getModuleURL('add_form/'));
+			$this->showInfoMessage($_SESSION['FpsForm']['error'], $this->getModuleURL('add_form/' . $id));
 		}
 
 
@@ -654,7 +654,7 @@ Class FotoModule extends Module {
 					'description' => null, 'commented' => null), $_POST);
 				$_SESSION['FpsForm']['error'] = '<p class="errorMsg">' . __('Some error occurred') . '</p>'
 						. "\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
-				redirect($this->getModuleURL('add_form/'));
+				$this->showInfoMessage($_SESSION['FpsForm']['error'], $this->getModuleURL('add_form/' . $id));
 			} else {
 				$entity->setFilename($last_id . $ext);
 				$entity->save();
@@ -696,7 +696,7 @@ Class FotoModule extends Module {
 	public function edit_form($id = null) {
 		$id = intval($id);
 		if ($id < 1)
-			return $this->showInfoMessage(__('Material not found'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Material not found'), $this->getModuleURL());
 
 
 		$this->Model->bindModel('author');
@@ -704,13 +704,13 @@ Class FotoModule extends Module {
 		$entity = $this->Model->getById($id);
 
 		if (!$entity)
-			return $this->showInfoMessage(__('Material not found'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Material not found'), $this->getModuleURL());
 
 
 		if (!$this->ACL->turn(array($this->module, 'edit_materials'), false)
 				&& (!empty($_SESSION['user']['id']) && $entity->getAuthor_id() == $_SESSION['user']['id']
 				&& $this->ACL->turn(array($this->module, 'edit_mine_materials'), false)) === false) {
-			return $this->showInfoMessage(__('Permission denied'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Permission denied'), $this->getModuleURL());
 		}
 
 
@@ -837,7 +837,7 @@ Class FotoModule extends Module {
 				'description' => null, 'commented' => $commented), $_POST);
 			$_SESSION['FpsForm']['error'] = '<p class="errorMsg">' . __('Some error in form') . '</p>'
 					. "\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
-			redirect($this->getModuleURL('edit_form/' . $id));
+			$this->showInfoMessage($_SESSION['FpsForm']['error'], $this->getModuleURL('edit_form/' . $id));
 		}
 
 
@@ -1002,13 +1002,13 @@ Class FotoModule extends Module {
 		}
 
 		if ($this->ACL->turn(array($this->module, 'up_materials'), false)) {
-			$moder_panel .= get_link('', $this->getModuleURL('upper/' . $id), array('class' => 'fps-up', 'onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+			$moder_panel .= get_link('', $this->getModuleURL('upper/' . $id), array('class' => 'fps-up', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('upper/' . $id)."')}; return false")) . '&nbsp;';
 		}
 
 		if ($this->ACL->turn(array($this->module, 'delete_materials'), false)
 				|| (!empty($_SESSION['user']['id']) && $uid == $_SESSION['user']['id']
 				&& $this->ACL->turn(array($this->module, 'delete_mine_materials'), false))) {
-			$moder_panel .= get_link('', $this->getModuleURL('delete/' . $id), array('class' => 'fps-delete', 'onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+			$moder_panel .= get_link('', $this->getModuleURL('delete/' . $id), array('class' => 'fps-delete', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('delete/' . $id)."')}; return false")) . '&nbsp;';
 		}
 		return $moder_panel;
 	}

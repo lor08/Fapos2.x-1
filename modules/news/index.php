@@ -184,15 +184,15 @@ Class NewsModule extends Module {
 		$this->ACL->turn(array($this->module, 'view_list'));
 		$id = intval($id);
 		if ($id < 1)
-			return $this->showInfoMessage(__('Can not find category'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Can not find category'), $this->getModuleURL());
 
 
 		$sectionsModel = $this->Register['ModManager']->getModelInstance($this->module . 'Sections');
 		$category = $sectionsModel->getById($id);
 		if (!$category)
-			return $this->showInfoMessage(__('Can not find category'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Can not find category'), $this->getModuleURL());
 		if (!$this->ACL->checkCategoryAccess($category->getNo_access()))
-			return $this->showInfoMessage(__('Permission denied'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Permission denied'), $this->getModuleURL());
 
 
 		$this->page_title = h($category->getTitle()) . ' - ' . $this->page_title;
@@ -331,7 +331,7 @@ Class NewsModule extends Module {
 		$this->ACL->turn(array($this->module, 'view_materials'));
 		$id = intval($id);
 		if ($id < 1)
-			return $this->showInfoMessage(__('Material not found'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Material not found'), $this->getModuleURL());
 
 
 		$this->Model->bindModel('attaches');
@@ -341,11 +341,11 @@ Class NewsModule extends Module {
 
 
 		if (!$entity)
-			return $this->showInfoMessage(__('Material not found'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Material not found'), $this->getModuleURL());
 		if ($entity->getAvailable() == 0 && !$this->ACL->turn(array('other', 'can_see_hidden'), false))
-			return $this->showInfoMessage(__('Permission denied'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Permission denied'), $this->getModuleURL());
 		if (!$this->ACL->checkCategoryAccess($entity->getCategory()->getNo_access()))
-			return $this->showInfoMessage(__('Permission denied'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Permission denied'), $this->getModuleURL());
 
 
 		// Some gemor with add fields
@@ -445,15 +445,15 @@ Class NewsModule extends Module {
 		$this->ACL->turn(array($this->module, 'view_list'));
 		$id = intval($id);
 		if ($id < 1)
-			return $this->showInfoMessage(__('Can not find user'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Can not find user'), $this->getModuleURL());
 
 
 		$usersModel = $this->Register['ModManager']->getModelInstance('Users');
 		$user = $usersModel->getById($id);
 		if (!$user)
-			return $this->showInfoMessage(__('Can not find user'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Can not find user'), $this->getModuleURL());
 		if (!$this->ACL->checkCategoryAccess($user->getNo_access()))
-			return $this->showInfoMessage(__('Permission denied'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Permission denied'), $this->getModuleURL());
 
 
 		$this->page_title = __('User materials') . ' "' . h($user->getName()) . '" - ' . $this->page_title;
@@ -759,7 +759,7 @@ Class NewsModule extends Module {
 				'sourse_site' => null, 'commented' => $commented, 'available' => $available), $_POST);
 			$_SESSION['FpsForm']['error'] = '<p class="errorMsg">' . __('Some error in form') . '</p>'
 					. "\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
-			redirect($this->getModuleURL('add_form/'));
+			$this->showInfoMessage($_SESSION['FpsForm']['error'], $this->getModuleURL('add_form/' . $id));
 		}
 
 
@@ -834,7 +834,7 @@ Class NewsModule extends Module {
 	public function edit_form($id = null) {
 		$id = intval($id);
 		if ($id < 1)
-			return $this->showInfoMessage(__('Material not found'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Material not found'), $this->getModuleURL());
 
 
 		$this->Model->bindModel('attaches');
@@ -843,7 +843,7 @@ Class NewsModule extends Module {
 		$entity = $this->Model->getById($id);
 
 		if (!$entity)
-			return $this->showInfoMessage(__('Material not found'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Material not found'), $this->getModuleURL());
 
 
 		if (is_object($this->AddFields) && count($entity) > 0) {
@@ -856,7 +856,7 @@ Class NewsModule extends Module {
 		if (!$this->ACL->turn(array($this->module, 'edit_materials'), false)
 				&& (!empty($_SESSION['user']['id']) && $entity->getAuthor_id() == $_SESSION['user']['id']
 				&& $this->ACL->turn(array($this->module, 'edit_mine_materials'), false)) === false) {
-			return $this->showInfoMessage(__('Permission denied'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Permission denied'), $this->getModuleURL());
 		}
 
 
@@ -1070,7 +1070,7 @@ Class NewsModule extends Module {
 				'sourse_site' => null, 'commented' => $commented, 'available' => $available), $_POST);
 			$_SESSION['FpsForm']['error'] = '<p class="errorMsg">' . __('Some error in form') . '</p>'
 					. "\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
-			redirect($this->getModuleURL('edit_form/' . $id));
+			$this->showInfoMessage($_SESSION['FpsForm']['error'], $this->getModuleURL('edit_form/' . $id));
 		}
 
 
@@ -1321,21 +1321,21 @@ Class NewsModule extends Module {
 		}
 
 		if ($this->ACL->turn(array($this->module, 'up_materials'), false)) {
-			$moder_panel .= get_link('', $this->getModuleURL('fix_on_top/' . $id), array('class' => 'fps-star', 'onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
-			$moder_panel .= get_link('', $this->getModuleURL('upper/' . $id), array('class' => 'fps-up', 'onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+			$moder_panel .= get_link('', $this->getModuleURL('fix_on_top/' . $id), array('class' => 'fps-star', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('fix_on_top/' . $id)."')}; return false")) . '&nbsp;';
+			$moder_panel .= get_link('', $this->getModuleURL('upper/' . $id), array('class' => 'fps-up', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('upper/' . $id)."')}; return false")) . '&nbsp;';
 		}
 		if ($this->ACL->turn(array($this->module, 'on_home'), false)) {
 			if ($record->getView_on_home() == 1) {
-				$moder_panel .= get_link('', $this->getModuleURL('off_home/' . $id), array('class' => 'fps-on', 'onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+				$moder_panel .= get_link('', $this->getModuleURL('off_home/' . $id), array('class' => 'fps-on', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('off_home/' . $id)."')}; return false")) . '&nbsp;';
 			} else {
-				$moder_panel .= get_link('', $this->getModuleURL('on_home/' . $id), array('class' => 'fps-off', 'onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+				$moder_panel .= get_link('', $this->getModuleURL('on_home/' . $id), array('class' => 'fps-off', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('on_home/' . $id)."')}; return false")) . '&nbsp;';
 			}
 		}
 
 		if ($this->ACL->turn(array($this->module, 'delete_materials'), false)
 				|| (!empty($_SESSION['user']['id']) && $uid == $_SESSION['user']['id']
 				&& $this->ACL->turn(array($this->module, 'delete_mine_materials'), false))) {
-			$moder_panel .= get_link('', $this->getModuleURL('delete/' . $id), array('class' => 'fps-delete', 'onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+			$moder_panel .= get_link('', $this->getModuleURL('delete/' . $id), array('class' => 'fps-delete', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('delete/' . $id)."')}; return false")) . '&nbsp;';
 		}
 		return $moder_panel;
 	}

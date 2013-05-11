@@ -169,15 +169,15 @@ Class BlogModule extends Module {
 		//turn access
 		$this->ACL->turn(array($this->module, 'view_list'));
 		$id = intval($id);
-		if (empty($id) || $id < 1) redirect('/');
+		if (empty($id) || $id < 1) $this->showInfoMessage(__('Unknown error'), '/', 2);
 
 		
 		$catsModel = $this->Register['ModManager']->getModelInstance($this->module . 'Sections');
 		$category = $catsModel->getById($id);
 		if (!$category)
-			return $this->showInfoMessage(__('Can not find category'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Can not find category'), $this->getModuleURL());
 		if (!$this->ACL->checkCategoryAccess($category->getNo_access())) 
-			return $this->showInfoMessage(__('Permission denied'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Permission denied'), $this->getModuleURL());
 		
 		
 		$this->page_title = h($category->getTitle()) . ' - ' . $this->page_title;
@@ -321,7 +321,7 @@ Class BlogModule extends Module {
 		//turn access
 		$this->ACL->turn(array($this->module, 'view_materials'));
 		$id = intval($id);
-		if (empty($id) || $id < 1) redirect('/');
+		if (empty($id) || $id < 1) $this->showInfoMessage(__('Unknown error'), '/', 2);
 
 		
 		$this->Model->bindModel('attaches');
@@ -330,11 +330,11 @@ Class BlogModule extends Module {
 		$entity = $this->Model->getById($id);
 		
 		
-		if (empty($entity)) redirect('/error.php?ac=404');
+		if (empty($entity)) $this->showInfoMessage(__('Material not found'), '/', 2);
 		if ($entity->getAvailable() == 0 && !$this->ACL->turn(array('other', 'can_see_hidden'), false)) 
-			return $this->showInfoMessage(__('Permission denied'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Permission denied'), $this->getModuleURL());
 		if (!$this->ACL->checkCategoryAccess($entity->getCategory()->getNo_access())) 
-			return $this->showInfoMessage(__('Permission denied'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Permission denied'), $this->getModuleURL());
 			
 		
 		// Some gemor with add fields
@@ -501,9 +501,9 @@ Class BlogModule extends Module {
 		if (!isset($_POST['title']) 
 		|| !isset($_POST['mainText']) 
 		|| !isset($_POST['cats_selector'])) {
-			redirect('/');
+			$this->showInfoMessage(__('Unknown error'), '/', 2);
 		}
-		if (!is_numeric($_POST['cats_selector'])) redirect('/');
+		if (!is_numeric($_POST['cats_selector'])) $this->showInfoMessage(__('Unknown error'), '/', 2);
 		$error  = '';
 		
 		
@@ -582,7 +582,7 @@ Class BlogModule extends Module {
 				'description' => null, 'tags' => null, 'commented' => null, 'available' => null), $_POST);
 			$_SESSION['FpsForm']['error']   = '<p class="errorMsg">' . __('Some error in form') . '</p>'.
 				"\n".'<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
-			redirect($this->getModuleURL('add_form/'));
+			$this->showInfoMessage($_SESSION['FpsForm']['error'], $this->getModuleURL('add_form/' . $id));
 		}
 
 		
@@ -659,7 +659,7 @@ Class BlogModule extends Module {
 	public function edit_form($id = null)
     {
 		$id = (int)$id;
-		if ( $id < 1 ) redirect('/');
+		if ( $id < 1 ) $this->showInfoMessage(__('Unknown error'), '/', 2);
 		$writer_status = (!empty($_SESSION['user']['status'])) ? $_SESSION['user']['status'] : 0;
 
 		
@@ -668,7 +668,7 @@ Class BlogModule extends Module {
 		$this->Model->bindModel('category');
 		$entity = $this->Model->getById($id);
 		
-		if (count($entity) == 0) redirect($this->getModuleURL());
+		if (count($entity) == 0) $this->showInfoMessage(__('Unknown error'), '/', 2);
 		
 		
 		if (is_object($this->AddFields) && count($entity) > 0) {
@@ -681,7 +681,7 @@ Class BlogModule extends Module {
 		if (!$this->ACL->turn(array($this->module, 'edit_materials'), false) 
 		&& (!empty($_SESSION['user']['id']) && $entity->getAuthor()->getId() == $_SESSION['user']['id'] 
 		&& $this->ACL->turn(array($this->module, 'edit_mine_materials'), false)) === false) {
-			return $this->showInfoMessage(__('Permission denied'), $this->getModuleURL());
+			return $this->showInfoMessageFull(__('Permission denied'), $this->getModuleURL());
 		}
 		
 		
@@ -774,15 +774,15 @@ Class BlogModule extends Module {
 		|| !isset($_POST['title']) 
 		|| !isset($_POST['mainText']) 
 		|| !isset($_POST['cats_selector'])) {
-			redirect('/');
+			$this->showInfoMessage(__('Unknown error'), '/', 2);
 		}
 		$id = (int)$id;
-		if ($id < 1) redirect($this->getModuleURL());
+		if ($id < 1) $this->showInfoMessage(__('Unknown error'), '/', 2);
 		$error = '';
 		
 
 		$target = $this->Model->getbyId($id);
-		if (!$target) redirect($this->getModuleURL());
+		if (!$target) $this->showInfoMessage(__('Unknown error'), '/', 2);
 		
 		
 		//turn access
@@ -876,7 +876,7 @@ Class BlogModule extends Module {
 				'description' => null, 'tags' => null, 'commented' => null, 'available' => null), $_POST);
 			$_SESSION['FpsForm']['error']   = '<p class="errorMsg">' . __('Some error in form') . '</p>'
 				."\n".'<ul class="errorMsg">'."\n".$error.'</ul>'."\n";
-			redirect($this->getModuleURL('edit_form/' . $id));
+			$this->showInfoMessage($_SESSION['FpsForm']['error'], $this->getModuleURL('edit_form/' . $id));
 		}
 		
 
@@ -929,11 +929,11 @@ Class BlogModule extends Module {
 	public function delete($id = null) {
 		$this->cached = false;
 		$id = (int)$id;
-		if ($id < 1) redirect('/');
+		if ($id < 1) $this->showInfoMessage(__('Unknown error'), '/', 2);
 
 
 		$target = $this->Model->getById($id);
-		if (!$target) redirect('/');
+		if (!$target) $this->showInfoMessage(__('Unknown error'), '/', 2);
 		
 		
 		//turn access
@@ -1039,11 +1039,11 @@ Class BlogModule extends Module {
 		//turn access
 		$this->ACL->turn(array($this->module, 'up_materials'));
 		$id = (int)$id;
-		if ($id < 1) redirect($this->getModuleURL());
+		if ($id < 1) $this->showInfoMessage(__('Unknown error'), '/', 2);
 
 		
 		$entity = $this->Model->getById($id);
-		if (!$entity) redirect($this->getModuleURL());
+		if (!$entity) $this->showInfoMessage(__('Unknown error'), '/', 2);
 		
 		$entity->setDate(date("Y-m-d H-i-s"));
 		$entity->save();
@@ -1061,11 +1061,11 @@ Class BlogModule extends Module {
 		//turn access
 		$this->ACL->turn(array($this->module, 'on_home'));
 		$id = (int)$id;
-		if ($id < 1) redirect($this->getModuleURL());
+		if ($id < 1) $this->showInfoMessage(__('Unknown error'), '/', 2);
 
 		
 		$entity = $this->Model->getById($id);
-		if (!$entity) redirect($this->getModuleURL());
+		if (!$entity) $this->showInfoMessage(__('Unknown error'), '/', 2);
 		
 		$entity->setView_on_home('1');
 		$entity->save();
@@ -1083,11 +1083,11 @@ Class BlogModule extends Module {
 		//turn access
 		$this->ACL->turn(array($this->module, 'on_home'));
 		$id = (int)$id;
-		if ($id < 1) redirect($this->getModuleURL());
+		if ($id < 1) $this->showInfoMessage(__('Unknown error'), '/', 2);
 
 		
 		$entity = $this->Model->getById($id);
-		if (!$entity) redirect($this->getModuleURL());
+		if (!$entity) $this->showInfoMessage(__('Unknown error'), '/', 2);
 		
 		$entity->setView_on_home('0');
 		$entity->save();
@@ -1104,10 +1104,10 @@ Class BlogModule extends Module {
 	public function fix_on_top($id) {
 		$this->ACL->turn(array($this->module, 'on_home'));
 		$id = (int)$id;
-		if ($id < 1) redirect($this->getModuleURL());
+		if ($id < 1) $this->showInfoMessage(__('Unknown error'), '/', 2);
 
 		$target = $this->Model->getById($id);
-		if (!$target) redirect('/');
+		if (!$target) $this->showInfoMessage(__('Unknown error'), '/', 2);
 		
 		$curr_state = $target->getOn_home_top();
 		$dest = ($curr_state) ? '0' : '1';
@@ -1137,17 +1137,17 @@ Class BlogModule extends Module {
 		
 		if ($this->ACL->turn(array($this->module, 'up_materials'), false)) {
 			$moder_panel .= get_link(get_img('/sys/img/star.png'), 
-			$this->getModuleURL('fix_on_top/' . $id), array('onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+			$this->getModuleURL('fix_on_top/' . $id), array('onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('fix_on_top/' . $id)."')}; return false")) . '&nbsp;';
 			$moder_panel .= get_link(get_img('/sys/img/up_arrow_16x16.png'), 
-			$this->getModuleURL('upper/' . $id), array('onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+			$this->getModuleURL('upper/' . $id), array('onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('upper/' . $id)."')}; return false")) . '&nbsp;';
 		}
 		if ($this->ACL->turn(array($this->module, 'on_home'), false)) {
 				if ($record->getView_on_home() == 1) {
 					$moder_panel .= get_link(get_img('/sys/img/round_ok.png', array('title' => __('On home'))), 
-					$this->getModuleURL('off_home/' . $id), array('onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+					$this->getModuleURL('off_home/' . $id), array('onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('off_home/' . $id)."')}; return false")) . '&nbsp;';
 				} else {
 					$moder_panel .= get_link(get_img('/sys/img/round_not_ok.png', array('title' => __('On home'))), 
-					$this->getModuleURL('on_home/' . $id), array('onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+					$this->getModuleURL('on_home/' . $id), array('onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('on_home/' . $id)."')}; return false")) . '&nbsp;';
 				}
 		}
 		
@@ -1155,7 +1155,7 @@ Class BlogModule extends Module {
 		|| (!empty($_SESSION['user']['id']) && $record->getAuthor_id() == $_SESSION['user']['id'] 
 		&& $this->ACL->turn(array($this->module, 'delete_mine_materials'), false))) {
 			$moder_panel .= get_link(get_img('/sys/img/delete_16x16.png'), 
-			$this->getModuleURL('delete/' . $id), array('onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+			$this->getModuleURL('delete/' . $id), array('onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('delete/' . $id)."')}; return false")) . '&nbsp;';
 		}
 		return $moder_panel;
 	}

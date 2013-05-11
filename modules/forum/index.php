@@ -1425,7 +1425,7 @@ Class ForumModule extends Module {
 			$_SESSION['editForumForm']['title'] = $title;
 			$_SESSION['editForumForm']['description'] = $description;
 
-			redirect($this->getModuleURL('edit_forum_form/' . $id_forum));
+			$this->showInfoMessage($_SESSION['editForumForm']['error'], $this->getModuleURL('edit_forum_form/' . $id_forum));
 		}
 
 
@@ -1773,7 +1773,7 @@ Class ForumModule extends Module {
 			$_SESSION['addThemeForm']['poll'] = $poll;
 			$_SESSION['addThemeForm']['poll_question'] = $poll_question;
 			$_SESSION['addThemeForm']['poll_ansvers'] = $poll_ansvers;
-			redirect($this->getModuleURL('add_theme_form/' . $id_forum));
+			$this->showInfoMessage($_SESSION['addThemeForm']['error'], $this->getModuleURL('add_theme_form/' . $id_forum));
 		}
 
 		$message = mb_substr($message, 0, $this->Register['Config']->read('max_post_lenght', $this->module));
@@ -2061,7 +2061,7 @@ Class ForumModule extends Module {
 			$_SESSION['editThemeForm']['gr_access'] = $gr_access;
 			$_SESSION['editThemeForm']['first_top'] = $first_top;
 			$_SESSION['editThemeForm']['locked'] = $locked;
-			redirect($this->getModuleURL('edit_theme_form/' . $id_theme));
+			$this->showInfoMessage($_SESSION['editThemeForm']['error'], $this->getModuleURL('edit_theme_form/' . $id_theme));
 		}
 
 
@@ -2347,7 +2347,7 @@ Class ForumModule extends Module {
 			$_SESSION['addPostForm']['error'] = '<p class="errorMsg">' . __('Some error in form') . '</p>' . "\n" .
 					'<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
 			$_SESSION['addPostForm']['message'] = $message;
-			redirect($this->getModuleURL('view_theme/' . $id_theme));
+			$this->showInfoMessage($_SESSION['addPostForm']['error'], $this->getModuleURL('view_theme/' . $id_theme));
 		}
 
 
@@ -2674,7 +2674,7 @@ Class ForumModule extends Module {
 			$_SESSION['editPostForm']['error'] = '<p class="errorMsg">' . __('Some error in form')
 					. '</p>' . "\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
 			$_SESSION['editPostForm']['message'] = $message;
-			redirect($this->getModuleURL('edit_post_form/' . $id));
+			$this->showInfoMessage($_SESSION['editPostForm']['error'], $this->getModuleURL('edit_post_form/' . $id));
 		}
 
 
@@ -3483,7 +3483,7 @@ Class ForumModule extends Module {
 			$_SESSION['editThemeForm']['posts_select'] = $posts_select;
 			$_SESSION['editThemeForm']['first_top'] = $first_top;
 			$_SESSION['editThemeForm']['locked'] = $locked;
-			redirect($this->getModuleURL('split_theme_form/' . $id_theme . (isset($_GET['page']) ? '?page=' . $_GET['page'] : '')));
+			$this->showInfoMessage($_SESSION['editThemeForm']['error'], $this->getModuleURL('split_theme_form/' . $id_theme . (isset($_GET['page']) ? '?page=' . $_GET['page'] : '')));
 		}
 
 
@@ -3750,7 +3750,7 @@ Class ForumModule extends Module {
 					. '</p>' . "\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
 			$_SESSION['editThemeForm']['theme'] = $id_new_theme;
 			$_SESSION['editThemeForm']['posts_select'] = $posts_select;
-			redirect($this->getModuleURL('move_posts_form/' . $id_theme . (isset($_GET['page']) ? '?page=' . $_GET['page'] : '')));
+			$this->showInfoMessage($_SESSION['editThemeForm']['error'], $this->getModuleURL('move_posts_form/' . $id_theme . (isset($_GET['page']) ? '?page=' . $_GET['page'] : '')));
 		}
 
 
@@ -3936,7 +3936,7 @@ Class ForumModule extends Module {
 			$_SESSION['editThemeForm']['error'] = '<p class="errorMsg">' . __('Some error in form')
 					. '</p>' . "\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
 			$_SESSION['editThemeForm']['theme'] = $id_new_theme;
-			redirect($this->getModuleURL('unite_themes_form/' . $id_theme));
+			$this->showInfoMessage($_SESSION['editThemeForm']['error'], $this->getModuleURL('unite_themes_form/' . $id_theme));
 		}
 
 

@@ -2,9 +2,8 @@
 <script type="text/javascript">
 maxAttachedFiles = {{ context.max_attaches }};
 </script>
-{{ context.errors }}
 <form name="sendForm" id="sendForm" action="{{ context.action }}" method="POST" 
-enctype="multipart/form-data" onsubmit="return checkForm(this)">
+enctype="multipart/form-data" onsubmit="if (checkForm(this)) {sendu('{{ context.action }}')}; return false">
 <table border="0"  class="add-form small" cellspacing="1" cellpadding="0">
 	<tr>
 		<td>Категория:<font color="red" class="manStar">*</font></td>
