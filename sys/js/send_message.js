@@ -656,7 +656,7 @@ function setGroup(uid, formId) {
 // Функция для отправки формы на сервер и открытия окошка со статусом выполненного действия
 function sendu(url) {
     var idrand = 'fpswin_'+Math.round(Math.random()*9999);
-    var fpswin = createFpsWin('Информация', 'Пожалуйста, подождите...', '');
+    var fpswin = createFpsWin('Информация', '<img src="/sys/img/ajaxload.gif" alt="loading">', '');
     $('body').append('<div id="'+idrand+'">'+fpswin+'</div>');
 
     jQuery.ajax({
