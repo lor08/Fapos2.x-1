@@ -149,6 +149,8 @@ $set = array (
     'autoban_interval' => 2000000,
     'use_gravatar' => '1',
     'use_md5_salt' => '1',
+    'new_pm_mail' => '0',
+    'pm_type' => '1',
     'fields' => 
     array (
       0 => 'pol',

@@ -799,3 +799,17 @@ function getOrderLink($params) {
 	$asc = ($active && isset($_GET['asc']));
 	return '<a href="?order=' . $new_order . ($asc ? '' : '&asc=1') . '">' . $params[1] . ($active ? ' ' . ($asc ? '↑' : '↓') : '') . '</a>';
 }
+
+// перебрасывает на выбранный тип просмотра ЛС, если открыт другой
+function pm_type_redirect($type) {
+	if ($type != Config::read('pm_type', 'users')) {
+		switch (Config::read('pm_type', 'users')) {
+			case '1':
+				$url = '/users/pm/';
+				break;
+			default:
+				$url = '/users/in_msg_box/';
+		}
+		header('Location: ' . get_url($url), TRUE, $header);
+	}
+}

@@ -1665,6 +1665,7 @@ Class UsersModule extends Module {
 
 	// Функция возвращает html формы для отправки личного сообщения
 	public function send_msg_form($id = null) {
+		pm_type_redirect('0');
 		// Незарегистрированный пользователь не может отправлять личные сообщения
 		if (!isset($_SESSION['user']))
 			return $this->showInfoMessage(__('Some error occurred'), '/');
@@ -1887,6 +1888,7 @@ Class UsersModule extends Module {
 
 	// Функция возвращает личное сообщение для просмотра пользователем
 	public function get_message($id_msg = null) {
+		pm_type_redirect('0');
 		if (!isset($_SESSION['user']))
 			return $this->showInfoMessage(__('Some error occurred'), '/');
 		$idMsg = intval($id_msg);
@@ -1969,6 +1971,7 @@ Class UsersModule extends Module {
 
 	// Папка личных сообщений (входящие)
 	public function in_msg_box() {
+		pm_type_redirect('0');
 		if (!isset($_SESSION['user']))
 			return $this->showInfoMessage(__('Some error occurred'), '/');
 
@@ -2008,6 +2011,7 @@ Class UsersModule extends Module {
 
 	// Папка личных сообщений (исходящие)
 	public function out_msg_box() {
+		pm_type_redirect('0');
 		if (!isset($_SESSION['user']))
 			return $this->showInfoMessage(__('Some error occurred'), '/');
 
@@ -3041,4 +3045,321 @@ Class UsersModule extends Module {
 		return $this->_view('');
 	}
 
+	// Папка личных сообщений (список собеседников)
+	public function pm() {
+		pm_type_redirect('1');
+		if (!isset($_SESSION['user']))
+			return $this->showInfoMessage(__('Some error occurred'), '/');
+
+
+		// Navigation Panel
+		$nav = array();
+		$nav['messages_menu'] = $this->_getMessagesMenu();
+		$nav['navigation'] = get_link(__('Home'), '/') . __('Separator')
+				. get_link(h($this->module_title), $this->getModuleURL()) . __('Separator') . __('PM nav');
+		$this->_globalize($nav);
+
+
+		$markers = array('error' => '');
+		$messages = $this->Model->getMessages();
+		if (!$messages || (is_array($messages) && count($messages) == 0)) {
+			$markers['messages'] = array();
+			$markers['error'] = __('This dir is empty');
+			$source = $this->render('pm.html', array('messages' => array(), 'context' => $markers));
+			return $this->_view($source);
+		}
+
+		$markers['count'] = count($messages);
+		foreach ($messages as $message) {
+			// Если сообщение еще не прочитано
+			$icon = ($message->getViewed() == 0) ? 'folder_new' : 'folder';
+			$message->setIcon(get_img('/template/' . getTemplateName() . '/img/' . $icon . '.gif'));
+			
+			if (strlen($message->getMessage()) > 170) {
+				$message->setMessage(mb_substr($message->getMessage(), 0, 150).'...');
+				// разница в 20 символов - это фича :)
+			}
+			$message->setText(h($message->getMessage()));
+
+			if ($message->getFrom_user() != $_SESSION['user']['id']) {
+				$message->setUser($message->getFromuser());
+			} else {
+				$message->setUser($message->getTouser());
+			}
+
+			$message->setDelete(get_link(__('Delete'), $this->getModuleURL('delete_message/' . $message->getId()), array('onClick' => "return confirm('" . __('Are you sure') . "')")));
+		}
+
+		$source = $this->render('pm.html', array('messages' => $messages, 'context' => $markers));
+		return $this->_view($source);
+	}
+
+	// Функция возвращает личное сообщение для просмотра пользователем
+	public function pm_view($id_user = null) {
+		pm_type_redirect('1');
+		if (!isset($_SESSION['user']))
+			return $this->showInfoMessage(__('Some error occurred'), '/');
+		$idUser = intval($id_user);
+		if ($idUser < 1)
+			return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL('in_msg_box/'));
+
+		$nav = array();
+		$nav['navigation'] = get_link(__('Home'), '/') . __('Separator')
+				. get_link(h($this->module_title), $this->getModuleURL()) . __('Separator') . __('Message');
+		$this->_globalize($nav);
+
+		$messages = $this->Model->getUserMessages($idUser);
+
+		$markers = array('error' => '');
+		if (!$messages || (is_array($messages) && count($messages) == 0)) {
+			$markers['error'] = __('This dir is empty');
+			$source = $this->render('pm_view.html', array('messages' => array(), 'context' => $markers));
+			return $this->_view($source);
+		}
+
+		if ($messages[0]->getTo_user() != $_SESSION['user']['id']) {
+			$markers['interlocutor'] = $messages[0]->getTouser()->getName();
+		} else {
+			$markers['interlocutor'] = $messages[0]->getFromuser()->getName();
+		}
+
+		foreach ($messages as $message) {
+			if ($message->getTo_user() == $_SESSION['user']['id']) {
+				$inBox = true;
+			} else {
+				$inBox = false;
+			}
+
+			$text = $this->Textarier->print_page($message->getMessage(), $message->getFromuser()->getStatus());
+
+			// Помечаем сообщение, как прочитанное
+			if ($inBox and $message->getViewed() != 1) {
+				$message->setViewed(1);
+				$message->save();
+			}
+			$message->setText($text);
+
+			if ($message->getFrom_user() != $_SESSION['user']['id']) {
+				$message->setUser($message->getFromuser());
+			} else {
+				$message->setUser($message->getTouser());
+			}
+
+			$message->setDelete(get_link(__('Delete'), $this->getModuleURL('delete_message/' . $message->getId()), array('onClick' => "return confirm('" . __('Are you sure') . "')")));
+		}
+
+		$source = $this->render('pm_view.html', array(
+			'context' => $markers,
+			'messages' => $messages,
+		));
+
+		return $this->_view($source);
+	}
+
+
+	// Функция возвращает html формы для отправки личного сообщения
+	public function send_pm_form($id = null) {
+		pm_type_redirect('1');
+		// Незарегистрированный пользователь не может отправлять личные сообщения
+		if (!isset($_SESSION['user']))
+			return $this->showInfoMessage(__('Some error occurred'), '/');
+		$writer_status = (!empty($_SESSION['user']['status'])) ? $_SESSION['user']['status'] : 0;
+
+
+		$menu = $this->_getMessagesMenu();
+
+		$toUser = '';
+		if (isset($id)) {
+			$id = intval($id);
+			if ($id > 0) {
+				$res = $this->Model->getById($id);
+				if ($res) {
+					$toUser = $res->getName();
+				}
+			}
+		}
+
+
+		$message = ''; // TODO
+
+
+		if (isset($_SESSION['viewMessage']) && !empty($_SESSION['viewMessage']['message'])) {
+			$prevMessage = $this->Textarier->print_page($_SESSION['viewMessage']['message'], $writer_status);
+			$prevSource = $this->render('previewmessage.html', array('message' => $prevMessage));
+			$toUser = h($_SESSION['viewMessage']['toUser']);
+			$message = h($_SESSION['viewMessage']['message']);
+			unset($_SESSION['viewMessage']);
+		}
+
+		$action = get_url($this->getModuleURL('send_pm'));
+		$error = '';
+		// Если при заполнении формы были допущены ошибки
+		if (isset($_SESSION['sendMessageForm'])) {
+			$error = $this->render('infomessage.html', array('info_message' => $_SESSION['sendMessageForm']['error']));
+			$toUser = h($_SESSION['sendMessageForm']['toUser']);
+			$message = h($_SESSION['sendMessageForm']['message']);
+			unset($_SESSION['sendMessageForm']);
+		}
+
+
+		$markers = array();
+		$markers['error'] = $error;
+		$markers['action'] = $action;
+		$markers['touser'] = $toUser;
+		$markers['main_text'] = $message;
+		$markers['preview'] = (!empty($prevSource)) ? $prevSource : '';
+		$source = $this->render('sendpmform.html', array('context' => $markers));
+
+
+		// Navigation Panel
+		$nav = array();
+		$nav['navigation'] = get_link(__('Home'), '/') . __('Separator')
+				. get_link(h($this->module_title), $this->getModuleURL()) . __('Separator') . __('PM nav');
+		$this->_globalize($nav);
+
+
+		return $this->_view($source);
+	}
+
+
+
+	public function send_pm() {
+		// Незарегистрированный пользователь не может отправлять личные сообщения
+		if (!isset($_SESSION['user'])) {
+			return $this->showInfoMessage(__('Some error occurred'), '/');
+		}
+		// Если не переданы данные формы - функция вызвана по ошибке
+		if (!isset($_POST['toUser']) or
+				!isset($_POST['mainText'])) {
+			return $this->showInfoMessage(__('Some error occurred'), '/');
+		}
+
+		$msgLen = mb_strlen($_POST['mainText']);
+
+		// Обрезаем переменные до длины, указанной в параметре maxlength тега input
+		$toUser = mb_substr($_POST['toUser'], 0, 30);
+		$message = mb_substr($_POST['mainText'], 0, $this->Register['Config']->read('max_message_lenght', $this->module));
+		// Обрезаем лишние пробелы
+		$toUser = trim($toUser);
+		$message = trim($message);
+
+		// Проверяем, заполнены ли обязательные поля
+		$error = '';
+		$valobj = $this->Register['Validate'];
+		if (empty($toUser))
+			$error = $error . '<li>' . __('Empty field "for"') . '</li>' . "\n";
+		if (empty($message))
+			$error = $error . '<li>' . __('Empty field "text"') . '</li>' . "\n";
+		if ($msgLen > $this->Register['Config']->read('max_message_lenght', $this->module))
+			$error = $error . '<li>' . sprintf(__('Very big message'), $this->Register['Config']->read('max_message_lenght', $this->module)) . '</li>' . "\n";
+
+
+		// Проверяем поля формы на недопустимые символы
+		if (!empty($toUser) && !$valobj->cha_val($toUser, V_LOGIN))
+			$error = $error . '<li>' . __('Wrong chars in field "to"') . '</li>' . "\n";
+
+
+		// Проверяем, есть ли такой пользователь
+		if (!empty($toUser)) {
+			$to = preg_replace("#[^- _0-9a-zА-Яа-я]#iu", '', $toUser);
+			$user = $this->Model->getFirst(
+					array(
+						'name' => $toUser
+					)
+			);
+
+
+			if (!$user)
+				$error = $error . '<li>' . sprintf(__('No user with this name'), $to) . '</li>' . "\n";
+			elseif ($user->getId() == $_SESSION['user']['id'])
+				$error = $error . '<li>' . __('You can not send message to yourself') . '</li>' . "\n";
+
+
+			//chek max count messages
+			if ($user && $user->getId()) {
+				$id_to = intval($user->getId());
+				$id_from = intval($_SESSION['user']['id']);
+
+
+				$model = $this->Register['ModManager']->getModelInstance('Messages');
+				$cnt_to = $model->getTotal(array(
+					'cond' => array(
+						"(`to_user` = '{$id_to}' OR `from_user` = '{$id_to}') AND `id_rmv` != '{$id_to}'"
+					)
+				));
+				$cnt_from = $model->getTotal(array(
+					'cond' => array(
+						"(`to_user` = '{$id_from}' OR `from_user` = '{$id_from}') AND `id_rmv` != '{$id_from}'"
+					)
+				));
+
+
+				if (!empty($cnt_to) && $cnt_to >= $this->Register['Config']->read('max_count_mess', $this->module)) {
+					$error = $error . '<li>' . __('This user has full messagebox') . '</li>' . "\n";
+				}
+				if (!empty($cnt_from) && $cnt_from >= $this->Register['Config']->read('max_count_mess', $this->module)) {
+					$error = $error . '<li>' . __('You have full messagebox') . '</li>' . "\n";
+				}
+			}
+		}
+
+
+
+		// Errors
+		if (!empty($error)) {
+			$_SESSION['sendMessageForm'] = array();
+			$_SESSION['sendMessageForm']['error'] = '<p class="errorMsg">' . __('Some error in form') . '</p>' .
+					"\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
+			$_SESSION['sendMessageForm']['toUser'] = $toUser;
+			$_SESSION['sendMessageForm']['message'] = $message;
+			return $this->showInfoMessage($_SESSION['sendMessageForm']['error'], $this->getModuleURL('send_pm_form/'));
+		}
+
+		// Все поля заполнены правильно - "посылаем" сообщение
+		$to = $user->getId();
+		$from = $_SESSION['user']['id'];
+
+
+		$data = array(
+			'to_user' => $to,
+			'from_user' => $from,
+			'sendtime' => new Expr('NOW()'),
+			'message' => $message,
+			'id_rmv' => 0,
+			'viewed' => 0,
+		);
+		$msg = new MessagesEntity($data);
+		if ($msg) {
+			$id_msg = $msg->save();
+			if ($this->Register['Config']->read('new_pm_mail', $this->module) == 1) {
+				// формируем заголовки письма
+				$headers = "From: " . $_SERVER['SERVER_NAME'] . " <" . $this->Register['Config']->read('admin_email') . ">\n";
+				$headers = $headers . "Content-type: text/html; charset=\"utf-8\"\n";
+				$headers = $headers . "Return-path: <" . $this->Register['Config']->read('admin_email') . ">\n";
+				$link = 'http://' . $_SERVER['SERVER_NAME'] . $this->getModuleURL('get_message/' . $id_msg);
+
+				$mail = array(
+					'name' => $user->getName(),
+					'email' => $user->getEmail(),
+					'link' => $link,
+				);
+				$from = array(
+					'name' => $_SESSION['user']['name'],
+					'email' => $_SESSION['user']['email'],
+				);
+				$context = $this->render('newpm.msg', array('from' => $from, 'mail' => $mail));
+				$body = $this->render('main.msg', array('from' => $from, 'mail' => $mail, 'context' => $context));
+
+				/* clean DB cache */
+				$this->DB->cleanSqlCache();
+				mail($user->getEmail(), __('New PM on forum'), $body, $headers);
+			}
+		}
+
+		/* clean DB cache */
+		$this->DB->cleanSqlCache();
+		if ($this->Log)
+			$this->Log->write('adding pm message', 'message id(' . mysql_insert_id() . ')');
+		return $this->showInfoMessage(__('Message successfully sent'), getReferer());
+	}
 }

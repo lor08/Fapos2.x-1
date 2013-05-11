@@ -1,0 +1,47 @@
+<style>
+.lsmat {height: 64px;}
+</style>
+
+<table cellspacing="0" cellpadding="0" class="cat-tb">
+	<tr >
+			<td class="title" style="vertical-align: middle">Собеседники
+							<div style="float: right"><a href="/users/send_pm_form/"><img alt="Написать" title="Написать" src="{{ template_path }}/img/msg_newpost.png" />&nbsp;Написать</a></div></td>
+	</tr>
+</table>
+
+<table cellspacing="0" cellpadding="0" class="cat-tb">
+
+{% if messages %}
+{% for message in messages %}
+	<tr class="lsmat">
+		<td class="col" style="width: 64px; background: url({{ getAvatar(message.user.id) }}) no-repeat; background-size: 70px 70px;"></td>
+
+		<td class="col" style="width:25%">
+			<a href="/users/info/{{ message.user.id }}">{{ message.user.name }}</a><br>
+			<span style="color:{% if message.direction == 'in'  %}blue;">&rArr;{% else %}red;">&lArr;{% endif %}</span>&nbsp;
+			<span style="font-size: small">{{ message.sendtime }}</span>
+		</td>
+
+		<td class="col" onclick="location.href='/users/pm_view/{{ message.user.id }}'" style="cursor: pointer;{% if message.viewed != 1 %}font-weight: bold;{% endif %}">
+			{{ message.text }}
+		</td>
+
+		<td class="col" style="text-align: center;width:80px">
+			{{ message.delete }}
+			<input type="checkbox" class="packPoint" onClick="if(this.checked){addToPackage(this.value);}else{delFromPackage(this.value);}" value="{{ message.id }}" />
+		</td>
+	</tr>
+{% endfor %}	
+{% endif %}	
+
+</table>
+
+<div class="fps-controll">
+	<select style="width:100px;">
+		<option>Удалить</option>
+	</select>
+	<input id="packButton" type="button" disabled="disabled" onClick="sendPack('/users/delete_message_pack/');" value="(0)">
+	<div style="display:none;">
+		<form id="actionPack" action="" method="POST"></form>
+	</div>
+</div>

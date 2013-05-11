@@ -1,0 +1,44 @@
+{{ editor_body }}
+
+<table cellspacing="0" cellpadding="0" class="cat-tb">
+	<tr>
+			<td class="title">
+				<a href="/users/pm/"><img alt="Вернуться" title="Список собеседников" src="{{ template_path }}/img/list2.png" />&nbsp;Вернуться</a>&nbsp;&nbsp;&nbsp;&nbsp;
+			Отправить сообщение</td>
+	</tr>
+</table>
+
+<script type="text/javascript">
+$(function() {
+    $('[list=findusers]').keyup(function() {
+        if ($('[list=findusers]').val().length > 2) {
+            $.get('/users/search_niks/?name='+$('[list=findusers]').val(), {}, function(data){
+                $('#findusers').html(data);
+            });
+        } else {
+            $('#findusers').html('');
+        };
+    });
+    return;
+});
+</script>
+
+<form name="sendMailForm" id="sendForm" action="{{ context.action }}" method="POST" onsubmit="sendu('{{ context.action }}'); return false">
+	<table class="cat-tb" cellpadding="0" cellspacing="0">
+		<tr >
+			<td class="col">Для пользователя:</td>
+			<td class="col">
+				<input type="text" name="toUser" id="toUser" maxlength="30" value="{{ context.touser }}" list="findusers" style="width: 98%" />
+				<datalist id="findusers"></datalist>
+			</td>
+		</tr>
+		<tr>
+			<td class="col" colspan="2"><textarea {{ editor_text }} class="text-area" name="mainText" style="height: 300px;">{{ context.main_text }}</textarea>
+		</tr>
+		<tr>
+			<td class="col" colspan="2" style="text-align: center">
+				<input class="subm" type="submit" name="submitForm" value="Отправить" />
+			</td>
+		</tr>
+	</table>
+</form>

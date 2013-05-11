@@ -1,0 +1,73 @@
+<style>
+.lsmat {height: 64px;}
+</style>
+
+{{ editor_body }}
+
+<script>
+function sendPM() {
+    $('#send_pm_a').hide();
+    $('#sendForm').show();
+}
+</script>
+
+<table cellspacing="0" cellpadding="0" class="cat-tb">
+	<tr>
+			<td class="title">
+				<a href="/users/pm/"><img alt="Вернуться" title="Список собеседников" src="{{ template_path }}/img/list2.png" />&nbsp;Вернуться</a>&nbsp;&nbsp;&nbsp;&nbsp;
+			Беседа с {{ context.interlocutor }}
+			<div style="float: right">
+				<a onclick="sendPM()"><img alt="Написать" title="Написать" src="{{ template_path }}/img/msg_newpost.png" />&nbsp;Написать</a>
+			</div>
+	</tr>
+</table>
+
+<form name="sendForm" id="sendForm" action="/users/send_pm" method="POST"
+enctype="multipart/form-data" onsubmit="sendu('/users/send_pm'); return false" style="display: none">
+<table border="0" class="add-form cat-tb" cellspacing="0" cellpadding="0">
+	<tr class="lsmat">
+		<td colspan="2">
+			<textarea {{ editor_text }} class="text-area" name="mainText" style="height: 300px;"></textarea><input type="text" name="toUser" id="toUser" maxlength="30" value="{{ context.interlocutor }}" style="display: none" />
+		</td>
+	</tr>
+	<tr class="lsmat">
+		<td colspan="2" align="center">
+			<input class="subm" type="submit" name="submitForm" value="Отправить" />
+		</td>
+	</tr>
+</table>
+</form>
+
+<table cellspacing="0" cellpadding="0" class="cat-tb">
+
+{% if messages %}
+{% for message in messages %}
+	<tr class="lsmat">
+
+
+		<td class="col" onclick="location.href='/users/pm_view/{{ message.user.id }}'" style="cursor: pointer;">
+			<span style="color:{% if message.direction == 'in'  %}blue;">&rArr;{% else %}red;">&lArr;{% endif %}</span>&nbsp;
+			<span style="font-size: small">{{ message.sendtime }}</span>
+			<br>
+			<span{% if message.viewed != 1 %} style="font-weight: bold;"{% endif %}>{{ message.text }}</span>
+		</td>
+
+		<td class="col" style="text-align: center;width:80px">
+			{{ message.delete }}
+			<input type="checkbox" class="packPoint" onClick="if(this.checked){addToPackage(this.value);}else{delFromPackage(this.value);}" value="{{ message.id }}" />
+		</td>
+	</tr>
+{% endfor %}	
+{% endif %}	
+
+</table>
+
+<div class="fps-controll">
+	<select style="width:100px;">
+		<option>Удалить</option>
+	</select>
+	<input id="packButton" type="button" disabled="disabled" onClick="sendPack('/users/delete_message_pack/');" value="(0)">
+	<div style="display:none;">
+		<form id="actionPack" action="" method="POST"></form>
+	</div>
+</div>
