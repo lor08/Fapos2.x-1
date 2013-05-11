@@ -1345,12 +1345,6 @@ Class ForumModule extends Module {
 
 		// Если при заполнении формы были допущены ошибки
 		if (isset($_SESSION['editForumForm'])) {
-			$info = $this->render('infomessage.html', array(
-				'context' => array(
-					'info_message' => $_SESSION['editForumForm']['error'],
-				),
-					));
-			$html = $html . $info . "\n";
 			$title = h($_SESSION['editForumForm']['title']);
 			$description = h($_SESSION['editForumForm']['description']);
 			unset($_SESSION['editForumForm']);
@@ -1630,12 +1624,6 @@ Class ForumModule extends Module {
 
 		// errors
 		if (isset($_SESSION['addThemeForm'])) {
-			$info = $this->render('infomessage.html', array(
-				'context' => array(
-					'info_message' => $_SESSION['addThemeForm']['error'],
-				),
-					));
-			$html = $html . $info . "\n";
 			$theme = h($_SESSION['addThemeForm']['theme']);
 			$description = h($_SESSION['addThemeForm']['description']);
 			$message = $_SESSION['addThemeForm']['message'];
@@ -1943,12 +1931,6 @@ Class ForumModule extends Module {
 
 		// Если при заполнении формы были допущены ошибки
 		if (isset($_SESSION['editThemeForm'])) {
-			$info = $this->render('infomessage.html', array(
-				'context' => array(
-					'info_message' => $_SESSION['editThemeForm']['error'],
-				),
-					));
-			$html = $info . $html . "\n";
 			$name = h($_SESSION['editThemeForm']['theme']);
 			$description = h($_SESSION['editThemeForm']['description']);
 			$gr_access = $_SESSION['editThemeForm']['gr_access'];
@@ -2252,12 +2234,6 @@ Class ForumModule extends Module {
 				$html = '';
 				// Если при заполнении формы были допущены ошибки
 				if (isset($_SESSION['addPostForm'])) {
-					$info = $this->render('infomessage.html', array(
-						'context' => array(
-							'info_message' => $_SESSION['addPostForm']['error'],
-						),
-							));
-					$html = $html . $info . "\n";
 					$message = h($_SESSION['addPostForm']['message']);
 					unset($_SESSION['addPostForm']);
 				}
@@ -2560,12 +2536,6 @@ Class ForumModule extends Module {
 		$markers = array();
 		// errors
 		if (isset($_SESSION['editPostForm'])) {
-			$info = $this->render('infomessage.html', array(
-				'context' => array(
-					'info_message' => $_SESSION['editPostForm']['error'],
-				),
-					));
-			$html = $info . $html . "\n";
 			$message = $_SESSION['editPostForm']['message'];
 			$add_editor = !empty($_SESSION['editPostForm']['add_editor']) ? '1' : '0';
 			unset($_SESSION['editPostForm']);
@@ -3307,12 +3277,6 @@ Class ForumModule extends Module {
 		$html = '';
 		// Если при заполнении формы были допущены ошибки
 		if (isset($_SESSION['editThemeForm'])) {
-			$info = $this->render('infomessage.html', array(
-				'context' => array(
-					'info_message' => $_SESSION['editThemeForm']['error'],
-				),
-					));
-			$html = $info . $html . "\n";
 			$name = h($_SESSION['editThemeForm']['theme']);
 			$desc = h($_SESSION['editThemeForm']['description']);
 			$gr_access = $_SESSION['editThemeForm']['gr_access'];
@@ -3605,12 +3569,6 @@ Class ForumModule extends Module {
 		$html = '';
 		// Если при заполнении формы были допущены ошибки
 		if (isset($_SESSION['editThemeForm'])) {
-			$info = $this->render('infomessage.html', array(
-				'context' => array(
-					'info_message' => $_SESSION['editThemeForm']['error'],
-				),
-					));
-			$html = $info . $html . "\n";
 			$name = h($_SESSION['editThemeForm']['theme']);
 			$posts_select = $_SESSION['editThemeForm']['posts_select'];
 			unset($_SESSION['editThemeForm']);
@@ -3846,12 +3804,6 @@ Class ForumModule extends Module {
 		$html = '';
 		// Если при заполнении формы были допущены ошибки
 		if (isset($_SESSION['editThemeForm'])) {
-			$info = $this->render('infomessage.html', array(
-				'context' => array(
-					'info_message' => $_SESSION['editThemeForm']['error'],
-				),
-					));
-			$html = $info . $html . "\n";
 			$name = h($_SESSION['editThemeForm']['theme']);
 			unset($_SESSION['editThemeForm']);
 		} else {
