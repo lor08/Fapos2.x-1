@@ -240,4 +240,67 @@ class UsersModel extends FpsModel
 		return false;
 	}
 
+    public function getMessages()
+    {
+        $Register = Register::getInstance();
+        $messagesModel = $Register['ModManager']->getModelInstance('Messages');
+        $messagesModel->bindModel('fromuser');
+        $messagesModel->bindModel('touser');
+
+        $messages = $messagesModel->getCollection(array(
+            '(to_user = ' . $_SESSION['user']['id'] . ' OR from_user = ' . $_SESSION['user']['id'] . ')',
+            "id_rmv <> '" . $_SESSION['user']['id'] . "'",
+        ), array(
+            'order' => 'sendtime DESC'
+        ));
+
+        if (!$messages || (is_array($messages) && count($messages) == 0)) {
+        	return;
+        }
+
+        $users = array();
+        foreach ($messages as $i => $message) {
+            if ($message->getFrom_user() != $_SESSION['user']['id']) {
+                if (array_search($message->getFrom_user(), $users) !== FALSE) {
+                    unset($messages[$i]);
+                } else {
+                    $message->setDirection('in');
+                    array_push($users, $message->getFrom_user());
+                }
+            } else {
+                if (array_search($message->getTo_user(), $users) !== FALSE) {
+                    unset($messages[$i]);
+                } else {
+                    $message->setDirection('out');
+                    array_push($users, $message->getTo_user());
+                }
+            }
+        }
+        return $messages;
+    }
+
+    public function getUserMessages($id)
+    {
+        $Register = Register::getInstance();
+        $messagesModel = $Register['ModManager']->getModelInstance('Messages');
+        $messagesModel->bindModel('fromuser');
+        $messagesModel->bindModel('touser');
+
+        $messages = $messagesModel->getCollection(array(
+            '((to_user = '.$_SESSION['user']['id'].' and from_user = '.$id.') OR 
+              (to_user = '.$id.' and from_user = '.$_SESSION['user']['id'].'))',
+            "id_rmv <> '".$_SESSION['user']['id']."'",
+        ), array(
+            'order' => 'sendtime DESC'
+        ));
+
+        foreach ($messages as $message) {
+            if ($message->getFrom_user() != $_SESSION['user']['id']) {
+                $message->setDirection('in');
+            } else {
+                $message->setDirection('out');
+            }
+        }
+        return $messages;
+    }
 }
