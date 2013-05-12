@@ -637,7 +637,9 @@ class Module {
 		if ($urlMode == 1) {
 			$queryString = null;
 		} elseif ($urlMode == 2) {
-			$jsredirect = '1';
+			$jsredirect = '<script>setTimeout("document.location.href=\''.$queryString.'\'", 3000);</script>';
+		} elseif ($urlMode == 3) {
+			$jsredirect = '<script>setTimeout("document.location.href=\''.$queryString.'\'", 0);</script>';
 		}
 		header( 'Refresh: ' . $this->Register['Config']->read('redirect_delay') . '; url=http://' . $_SERVER['SERVER_NAME'] . get_url($queryString));
 		$output = $this->render('infomessage.html', array('data' => array('info_message' => $message, 'error_message' => null, 'url' => $queryString, 'jsredirect' => $jsredirect)));
