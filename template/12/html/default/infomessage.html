@@ -6,11 +6,7 @@
 			<a href="{{ data.url }}">Продолжить</a>
 		</div>
 
-		{% if data.jsredirect %}
-			<script>
-				setTimeout("document.location.href='{{ data.url }}'", 3000);
-			</script>
-		{% endif %}
+		{{ data.jsredirect }}
 
 	{% endif %}
 </div>

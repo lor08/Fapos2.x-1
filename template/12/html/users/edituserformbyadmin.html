@@ -1,14 +1,9 @@
-<form name="addNewUserFormByAdmin" action="{{ context.action }}" method="POST" enctype="multipart/form-data">
+<form name="addNewUserFormByAdmin" id="sendForm" action="{{ context.action }}" method="POST" enctype="multipart/form-data" onsubmit="sendu('{{ context.action }}'); return false">
 
 <table class="material anket-form" cellpadding="0" cellspacing="0">
 <tr>
   <td class="title" colspan="2">Изменение профиля</td>
 </tr>
-{% if context.error %}
-<tr>
-  <td class="error" colspan="2">{{ context.error }}</td>
-</tr>
-{% endif %}
 <tr>
   <td class="left"><strong>Имя:</strong></td>
   <td class="right"><input type="text" name="name" maxlength="30" value="{{ context.login }}" readonly /></td>

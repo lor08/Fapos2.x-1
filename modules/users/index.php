@@ -256,7 +256,7 @@ Class UsersModule extends Module {
 				!isset($_POST['email']) or
 				!isset($_POST['keystring'])
 		) {
-			redirect($this->getModuleURL('add_form/yes'));
+			return $this->showInfoMessage(__('Required field'), $this->getModuleURL('add_form/yes'), 1);
 		}
 		$error = '';
 
@@ -453,7 +453,7 @@ Class UsersModule extends Module {
 			$_SESSION['FpsForm'] = array_merge(array('login' => null, 'email' => null, 'timezone' => null, 'icq' => null, 'url' => null, 'about' => null, 'signature' => null, 'pol' => $pol, 'telephone' => null, 'city' => null, 'jabber' => null, 'byear' => null, 'bmonth' => null, 'bday' => null), $_POST);
 			$_SESSION['FpsForm']['error'] = '<p class="errorMsg">' . __('Some error in form') . '</p>' .
 					"\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
-			redirect($this->getModuleURL('add_form/yes'));
+			return $this->showInfoMessage($_SESSION['FpsForm']['error'], $this->getModuleURL('add_form/yes'), 1);
 		}
 
 		if (!empty($url) && mb_substr($url, 0, mb_strlen('http://')) !== 'http://')
@@ -536,8 +536,7 @@ Class UsersModule extends Module {
 		} else { // Activate without Email
 			$msg = __('Registration complete');
 		}
-		$source = $this->render('infomessage.html', array('info_message' => $msg));
-		return $this->_view($source);
+		return $this->showInfoMessage($msg, '/');
 	}
 
 	// Активация учетной записи нового пользователя
@@ -690,7 +689,7 @@ Class UsersModule extends Module {
 				mail($email, $subject, $body, $headers);
 
 				$msg = __('We send mail to your e-mail');
-				$source = $this->render('infomessage.html', array('info_message' => $msg));
+				return $this->showInfoMessage($msg, $this->getModuleURL('new_password_form/'), 1);
 
 
 				if ($this->Log)
@@ -711,7 +710,7 @@ Class UsersModule extends Module {
 			$_SESSION['newPasswordForm'] = array();
 			$_SESSION['newPasswordForm']['error'] = '<p class="errorMsg">' . __('Some error in form') . '</p>' . "\n"
 					. '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
-			redirect($this->getModuleURL('new_password_form/'));
+			return $this->showInfoMessage($_SESSION['newPasswordForm']['error'], $this->getModuleURL('new_password_form/'), 1);
 		}
 	}
 
@@ -747,9 +746,7 @@ Class UsersModule extends Module {
 				$this->Log->write('wrong activate new passw', 'code(' . $code . ')');
 		}
 
-		$markers = array('info_message' => $message);
-		$html = $this->render('infomessage.html', $markers);
-		return $this->_view($html);
+		return $this->showInfoMessageFull($message, '/');
 	}
 
 	// Функция возвращает случайно сгенерированный пароль
@@ -1055,7 +1052,7 @@ Class UsersModule extends Module {
 			$_SESSION['FpsForm'] = array_merge(array('login' => null, 'email' => null, 'timezone' => null, 'icq' => null, 'url' => null, 'about' => null, 'signature' => null, 'pol' => $pol, 'telephone' => null, 'city' => null, 'jabber' => null, 'byear' => null, 'bmonth' => null, 'bday' => null), $_POST);
 			$_SESSION['FpsForm']['error'] = '<p class="errorMsg">' . __('Some error in form') . '</p>' .
 					"\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
-			redirect($this->getModuleURL('edit_form/'));
+			return $this->showInfoMessage($_SESSION['FpsForm']['error'], $this->getModuleURL('edit_form/'), 1);
 		}
 
 		if ($template != null) {
@@ -1482,7 +1479,7 @@ Class UsersModule extends Module {
 			);
 			$_SESSION['FpsForm']['error'] = '<p class="errorMsg">' . __('Some error in form') . '</p>' .
 					"\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
-			redirect($this->getModuleURL('edit_form_by_admin/' . $id));
+			return $this->showInfoMessage($_SESSION['FpsForm']['error'], $this->getModuleURL('edit_form_by_admin/' . $id));
 		}
 
 		// Если выставлен флажок "Удалить загруженный ранее файл"
@@ -1833,7 +1830,7 @@ Class UsersModule extends Module {
 			$_SESSION['sendMessageForm']['toUser'] = $toUser;
 			$_SESSION['sendMessageForm']['subject'] = $subject;
 			$_SESSION['sendMessageForm']['message'] = $message;
-			redirect($this->getModuleURL('send_msg_form/'));
+			return $this->showInfoMessage($_SESSION['sendMessageForm']['error'], $this->getModuleURL('send_msg_form/'));
 		}
 
 		// Все поля заполнены правильно - "посылаем" сообщение
@@ -2243,7 +2240,7 @@ Class UsersModule extends Module {
 			$_SESSION['sendMailForm']['toUser'] = $toUser;
 			$_SESSION['sendMailForm']['subject'] = $subject;
 			$_SESSION['sendMailForm']['message'] = $message;
-			redirect($this->getModuleURL('send_mail_form/' . $user->getId()));
+			return $this->showInfoMessage($_SESSION['sendMailForm']['error'], $this->getModuleURL('send_mail_form/' . $user->getId()));
 		}
 
 		// формируем заголовки письма
@@ -2393,7 +2390,7 @@ Class UsersModule extends Module {
 
 			$_SESSION['loginForm']['error'] = '<p class="errorMsg">' . __('Some error in form') . '</p>' .
 					"\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
-			redirect($this->getModuleURL('login_form/'));
+			return $this->showInfoMessage($_SESSION['loginForm']['error'], $this->getModuleURL('login_form/'));
 		}
 
 		// Все поля заполнены правильно и такой пользователь существует - продолжаем...
@@ -2405,7 +2402,7 @@ Class UsersModule extends Module {
 
 		// Если пользователь заблокирован
 		if ($user->getLocked())
-			return redirect($this->getModuleURL('baned/'));
+			return $this->showInfoMessage('', $this->getModuleURL('baned/'), 3);
 		$_SESSION['user'] = $user->asArray();
 
 		// Функция getNewThemes() помещает в массив $_SESSION['newThemes'] ID тем,
@@ -2423,18 +2420,18 @@ Class UsersModule extends Module {
 
 		// Authorization complete. Redirect
 		if (isset($_SESSION['authorize_referer'])) {
-			redirect('/' . $_SESSION['authorize_referer']);
+			return $this->showInfoMessage('', '/' . $_SESSION['authorize_referer'], 3);
 		} else if (!empty($_SERVER['HTTP_REFERER'])
 				&& preg_match('#^http://([^/]+)/(.+)#', $_SERVER['HTTP_REFERER'], $match)) {
 			if (!empty($match[1]) && !empty($match[2]) && $match[1] == $_SERVER['SERVER_NAME']) {
 				$ref_params = explode('/', $match[2]);
 				if (empty($ref_params[0]) || empty($ref_params[1]) ||
 						($ref_params[0] != $this->module && $ref_params[1] != 'login_form')) {
-					redirect('/' . $match[2]);
+					return $this->showInfoMessage('', '/' . $match[2], 3);
 				}
 			}
 		}
-		redirect('/');
+		return $this->showInfoMessage('', '/', 3);
 	}
 
 	// Выход из системы
@@ -2464,7 +2461,7 @@ Class UsersModule extends Module {
 		$this->ACL->turn(array($this->module, 'ban_users'));
 		$id = intval($id);
 		if ($id < 1) {
-			redirect('/');
+			return $this->showInfoMessage('', '/', 3);
 		}
 		$user = $this->Model->getById($id);
 		if (!empty($user)) {
@@ -2483,7 +2480,7 @@ Class UsersModule extends Module {
 		$this->ACL->turn(array($this->module, 'ban_users'));
 		$id = intval($id);
 		if ($id < 1) {
-			redirect('/');
+			return $this->showInfoMessage('', '/', 3);
 		}
 		$user = $this->Model->getById($id);
 		if (!empty($user)) {
@@ -2583,13 +2580,13 @@ Class UsersModule extends Module {
 
 		$user_id = intval($user_id);
 		if ($user_id < 1)
-			redirect('/');
+			return $this->showInfoMessage('', '/', 3);
 
 
 		// Check user exists
 		$to_user = $this->Model->getById($user_id);
 		if (empty($to_user))
-			redirect('/');
+			return $this->showInfoMessage('', '/', 3);
 
 
 		$votesModel = $this->Register['ModManager']->getModelInstance('UsersVotes');
@@ -2794,7 +2791,7 @@ Class UsersModule extends Module {
 		$uid = intval($uid);
 		if ($uid < 1) {
 			if ($this->wrap)
-				redirect('/');
+				return $this->showInfoMessage('', '/', 3);
 			else
 				die(__('Some error occurred'));
 		}
@@ -2804,7 +2801,7 @@ Class UsersModule extends Module {
 		$to_user = $this->Model->getById($uid);
 		if (empty($to_user)) {
 			if ($this->wrap)
-				redirect('/');
+				return $this->showInfoMessage('', '/', 3);
 			else
 				die(__('Can not find user'));
 		}
@@ -3087,7 +3084,7 @@ Class UsersModule extends Module {
 				$message->setUser($message->getTouser());
 			}
 
-			$message->setDelete(get_link(__('Delete'), $this->getModuleURL('delete_message/' . $message->getId()), array('onClick' => "return confirm('" . __('Are you sure') . "')")));
+			$message->setDelete(get_link(__('Delete'), $this->getModuleURL('delete_message/' . $message->getId()), array('onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('delete_message/' . $message->getId())."')}; return false")));
 		}
 
 		$source = $this->render('pm.html', array('messages' => $messages, 'context' => $markers));
@@ -3145,7 +3142,7 @@ Class UsersModule extends Module {
 				$message->setUser($message->getTouser());
 			}
 
-			$message->setDelete(get_link(__('Delete'), $this->getModuleURL('delete_message/' . $message->getId()), array('onClick' => "return confirm('" . __('Are you sure') . "')")));
+			$message->setDelete(get_link(__('Delete'), $this->getModuleURL('delete_message/' . $message->getId()), array('onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('delete_message/' . $message->getId())."')}; return false")));
 		}
 
 		$source = $this->render('pm_view.html', array(

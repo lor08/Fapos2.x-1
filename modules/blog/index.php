@@ -1128,34 +1128,32 @@ Class BlogModule extends Module {
 	protected function _getAdminBar($record) {
 		$moder_panel = '';
 		$id = $record->getId();
-		
-		if ($this->ACL->turn(array($this->module, 'edit_materials'), false) 
-		|| (!empty($_SESSION['user']['id']) && $record->getAuthor_id() == $_SESSION['user']['id'] 
-		&& $this->ACL->turn(array($this->module, 'edit_mine_materials'), false))) {
-			$moder_panel .= get_link(get_img('/sys/img/edit_16x16.png'), $this->getModuleURL('edit_form/' . $id)) . '&nbsp;';
+		$uid = $record->getAuthor_id();
+		if (!$uid)
+			$uid = 0;
+
+		if ($this->ACL->turn(array($this->module, 'edit_materials'), false)
+				|| (!empty($_SESSION['user']['id']) && $uid == $_SESSION['user']['id']
+				&& $this->ACL->turn(array($this->module, 'edit_mine_materials'), false))) {
+			$moder_panel .= get_link('', $this->getModuleURL('edit_form/' . $id), array('class' => 'fps-edit')) . '&nbsp;';
 		}
-		
+
 		if ($this->ACL->turn(array($this->module, 'up_materials'), false)) {
-			$moder_panel .= get_link(get_img('/sys/img/star.png'), 
-			$this->getModuleURL('fix_on_top/' . $id), array('onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('fix_on_top/' . $id)."')}; return false")) . '&nbsp;';
-			$moder_panel .= get_link(get_img('/sys/img/up_arrow_16x16.png'), 
-			$this->getModuleURL('upper/' . $id), array('onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('upper/' . $id)."')}; return false")) . '&nbsp;';
+			$moder_panel .= get_link('', $this->getModuleURL('fix_on_top/' . $id), array('class' => 'fps-star', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('fix_on_top/' . $id)."')}; return false")) . '&nbsp;';
+			$moder_panel .= get_link('', $this->getModuleURL('upper/' . $id), array('class' => 'fps-up', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('upper/' . $id)."')}; return false")) . '&nbsp;';
 		}
 		if ($this->ACL->turn(array($this->module, 'on_home'), false)) {
-				if ($record->getView_on_home() == 1) {
-					$moder_panel .= get_link(get_img('/sys/img/round_ok.png', array('title' => __('On home'))), 
-					$this->getModuleURL('off_home/' . $id), array('onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('off_home/' . $id)."')}; return false")) . '&nbsp;';
-				} else {
-					$moder_panel .= get_link(get_img('/sys/img/round_not_ok.png', array('title' => __('On home'))), 
-					$this->getModuleURL('on_home/' . $id), array('onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('on_home/' . $id)."')}; return false")) . '&nbsp;';
-				}
+			if ($record->getView_on_home() == 1) {
+				$moder_panel .= get_link('', $this->getModuleURL('off_home/' . $id), array('class' => 'fps-on', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('off_home/' . $id)."')}; return false")) . '&nbsp;';
+			} else {
+				$moder_panel .= get_link('', $this->getModuleURL('on_home/' . $id), array('class' => 'fps-off', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('on_home/' . $id)."')}; return false")) . '&nbsp;';
+			}
 		}
-		
-		if ($this->ACL->turn(array($this->module, 'delete_materials'), false) 
-		|| (!empty($_SESSION['user']['id']) && $record->getAuthor_id() == $_SESSION['user']['id'] 
-		&& $this->ACL->turn(array($this->module, 'delete_mine_materials'), false))) {
-			$moder_panel .= get_link(get_img('/sys/img/delete_16x16.png'), 
-			$this->getModuleURL('delete/' . $id), array('onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('delete/' . $id)."')}; return false")) . '&nbsp;';
+
+		if ($this->ACL->turn(array($this->module, 'delete_materials'), false)
+				|| (!empty($_SESSION['user']['id']) && $uid == $_SESSION['user']['id']
+				&& $this->ACL->turn(array($this->module, 'delete_mine_materials'), false))) {
+			$moder_panel .= get_link('', $this->getModuleURL('delete/' . $id), array('class' => 'fps-delete', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('delete/' . $id)."')}; return false")) . '&nbsp;';
 		}
 		return $moder_panel;
 	}

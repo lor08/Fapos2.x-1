@@ -210,14 +210,14 @@ Class ForumModule extends Module {
 		// Ссылка "Править форум"
 		$admin_bar = '';
 		if ($this->ACL->turn(array($this->module, 'replace_forums'), false)) {
-			$admin_bar .= get_link('', $this->getModuleURL('forum_up/' . $forum->getId()), array('class' => 'fps-up'))
-					. '&nbsp;' . get_link('', $this->getModuleURL('forum_down/' . $forum->getId()), array('class' => 'fps-down')) . '&nbsp;';
+			$admin_bar .= get_link('', $this->getModuleURL('forum_up/' . $forum->getId()), array('class' => 'fps-up', 'onclick' => "sendu('".$this->getModuleURL('forum_up/' . $forum->getId())."'); return false"))
+					. '&nbsp;' . get_link('', $this->getModuleURL('forum_down/' . $forum->getId()), array('class' => 'fps-down', 'onclick' => "sendu('".$this->getModuleURL('forum_down/' . $forum->getId())."'); return false")) . '&nbsp;';
 		}
 		if ($this->ACL->turn(array($this->module, 'edit_forums'), false)) {
 			$admin_bar .= get_link('', $this->getModuleURL('edit_forum_form/' . $forum->getId()), array('class' => 'fps-edit')) . '&nbsp;';
 		}
 		if ($this->ACL->turn(array($this->module, 'delete_forums'), false)) {
-			$admin_bar .= get_link('', $this->getModuleURL('delete_forum/' . $forum->getId()), array('class' => 'fps-delete', 'onClick' => "return confirm('" . __('Are you sure') . "')")) . '&nbsp;';
+			$admin_bar .= get_link('', $this->getModuleURL('delete_forum/' . $forum->getId()), array('class' => 'fps-delete', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('delete_forum/' . $forum->getId())."')}; return false")) . '&nbsp;';
 		}
 		$forum->setAdmin_bar($admin_bar);
 
@@ -448,18 +448,18 @@ Class ForumModule extends Module {
 		}
 		if ($this->ACL->turn(array($this->module, 'close_themes', $theme->getId_forum()), false)) {
 			if ($theme->getLocked() == 0) { // заблокировать тему
-				$adminbar .= get_link('', $this->getModuleURL('lock_theme/' . $theme->getId()), array('class' => 'fps-close'));
+				$adminbar .= get_link('', $this->getModuleURL('lock_theme/' . $theme->getId()), array('class' => 'fps-close', 'onClick' => "sendu('".$this->getModuleURL('lock_theme/' . $theme->getId())."'); return false"));
 			} else { // разблокировать тему
-				$adminbar .= get_link('', $this->getModuleURL('unlock_theme/' . $theme->getId()), array('class' => 'fps-open'));
+				$adminbar .= get_link('', $this->getModuleURL('unlock_theme/' . $theme->getId()), array('class' => 'fps-open', 'onClick' => "sendu('".$this->getModuleURL('unlock_theme/' . $theme->getId())."'); return false"));
 			}
 		}
 
 
 		if ($this->ACL->turn(array($this->module, 'important_themes'), false)) {
 			if ($theme->getImportant() == 1) {
-				$adminbar .= get_link('', $this->getModuleURL('unimportant/' . $theme->getId()), array('class' => 'fps-unfix'));
+				$adminbar .= get_link('', $this->getModuleURL('unimportant/' . $theme->getId()), array('class' => 'fps-unfix', 'onClick' => "sendu('".$this->getModuleURL('unimportant/' . $theme->getId())."'); return false"));
 			} else {
-				$adminbar .= get_link('', $this->getModuleURL('important/' . $theme->getId()), array('class' => 'fps-fix'));
+				$adminbar .= get_link('', $this->getModuleURL('important/' . $theme->getId()), array('class' => 'fps-fix', 'onClick' => "sendu('".$this->getModuleURL('important/' . $theme->getId())."'); return false"));
 			}
 		}
 
@@ -467,7 +467,7 @@ Class ForumModule extends Module {
 		if ($this->ACL->turn(array($this->module, 'delete_themes', $theme->getId_forum()), false)
 				|| (!empty($_SESSION['user']['id']) && $theme->getId_author() == $_SESSION['user']['id']
 				&& $this->ACL->turn(array($this->module, 'delete_mine_themes', $theme->getId_forum()), false))) {
-			$adminbar .= get_link('', $this->getModuleURL('delete_theme/' . $theme->getId()), array('class' => 'fps-delete', 'onClick' => "return confirm('" . __('Are you sure') . "')"));
+			$adminbar .= get_link('', $this->getModuleURL('delete_theme/' . $theme->getId()), array('class' => 'fps-delete', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('delete_theme/' . $theme->getId())."')}; return false"));
 		}
 		$theme->setAdminbar($adminbar);
 
