@@ -56,7 +56,8 @@ WBBPRESET = {
 		},
 		video: {
 			transform: {
-				'<iframe src="http://www.youtube.com/embed/{SRC}" width="640" height="480" frameborder="0"></iframe>':'[video]http://www.youtube.com/watch?v={SRC}[/video]'
+				'<iframe src="http://www.youtube.com/embed/{SRC}" width="450" height="300" frameborder="0"></iframe>':'[video]http://www.youtube.com/watch?v={SRC}[/video]',
+				'<iframe src="http://player.vimeo.com/video/{SRC}" width="450" height="300" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>':'[video]https://vimeo.com/{SRC}[/video]'
 			}
 		}
 	}

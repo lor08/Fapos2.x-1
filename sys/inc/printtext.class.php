@@ -331,11 +331,9 @@ class PrintText {
 			if (!empty($match[1])) {
 				foreach ($match[1] as $key => $url) {
 					$message = str_replace('[video]' . $url . '[/video]',
-					'<object height="300" width="450" data="http://youtube.com/v/' . $match[3][$key]
-					. '" type="application/x-shockwave-flash" class="restrain" id="yui-gen54">'
-					. '<param value="http://youtube.com/v/' . $match[3][$key] . '" name="movie"><param value="transparent" name="wmode">'
-					. '<!--[if IE 6]><embed width="400" height="300" type="application/x-shockwave-flash" src="http://youtube.com/v/' . $match[3][$key] . '" />'
-					. '<![endif]--></object>', $message);
+					'<iframe src="http://www.youtube.com/embed/'.$match[3][$key].'"'.
+						'width="450" height="300" frameborder="0" allowfullscreen>'.
+						'</iframe>', $message);
 				}
 			}
 		}
@@ -349,6 +347,17 @@ class PrintText {
 					. '<!--[if IE 6]><embed width="400" height="300" type="application/x-shockwave-flash" src="http://video.rutube.ru/'
 					. $match[3][$key] . '" />'
 					. '<![endif]--></object>', $message);
+				}
+			}
+		}
+		if (preg_match_all("#\[video\](http[s]*://vimeo\.com/([\w-]+))\[/video\]#isU", $message, $match)) {
+			if (!empty($match[1])) {
+				foreach ($match[1] as $key => $url) {
+					$message = str_replace('[video]' . $url . '[/video]',
+					'<iframe src="http://player.vimeo.com/video/'.$match[2][$key].'" '.
+						'width="450" height="300" frameborder="0" '.
+						'webkitAllowFullScreen mozallowfullscreen allowFullScreen>'.
+						'</iframe>', $message);
 				}
 			}
 		}
