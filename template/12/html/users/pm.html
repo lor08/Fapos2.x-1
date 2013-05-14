@@ -28,7 +28,7 @@
 
 		<td class="col" style="text-align: center;width:80px">
 			{{ message.delete }}
-			<input type="checkbox" class="packPoint" onClick="if(this.checked){addToPackage(this.value);}else{delFromPackage(this.value);}" value="{{ message.id }}" />
+			<input type="checkbox" class="packPoint" onClick="if(this.checked){addToPackage(this.value);}else{delFromPackage(this.value);}" value="{{ message.user.id }}" />
 		</td>
 	</tr>
 {% endfor %}	
@@ -40,8 +40,8 @@
 	<select style="width:100px;">
 		<option>Удалить</option>
 	</select>
-	<input id="packButton" type="button" disabled="disabled" onClick="sendPack('/users/delete_message_pack/');" value="(0)">
+	<input id="packButton" type="button" disabled="disabled" onClick="sendPack('/users/delete_messages_user-/');" value="(0)">
 	<div style="display:none;">
-		<form id="actionPack" action="" method="POST"></form>
+		<form id="actionPack" action="" method="POST" onsubmit="sendu('/users/delete_messages_user/');return false;"></form>
 	</div>
 </div>

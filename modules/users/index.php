@@ -3084,7 +3084,7 @@ Class UsersModule extends Module {
 				$message->setUser($message->getTouser());
 			}
 
-			$message->setDelete(get_link(__('Delete'), $this->getModuleURL('delete_message/' . $message->getId()), array('onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('delete_message/' . $message->getId())."')}; return false")));
+			$message->setDelete(get_link(__('Delete'), $this->getModuleURL('delete_messages_user/' . $message->getUser()->getId()), array('onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('delete_messages_user/' . $message->getUser()->getId())."')}; return false")));
 		}
 
 		$source = $this->render('pm.html', array('messages' => $messages, 'context' => $markers));
@@ -3358,5 +3358,83 @@ Class UsersModule extends Module {
 		if ($this->Log)
 			$this->Log->write('adding pm message', 'message id(' . mysql_insert_id() . ')');
 		return $this->showInfoMessage(__('Message successfully sent'), getReferer());
+	}
+
+	// Функция удаляет личные сообщения собеседника
+	public function delete_messages_user($id_user = null) {
+		if (!isset($_SESSION['user']))
+			return $this->showInfoMessage(__('Some error occurred'), '/');
+		$messagesModel = $this->Register['ModManager']->getModelInstance('Messages');
+
+		$multi_del = true;
+		if (empty($_POST['ids'])
+				|| !is_array($_POST['ids'])
+				|| count($_POST['ids']) < 1)
+			$multi_del = false;
+
+		$id_user = intval($id_user);
+		if ($id_user < 1 && $multi_del === false)
+			return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL('pm/'));
+
+
+		// We create array with ids for delete
+		$ids = array();
+		if ($multi_del === false) {
+			$ids[] = $id_user;
+		} else {
+			foreach ($_POST['ids'] as $id) {
+				$id = intval($id);
+				if ($id < 1)
+					continue;
+				$ids[] = $id;
+			}
+		}
+		if (count($ids) < 1)
+			return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL('pm/'));
+
+
+		foreach ($ids as $id_user) {
+			$messages = $this->Model->getUserMessages($id_user);
+
+			if (!$messages || (is_array($messages) && count($messages) == 0)) {
+				return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL('pm/'));
+			}
+			foreach ($messages as $message) {
+				// Далее мы должны выяснить, удаляется входящее или исходящее
+				// сообщение. Это нужно, чтобы сделать редирект на нужный ящик.
+				// В этом запросе дополнительное условие нужно для того, чтобы
+				// пользователь не смог удалить чужое сообщение, просто указав
+				// ID сообщения в адресной строке браузера
+				$messages = $messagesModel->getCollection(array(
+					'id' => $message->getId(),
+					"(`to_user` = '" . $_SESSION['user']['id'] . "' OR `from_user` = '" . $_SESSION['user']['id'] . "')"
+						));
+				if (count($messages) == 0) {
+					continue;
+				}
+
+
+				$message = $messages[0];
+				$toUser = $message->getTo_user();
+				$id_rmv = $message->getId_rmv();
+				// id_rmv - это поле указывает на то, что это сообщение уже удалил
+				// один из пользователей. Т.е. сначала id_rmv=0, после того, как
+				// сообщение удалил один из пользователей, id_rmv=id_user. И только после
+				// того, как сообщение удалит второй пользователь, мы можем удалить
+				// запись в таблице БД
+				if ($id_rmv == 0) {
+					$message->setId_rmv($_SESSION['user']['id']);
+					$message->save();
+				} else {
+					$message->delete();
+				}
+			}
+		}
+
+		/* clean DB cache */
+		$this->DB->cleanSqlCache();
+		if ($this->Log)
+			$this->Log->write('delete pm message(s)', 'message(s) id(' . implode(', ', $ids) . ')');
+		return $this->showInfoMessage(__('Operation is successful'), get_url($this->getModuleURL('pm/')));
 	}
 }
