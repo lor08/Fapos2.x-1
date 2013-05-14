@@ -154,6 +154,7 @@ $set = array (
     'fields' => 
     array (
       0 => 'pol',
+      'keystring' => 'keystring',
     ),
   ),
   'chat' => 
