@@ -1,5 +1,35 @@
 Здесь буду писать все запросы к БД, которые нужно выполнить при обновлении до новой версии движка. При новой установке они выполнятся автоматически.
 
+>>> May 14, 2013
+CREATE TABLE `comments` (
+  `id` int(11) NOT NULL auto_increment,
+  `entity_id` int(11) NOT NULL,
+  `user_id` INT(11) DEFAULT '0' NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `message` text NOT NULL,
+  `ip` varchar(50) NOT NULL,
+  `mail` varchar(150) NOT NULL,
+  `date` DATETIME NOT NULL,
+  `editdate` DATETIME NOT NULL,
+  `module` varchar(10) default 'news' NOT NULL, 
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+INSERT INTO comments
+SELECT '0' as id, entity_id, user_id, name, message, ip, mail, date, editdate, 'foto' AS module FROM `foto_comments`
+UNION
+SELECT '0' as id, entity_id, user_id, name, message, ip, mail, date, editdate, 'loads' AS module FROM `loads_comments`
+UNION
+SELECT '0' as id, entity_id, user_id, name, message, ip, mail, date, editdate, 'news' AS module FROM `news_comments`
+UNION
+SELECT '0' as id, entity_id, user_id, name, message, ip, mail, date, editdate, 'stat' AS module FROM `stat_comments`
+ORDER BY date ASC;
+DROP TABLE IF EXISTS `foto_comments`;
+DROP TABLE IF EXISTS `loads_comments`;
+DROP TABLE IF EXISTS `news_comments`;
+DROP TABLE IF EXISTS `stat_comments`;
+
+
+
 >>> Feb 10, 2013
 ALTER TABLE `themes` ADD `first_top` ENUM( '0', '1' ) DEFAULT '0' NOT NULL
 

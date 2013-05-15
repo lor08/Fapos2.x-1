@@ -20,18 +20,6 @@ $FpsInstallQueries[] = "CREATE TABLE `" . $Register['DB']->getFullTableName('blo
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci";
 
-$FpsInstallQueries[] = "CREATE TABLE `" . $Register['DB']->getFullTableName('blog') . "_comments`(
-  `id` int(11) NOT NULL auto_increment,
-  `entity_id` int(11) NOT NULL,
-  `user_id` INT(11) DEFAULT '0' NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `message` text NOT NULL,
-  `ip` varchar(50) NOT NULL,
-  `mail` varchar(150) NOT NULL,
-  `date` DATETIME NOT NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci";
-
 $FpsInstallQueries[] = "CREATE TABLE `" . $Register['DB']->getFullTableName('blog') . "_sections` (
   `id` int(11) NOT NULL auto_increment,
   `parent_id` int(11) default '0',

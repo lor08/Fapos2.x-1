@@ -22,7 +22,7 @@ class LastComments {
 		$this->wrap = '<div class="conmenu2 lastqq">' . "\n" .
 			'<div class="lastcomm">' . "\n" .
 			'<img class="lastimg" alt="" src="' . get_url('/template/' . Config::read('template')) . 
-			'/img/listlast.png">Автор: <span style="color:#587803;">%s</span>, в новости:' . "\n" .
+			'/img/listlast.png">Автор: <span style="color:#587803;">%s</span>, %s:' . "\n" .
 			'<p>%s</p>' . "\n" .
 			'</div>' . "\n" .
 			'</div>' . "\n";
@@ -40,15 +40,18 @@ class LastComments {
 			$comments = $Cache->read('pl_last_comments');
 			$comments = unserialize($comments);
 		} else {
-			$sql = "(SELECT a.`date`, a.`id`, a.`entity_id`, a.`name`, a.`message`, b.`title`, (SELECT \"news\") AS skey 
-				FROM `" . $this->DB->getFullTableName('news_comments') . "` a
-				JOIN `" . $this->DB->getFullTableName('news') . "` b ON b.`id` = a.`entity_id`)
-				UNION (SELECT a.`date`, a.`id`, a.`entity_id`, a.`name`, a.`message`, b.`title`, (SELECT \"stat\") AS skey 
-				FROM `" . $this->DB->getFullTableName('stat_comments') . "` a
-				JOIN `" . $this->DB->getFullTableName('stat') . "` b ON b.`id` = a.`entity_id`)
-				UNION (SELECT a.`date`, a.`id`, a.`entity_id`, a.`name`, a.`message`, b.`title`, (SELECT \"loads\") AS skey 
-				FROM `" . $this->DB->getFullTableName('loads_comments') . "` a
-				JOIN `" . $this->DB->getFullTableName('loads') . "` b ON b.`id` = a.`entity_id`)
+			$sql = "(SELECT a.`date`, a.`id`, a.`entity_id`, a.`name`, a.`message`, b.`title`, a.`module`
+				FROM `" . $this->DB->getFullTableName('comments') . "` a 
+				JOIN `" . $this->DB->getFullTableName('news') . "` b ON b.`id` = a.`entity_id` WHERE a.`module` = 'news')
+				UNION (SELECT a.`date`, a.`id`, a.`entity_id`, a.`name`, a.`message`, b.`title`, a.`module`
+				FROM `" . $this->DB->getFullTableName('comments') . "` a 
+				JOIN `" . $this->DB->getFullTableName('stat') . "` b ON b.`id` = a.`entity_id` WHERE a.`module` = 'stat')
+				UNION (SELECT a.`date`, a.`id`, a.`entity_id`, a.`name`, a.`message`, b.`title`, a.`module`
+				FROM `" . $this->DB->getFullTableName('comments') . "` a 
+				JOIN `" . $this->DB->getFullTableName('loads') . "` b ON b.`id` = a.`entity_id` WHERE a.`module` = 'loads')
+				UNION (SELECT a.`date`, a.`id`, a.`entity_id`, a.`name`, a.`message`, b.`title`, a.`module`
+				FROM `" . $this->DB->getFullTableName('comments') . "` a 
+				JOIN `" . $this->DB->getFullTableName('foto') . "` b ON b.`id` = a.`entity_id` WHERE a.`module` = 'foto')
 				ORDER BY `date` DESC LIMIT " . $this->limit;
 			$comments = $this->DB->query($sql);
 			$Cache->write(serialize($comments), 'pl_last_comments', array());
@@ -56,8 +59,15 @@ class LastComments {
 		
 		if (!empty($comments)) {
 			foreach ($comments as $key => $comm) {
-				$link = get_link($comm['title'], '/' . $comm['skey'] . '/view/' . $comm['entity_id']);
-				$output .= sprintf($this->wrap, $comm['name'], $link);
+				$str = 'к материалу';
+				switch ($comm['module']) {
+					case 'foto': $str = 'к фотографии'; break;
+					case 'loads': $str = 'к загрузке'; break;
+					case 'news': $str = 'к новости'; break;
+					case 'stat': $str = 'к статье'; break;
+				}
+				$link = get_link($comm['title'], '/' . $comm['module'] . '/view/' . $comm['entity_id']);
+				$output .= sprintf($this->wrap, $comm['name'], $str, $link);
 			}
 		}
 			

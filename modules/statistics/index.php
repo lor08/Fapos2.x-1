@@ -2,12 +2,12 @@
 /*---------------------------------------------\
 |											   |
 | @Author:       Andrey Brykin (Drunya)        |
-| @Version:      1.6.0                         |
+| @Version:      1.6.1                         |
 | @Project:      CMS                           |
 | @package       CMS Fapos                     |
 | @subpackege    Statistic Module              |
-| @copyright     ©Andrey Brykin 2010-2012      |
-| @last mod      2012/06/04                    |
+| @copyright     ©Andrey Brykin 2010-2013      |
+| @last mod      2013/04/25                    |
 |----------------------------------------------|
 |											   |
 | any partial or not partial extension         |
@@ -286,7 +286,7 @@ Class StatisticsModule {
 	 *
 	 * clean overal stats key
 	 */
-	private function _deleteOveralKey($key) {
+	static private function _deleteOveralKey($key) {
 		$data = unserialize(file_get_contents(ROOT . '/sys/logs/overal_stats.dat'));
 		if (array_key_exists($key, $data))
 			unset($data[$key]);
@@ -332,7 +332,7 @@ Class StatisticsModule {
 	/**
 	 * write into database
 	 */
-	function _writeIntoDataBase($date) {
+	static public function _writeIntoDataBase($date) {
 		$file = ROOT . '/sys/logs/counter/' . $date . '.dat';
 		if (!preg_match('#^\d{4}-\d{2}-\d{2}$#', $date) || !file_exists($file))
 			return;
@@ -397,13 +397,13 @@ Class StatisticsModule {
 	function getWhoOnline() {
 		$path = ROOT . '/sys/logs/counter_online/online.dat';
 		$users = 0;
-		$quests = 0;
+		$guests = 0;
 		if (file_exists($path) && is_readable($path)) {
 			$data = unserialize(file_get_contents($path));
 			$users = (isset($data['users'])) ? count($data['users']) : 0;
 			$guests = (isset($data['guests'])) ? count($data['guests']) : 0;
 		}
-		return array('users' => $users, 'quests' => $quests);
+		return array('users' => $users, 'quests' => $guests);
 	}
 
 }

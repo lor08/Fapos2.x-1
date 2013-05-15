@@ -58,11 +58,11 @@
 	</tr>
 	<tr>
 		<td width="4%" colspan="1" class="meta">&nbsp;</td>
-		<td  class="meta" align="left">Тема</td>
-		<td width="7%" class="meta" align="center">Ответы</td>
-		<td width="8%" class="meta" align="center">Просмотры</td>
+		<td class="meta" align="left">{{ getOrderLink(['title','Тема']) }}</td>
+		<td width="7%" class="meta" align="center">{{ getOrderLink(['posts','Ответы']) }}</td>
+		<td width="8%" class="meta" align="center">{{ getOrderLink(['views','Просмотры']) }}</td>
 		<td width="16%" class="meta" align="center">Автор темы</td>
-		<td width="22%" class="meta" align="left">Обновления</td>
+		<td width="22%" class="meta" align="left">{{ getOrderLink(['last_post','Обновления']) }}</td>
 	</tr>
 
 	

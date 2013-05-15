@@ -312,13 +312,14 @@ Class ForumModule extends Module {
 			$this->page_title .= ' (' . $page . ')';
 
 
+			$order = getOrderParam(__CLASS__);
 			$themes = $themesClass->getCollection(
 					array(
 				'id_forum' => $id_forum
 					), array(
 				'page' => $page,
 				'limit' => $perPage,
-				'order' => 'important DESC, last_post DESC, id DESC',
+				'order' => 'important DESC,' . (empty($order) ? ' last_post DESC,' : $order . ',') . ' id DESC',
 					)
 			);
 
@@ -1289,8 +1290,9 @@ Class ForumModule extends Module {
 		$themesModel->bindModel('forum');
 		$themesModel->bindModel('author');
 		$themesModel->bindModel('last_author');
+		$order = getOrderParam(__CLASS__);
 		$themes = $themesModel->getCollection(array(), array(
-			'order' => 'last_post DESC',
+			'order' => (empty($order) ? 'last_post DESC' : $order),
 			'page' => $page,
 			'limit' => $perPage,
 				));
@@ -2936,10 +2938,11 @@ Class ForumModule extends Module {
 		$themesModel->bindModel('last_author');
 		$themesModel->bindModel('postslist');
 		$themesModel->bindModel('forum');
+		$order = getOrderParam(__CLASS__);
 		$themes = $themesModel->getCollection(array(
 			'id_author' => $user_id,
 				), array(
-			'order' => 'time DESC',
+			'order' => (empty($order) ? 'time DESC' : $order),
 			'group' => 'id',
 			'page' => $page,
 			'limit' => $perPage,

@@ -33,6 +33,10 @@ function pagination( $total, $perPage, $url )
 	} else {
 		$page = 1;
 	}
+	$order = (!empty($_GET['order'])) ? trim($_GET['order']) : '';
+	$asc = (!empty($_GET['asc'])) ? trim($_GET['asc']) : '';
+	$add_params = (!empty($order) ? '&order=' . $order : '') . (!empty($asc) ? '&asc=' . $asc : '');
+
 	if ($page > $cntPages) $page = $cntPages;
 	$Register = Register::getInstance();
 	$Register['pagescnt'] = $cntPages;
@@ -53,30 +57,30 @@ function pagination( $total, $perPage, $url )
 	$html = __('Pages');
 	// Проверяем нужна ли стрелка "В начало"
 	if ( $page > 3 )
-		$startpage = '<a class="pages" href="'.$url.'&page=1"><<</a> ... ';
+		$startpage = '<a class="pages" href="'.$url.'?page=1'.$add_params.'"><<</a> ... ';
 	else
 		$startpage = '';
 	// Проверяем нужна ли стрелка "В конец"
 	if ( $page < ($cntPages - 2) )
-		$endpage = ' ... <a class="pages" href="'.$url.'&page='.$cntPages.'">>></a>';
+		$endpage = ' ... <a class="pages" href="'.$url.'?page='.$cntPages.$add_params.'">>></a>';
 	else
 		$endpage = '';
 
 	// Находим две ближайшие станицы с обоих краев, если они есть
 	if ( $page - 2 > 0 )
-		$page2left = ' <a class="pages" href="'.$url.'&page='.($page - 2).'">'.($page - 2).'</a>  ';
+		$page2left = ' <a class="pages" href="'.$url.'?page='.($page - 2).$add_params.'">'.($page - 2).'</a>  ';
 	else
 		$page2left = '';
 	if ( $page - 1 > 0 )
-		$page1left = ' <a class="pages" href="'.$url.'&page='.($page - 1).'">'.($page - 1).'</a>  ';
+		$page1left = ' <a class="pages" href="'.$url.'?page='.($page - 1).$add_params.'">'.($page - 1).'</a>  ';
 	else
 		$page1left = '';
 	if ( $page + 2 <= $cntPages )
-		$page2right = '  <a class="pages" href="'.$url.'&page='.($page + 2).'">'.($page + 2).'</a>';
+		$page2right = '  <a class="pages" href="'.$url.'?page='.($page + 2).$add_params.'">'.($page + 2).'</a>';
 	else
 		$page2right = '';
 	if ( $page + 1 <= $cntPages )
-		$page1right = '  <a class="pages" href="'.$url.'&page='.($page + 1).'">'.($page + 1).'</a>';
+		$page1right = '  <a class="pages" href="'.$url.'?page='.($page + 1).$add_params.'">'.($page + 1).'</a>';
 	else
 		$page1right = '';
 

@@ -2,10 +2,10 @@
 $id = (int)$entity->getId();
 if (empty($id) || $id < 1) $html = true;
 
-$commentsModel = $this->Register['ModManager']->getModelInstance($this->module . 'Comments');
+$commentsModel = $this->Register['ModManager']->getModelInstance('Comments');
 
 if (empty($html) && $commentsModel) {
-	$commentsModel->bindModel('Users');
+	// $commentsModel->bindModel('Users');
 
 	/* pages nav */
 	$total = $commentsModel->getTotal(array('cond' => array('entity_id' => $id)));
@@ -20,56 +20,54 @@ if (empty($html) && $commentsModel) {
 		'page'  => $page,
 		'limit' => $per_page,
 		'order' => 'date ' . $order_way,
+		'module' => $this->module,
 	);
 	$comments = $commentsModel->getCollection(array('entity_id' => $id), $params);
 	if ($comments) {
 		foreach ($comments as $comment) {
-			$markers = array();
+			if ($comment) {
+				$markers = array();
 
 
-			// COMMENT ADMIN BAR
-			$ip = ($comment->getIp()) ? $comment->getIp() : 'Unknown';
-			$moder_panel = '';
-			if ($this->ACL->turn(array($this->module, 'edit_comments'), false)) {
-				$moder_panel .= get_link('', $this->getModuleURL('/edit_comment_form/' . $comment->getId()), array('class' => 'fps-edit', 'title' => __('Edit')));
+				// COMMENT ADMIN BAR
+				$ip = ($comment->getIp()) ? $comment->getIp() : 'Unknown';
+				$moder_panel = '';
+				if ($this->ACL->turn(array($this->module, 'edit_comments'), false)) {
+					$moder_panel .= get_link('', $this->getModuleURL('/edit_comment_form/' . $comment->getId()), array('class' => 'fps-edit', 'title' => __('Edit')));
+				}
+
+				if ($this->ACL->turn(array($this->module, 'delete_comments'), false)) {
+					$moder_panel .= get_link('', $this->getModuleURL('/delete_comment/' . $comment->getId()), array('class' => 'fps-delete', 'title' => __('Delete'), 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('/delete_comment/' . $comment->getId())."')}; return false"));
+				}
+
+				if (!empty($moder_panel)) {
+					$moder_panel .= '<a target="_blank" href="https://apps.db.ripe.net/search/query.html?searchtext=' . h($ip) . '" class="fps-ip" title="IP: ' . h($ip) . '"></a>';
+				}
+
+				$markers['avatar'] = '<img class="ava" src="' . getAvatar($comment->getUser_id()) . '" alt="User avatar" title="' . h($comment->getName()) . '" />';
+
+
+				if ($comment->getUser_id()) {
+					$markers['name_a'] = get_link(h($comment->getName()), getProfileUrl((int)$comment->getUser_id()));
+					$markers['user_url'] = get_url(getProfileUrl((int)$comment->getUser_id()));
+					$markers['avatar'] = get_link($markers['avatar'], $markers['user_url']);
+				} else {
+					$markers['name_a'] = h($comment->getName());
+				}
+				$markers['name'] = h($comment->getName());
+
+
+				$markers['moder_panel'] = $moder_panel;
+				$markers['message'] = $this->Textarier->print_page($comment->getMessage());
+
+				if ($comment->getEditdate()!='0000-00-00 00:00:00') {
+					$markers['editdate'] = 'Комментарий был изменён '.$comment->getEditdate();
+				} else {
+					$markers['editdate'] = '';
+				}
+
+				$comment->setAdd_markers($markers);
 			}
-
-			if ($this->ACL->turn(array($this->module, 'delete_comments'), false)) {
-				$moder_panel .= get_link('', $this->getModuleURL('/delete_comment/' . $comment->getId()), array('class' => 'fps-delete', 'title' => __('Delete'), 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('/delete_comment/' . $comment->getId())."')}; return false"));
-			}
-
-			if (!empty($moder_panel)) {
-				$moder_panel .= '<a target="_blank" href="https://apps.db.ripe.net/search/query.html?searchtext=' . h($ip) . '" class="fps-ip" title="IP: ' . h($ip) . '"></a>';
-			}
-
-			$img = array(
-				'alt' => 'User avatar',
-				'title' => h($comment->getName()),
-				'class' => 'ava',
-			);
-			$markers['avatar'] = '<img class="ava" src="' . getAvatar($comment->getUser_id()) . '" alt="User avatar" />';
-
-
-			if ($comment->getUser_id()) {
-				$markers['name_a'] = get_link(h($comment->getName()), getProfileUrl((int)$comment->getUser_id()));
-				$markers['user_url'] = get_url(getProfileUrl((int)$comment->getUser_id()));
-				$markers['avatar'] = get_link($markers['avatar'], $markers['user_url']);
-			} else {
-				$markers['name_a'] = h($comment->getName());
-			}
-			$markers['name'] = h($comment->getName());
-
-
-			$markers['moder_panel'] = $moder_panel;
-			$markers['message'] = $this->Textarier->print_page($comment->getMessage());
-
-			if ($comment->getEditdate()!='0000-00-00 00:00:00') {
-				$markers['editdate'] = 'Комментарий был изменён '.$comment->getEditdate();
-			} else {
-				$markers['editdate'] = '';
-			}
-
-			$comment->setAdd_markers($markers);
 		}
 	}
 	$html = $this->render('viewcomment.html', array('commentsr' => $comments));

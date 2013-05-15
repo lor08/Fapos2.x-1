@@ -132,8 +132,8 @@ $array[] = "CREATE TABLE `{$set['db']['prefix']}loads` (
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci";
 #####################################################################
-$array[] = "DROP TABLE IF EXISTS `{$set['db']['prefix']}loads_comments`";
-$array[] = "CREATE TABLE `{$set['db']['prefix']}loads_comments` (
+$array[] = "DROP TABLE IF EXISTS `{$set['db']['prefix']}comments`";
+$array[] = "CREATE TABLE `{$set['db']['prefix']}comments` (
   `id` int(11) NOT NULL auto_increment,
   `entity_id` int(11) NOT NULL,
   `user_id` INT(11) DEFAULT '0' NOT NULL,
@@ -143,6 +143,7 @@ $array[] = "CREATE TABLE `{$set['db']['prefix']}loads_comments` (
   `mail` varchar(150) NOT NULL,
   `date` DATETIME NOT NULL,
   `editdate` DATETIME NOT NULL,
+  `module` varchar(10) default 'news' NOT NULL, 
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci";
 #####################################################################
@@ -193,20 +194,6 @@ $array[] = "CREATE TABLE `{$set['db']['prefix']}news` (
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci";
 $array[] = "INSERT INTO `{$set['db']['prefix']}news` VALUES (1, 'Моя первая новость', 'Теперь сайт установлен и вы можете приступать его настройке. По любым вопросам обращайтесь на официальный сайт Fapos.net', 0, NOW(), 1, 1, 0, '', '', '', '', '', '1', '1', '1', '0')";
-#####################################################################
-$array[] = "DROP TABLE IF EXISTS `{$set['db']['prefix']}news_comments`";
-$array[] = "CREATE TABLE `{$set['db']['prefix']}news_comments` (
-  `id` int(11) NOT NULL auto_increment,
-  `entity_id` int(11) NOT NULL,
-  `user_id` INT(11) DEFAULT '0' NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `message` text NOT NULL,
-  `ip` varchar(50) NOT NULL,
-  `mail` varchar(150) NOT NULL,
-  `date` DATETIME NOT NULL,
-  `editdate` DATETIME NOT NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci";
 #####################################################################
 $array[] = "DROP TABLE IF EXISTS `{$set['db']['prefix']}news_sections`";
 $array[] = "CREATE TABLE `{$set['db']['prefix']}news_sections` (
@@ -264,20 +251,6 @@ $array[] = "CREATE TABLE `{$set['db']['prefix']}stat` (
   `available` ENUM( '0', '1' ) DEFAULT '1' NOT NULL,
   `view_on_home` ENUM( '0', '1' ) DEFAULT '1' NOT NULL,
   `on_home_top` ENUM( '0', '1' ) DEFAULT '0' NOT NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci";
-#####################################################################
-$array[] = "DROP TABLE IF EXISTS `{$set['db']['prefix']}stat_comments`";
-$array[] = "CREATE TABLE `{$set['db']['prefix']}stat_comments` (
-  `id` int(11) NOT NULL auto_increment,
-  `entity_id` int(11) NOT NULL,
-  `user_id` INT(11) DEFAULT '0' NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `message` text NOT NULL,
-  `ip` varchar(50) NOT NULL,
-  `mail` varchar(150) NOT NULL,
-  `date` DATETIME NOT NULL,
-  `editdate` DATETIME NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci";
 #####################################################################
@@ -396,20 +369,6 @@ $array[] = "CREATE TABLE `{$set['db']['prefix']}foto` (
   `comments` int(11) NOT NULL default '0',
   `commented` ENUM( '0', '1' ) DEFAULT '1' NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci";
-#############################################################################
-$array[] = "DROP TABLE IF EXISTS `{$set['db']['prefix']}foto_comments`";
-$array[] = "CREATE TABLE `{$set['db']['prefix']}foto_comments` (
-`id` int(11) NOT NULL auto_increment,
-`entity_id` int(11) NOT NULL,
-`user_id` INT(11) DEFAULT '0' NOT NULL,
-`name` varchar(100) NOT NULL,
-`message` text NOT NULL,
-`ip` varchar(50) NOT NULL,
-`mail` varchar(150) NOT NULL,
-`date` DATETIME NOT NULL,
-`editdate` DATETIME NOT NULL,
-PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci";
 #############################################################################
 $array[] = "DROP TABLE IF EXISTS `{$set['db']['prefix']}foto_sections`";

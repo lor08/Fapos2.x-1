@@ -1905,7 +1905,7 @@ Class UsersModule extends Module {
 		// пользователь не смог просмотреть чужое сообщение, просто указав
 		// ID сообщения в адресной строке браузера
 		$message = $this->Model->getMessage($idMsg);
-		if (!$message) {
+		if (!$message || !$message->getFromuser() || !$message->getTouser()) {
 			return $this->showInfoMessage(__('Some error occurred'), $this->getModuleURL('in_msg_box/'));
 		}
 
@@ -2957,67 +2957,64 @@ Class UsersModule extends Module {
 		list($pages, $page) = pagination($total, $per_page, $this->getModuleURL('comments/' . ($id ? $id : '')));
 		$this->_globalize(array('comments_pagination' => $pages));
 
-		$offset = ($page - 1) * $per_page;
-
-		$comments = $this->Model->getComments($id, $offset, $per_page);
+		$cond = array();
+		if ($id) {
+			$cond['user_id'] = $id;
+		}
+		$params = array(
+			'page'  => $page,
+			'limit' => $per_page,
+			'order' => 'date DESC',
+		);
+		
+		$commentsModel = $this->Register['ModManager']->getModelInstance('Comments');
+		$comments = $commentsModel->getCollection($cond, $params);
 		if ($comments && is_array($comments)) {
-			foreach ($comments as $index => $comment) {
-
-				$module = $comment['type'];
-
-				$className = $this->Register['ModManager']->getEntityName($module . 'Comments');
-				$entity = new $className($comment);
-
-				if ($entity) {
+			foreach ($comments as $comment) {
+				if ($comment) {
+					$module = $comment->getModule();
 					$markers = array();
 
 					// COMMENT ADMIN BAR
-					$ip = ($entity->getIp()) ? $entity->getIp() : 'Unknown';
+					$ip = ($comment->getIp()) ? $comment->getIp() : 'Unknown';
 					$moder_panel = '';
 					if ($this->ACL->turn(array($module, 'edit_comments'), false)) {
-						$moder_panel .= get_link('', '/' . $module . '/edit_comment_form/' . $entity->getId(), array('class' => 'fps-edit', 'title' => __('Edit')));
+						$moder_panel .= get_link('', '/' . $module . '/edit_comment_form/' . $comment->getId(), array('class' => 'fps-edit', 'title' => __('Edit')));
 					}
 
 					if ($this->ACL->turn(array($module, 'delete_comments'), false)) {
-						$moder_panel .= get_link('', '/' . $module . '/delete_comment/' . $entity->getId(), array('class' => 'fps-delete', 'title' => __('Delete'), 'onClick' => "return confirm('" . __('Are you sure') . "')"));
+						$moder_panel .= get_link('', '/' . $module . '/delete_comment/' . $comment->getId(), array('class' => 'fps-delete', 'title' => __('Delete'), 'onClick' => "return confirm('" . __('Are you sure') . "')"));
 					}
 
 					if (!empty($moder_panel)) {
 						$moder_panel .= '<a target="_blank" href="https://apps.db.ripe.net/search/query.html?searchtext=' . h($ip) . '" class="fps-ip" title="IP: ' . h($ip) . '"></a>';
 					}
 
-					$img = array(
-						'alt' => 'User avatar',
-						'title' => h($entity->getName()),
-						'class' => 'ava',
-					);
-					$markers['avatar'] = '<img class="ava" src="' . getAvatar($entity->getUser_id()) . '" alt="User avatar" />';
+					$markers['avatar'] = '<img class="ava" src="' . getAvatar($comment->getUser_id()) . '" alt="User avatar" title="' . h($comment->getName()) . '" />';
 
 
-					if ($entity->getUser_id()) {
-						$markers['name_a'] = get_link(h($entity->getName()), getProfileUrl((int) $entity->getUser_id()));
-						$markers['user_url'] = get_url(getProfileUrl((int) $entity->getUser_id()));
+					if ($comment->getUser_id()) {
+						$markers['name_a'] = get_link(h($comment->getName()), getProfileUrl((int) $comment->getUser_id()));
+						$markers['user_url'] = get_url(getProfileUrl((int) $comment->getUser_id()));
 						$markers['avatar'] = get_link($markers['avatar'], $markers['user_url']);
 					} else {
-						$markers['name_a'] = h($entity->getName());
+						$markers['name_a'] = h($comment->getName());
 					}
-					$markers['name'] = h($entity->getName());
+					$markers['name'] = h($comment->getName());
 
 
 					$markers['moder_panel'] = $moder_panel;
-					$markers['message'] = $this->Textarier->print_page($entity->getMessage());
+					$markers['message'] = $this->Textarier->print_page($comment->getMessage());
 
-					if ($entity->getEditdate() != '0000-00-00 00:00:00') {
-						$markers['editdate'] = 'Комментарий был изменён ' . $entity->getEditdate();
+					if ($comment->getEditdate() != '0000-00-00 00:00:00') {
+						$markers['editdate'] = 'Комментарий был изменён ' . $comment->getEditdate();
 					} else {
 						$markers['editdate'] = '';
 					}
 
-					$entity->setEntry_url(get_url('/' . $module . '/view/' . $entity->getEntity_id()));
-
-					$entity->setAdd_markers($markers);
+					$comment->setEntry_url(get_url('/' . $module . '/view/' . $comment->getEntity_id()));
+					$comment->setAdd_markers($markers);
 				}
-				$comments[$index] = $entity;
 			}
 		}
 		$this->comments = $this->render('viewcomment.html', array('commentsr' => $comments));

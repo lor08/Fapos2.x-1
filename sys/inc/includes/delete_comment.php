@@ -4,7 +4,7 @@ $this->ACL->turn(array($this->module, 'delete_comments'));
 $id = (!empty($id)) ? (int)$id : 0;
 if ($id < 1) return $this->showInfoMessage(__('Unknown error'), $this->getModuleURL(), 1);
 
-$commentsModel = $this->Register['ModManager']->getModelInstance($this->module . 'Comments');
+$commentsModel = $this->Register['ModManager']->getModelInstance('Comments');
 if ($commentsModel) {
 	$comment = $commentsModel->getById($id);
 	if ($comment) {

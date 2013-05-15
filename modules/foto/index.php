@@ -4,12 +4,12 @@
 | @Author:       Andrey Brykin (Drunya)          |
 | @Email:        drunyacoder@gmail.com           |
 | @Site:         http://fapos.net                |
-| @Version:      1.5.5                           |
+| @Version:      1.5.6                           |
 | @Project:      CMS                             |
 | @package       CMS Fapos                       |
 | @subpackege    Foto Module  			 		 |
 | @copyright     ©Andrey Brykin 2010-2013        |
-| @last  mod     2013/03/31                      |
+| @last  mod     2013/04/24                      |
 \-----------------------------------------------*/
 
 /*-----------------------------------------------\

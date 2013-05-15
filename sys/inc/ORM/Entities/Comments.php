@@ -2,12 +2,12 @@
 /*---------------------------------------------\
 |											   |
 | @Author:       Andrey Brykin (Drunya)        |
-| @Version:      1.2                           |
+| @Version:      1.3                           |
 | @Project:      CMS                           |
 | @package       CMS Fapos                     |
-| @subpackege    NewsComments Entity           |
+| @subpackege    Comments Entity               |
 | @copyright     ©Andrey Brykin 2010-2013      |
-| @last mod      2013/04/03                    |
+| @last mod      2013/04/25                    |
 |----------------------------------------------|
 |											   |
 | any partial or not partial extension         |
@@ -24,7 +24,7 @@
 /**
  *
  */
-class NewsCommentsEntity extends FpsEntity
+class CommentsEntity extends FpsEntity
 {
 	
 	protected $id;
@@ -36,6 +36,7 @@ class NewsCommentsEntity extends FpsEntity
 	protected $mail;
 	protected $date;
 	protected $editdate;
+	protected $module; 
 
 
 	public function save()
@@ -49,16 +50,17 @@ class NewsCommentsEntity extends FpsEntity
 			'mail' => $this->mail,
 			'date' => $this->date,
 			'editdate' => $this->editdate,
+			'module' => $this->module,
 		);
 		if($this->id) $data['id'] = $this->id;
 		$Register = Register::getInstance();
-		return ($Register['DB']->save('news_comments', $data));
+		return ($Register['DB']->save('comments', $data));
 	}
 	
 	
 	public function delete()
 	{
 		$Register = Register::getInstance();
-		$Register['DB']->delete('news_comments', array('id' => $this->id));
+		$Register['DB']->delete('comments', array('id' => $this->id));
 	}
 }

@@ -94,8 +94,9 @@ $data = array(
 	'user_id'  => (!empty($_SESSION['user']['id'])) ? $_SESSION['user']['id'] : 0,
 	'date'     => new Expr('NOW()'),
 	'mail'     => $mail,
+	'module'   => $this->module,
 );
-$className = $this->Register['ModManager']->getEntityName($this->module . 'Comments');
+$className = $this->Register['ModManager']->getEntityName('Comments');
 $entityComm = new $className($data);
 if ($entityComm) {
 	$entityComm->save();

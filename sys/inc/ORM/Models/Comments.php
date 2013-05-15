@@ -5,9 +5,9 @@
 | @Version:      1.0                           |
 | @Project:      CMS                           |
 | @package       CMS Fapos                     |
-| @subpackege    StatComments Model            |
-| @copyright     ©Andrey Brykin 2010-2012      |
-| @last mod      2012/04/25                    |
+| @subpackege    Comments Model                |
+| @copyright     ©Andrey Brykin 2010-2013      |
+| @last mod      2013/04/25                    |
 |----------------------------------------------|
 |											   |
 | any partial or not partial extension         |
@@ -24,11 +24,10 @@
 /**
  *
  */
-class StatCommentsModel extends FpsModel
+class CommentsModel extends FpsModel
 {
 	
-    public $Table = 'stat_comments';
-	
+    public $Table = 'comments';
     protected $RelatedEntities = array(
         'author' => array(
             'model' => 'Users',
@@ -36,7 +35,7 @@ class StatCommentsModel extends FpsModel
             'foreignKey' => 'user_id',
       	),
         'parent_entity' => array(
-            'model' => 'Stat',
+            'model' => 'this.module',
             'type' => 'has_one',
             'foreignKey' => 'entity_id',
         ),

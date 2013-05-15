@@ -182,44 +182,14 @@ class UsersModel extends FpsModel
 
 	function getCountComments($user_id = null) {
 		$Register = Register::getInstance();
-		$modules = array('foto', 'loads', 'news', 'stat');
-		$sql = '';
-		foreach ($modules as $module) {
-			if ($Register['Config']->read('comment_active', $module) == 1 &&
-					$Register['ACL']->turn(array($module, 'view_comments'), false)) {
-				if (!empty($sql))
-					$sql .= ' UNION ';
-				$sql .= 'SELECT COUNT(*) AS cnt FROM `' . $this->getDbDriver()->getFullTableName($module . '_comments') . '`' . ($user_id ? " WHERE `user_id` = $user_id" : '');
-			}
+		$commentsModel = $Register['ModManager']->getModelInstance('Comments');
+		$cond = array();
+		if ($user_id) {
+			$cond['user_id'] = $user_id;
 		}
-		if (!empty($sql)) {
-			$result = $this->getDbDriver()->query('SELECT SUM(cnt) AS cnt FROM (' . $sql . ') AS `comments`');
-			if (is_array($result) && count($result) > 0) {
-				return $result[0]['cnt'];
-			}
-		}
-		return false;
-	}
-
-	function getComments($user_id = null, $offset = null, $per_page = null) {
-		$Register = Register::getInstance();
-		$modules = array('foto', 'loads', 'news', 'stat');
-		$sql = '';
-		foreach ($modules as $module) {
-			if ($Register['Config']->read('comment_active', $module) == 1 &&
-					$Register['ACL']->turn(array($module, 'view_comments'), false)) {
-				if (!empty($sql))
-					$sql .= ' UNION ';
-				$sql .= "SELECT *, '$module' AS type FROM `" . $this->getDbDriver()->getFullTableName($module . '_comments') . '`' . ($user_id ? " WHERE `user_id` = $user_id" : '');
-			}
-		}
-		if (!empty($sql)) {
-			$result = $this->getDbDriver()->query($sql . ' ORDER BY date DESC' . ($per_page ? " LIMIT " . ($offset ? $offset . ',' : '') . $per_page : ''));
-			if (is_array($result) && count($result) > 0) {
-				return $result;
-			}
-		}
-		return false;
+		$cnt = $commentsModel->getTotal(array('cond' => $cond));
+		
+		return ($cnt) ? $cnt : false;
 	}
 
 	function getUserStatistic($user_id) {

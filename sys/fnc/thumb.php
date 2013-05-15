@@ -1,6 +1,8 @@
 <?php
 
-function resampleImage($path, $new_path, $sizew, $sizeh) {
+function resampleImage($path, $new_path, $sizew, $sizeh = false) {
+	if (false == $sizeh) $sizeh = $sizew;
+
 	if (!isset($sizew) || $sizew < 150) $sizew = 150;
 	if (!isset($sizeh) || $sizeh < 150) $sizeh = 150;
 
@@ -60,7 +62,7 @@ function resampleImage($path, $new_path, $sizew, $sizeh) {
 	if (isset($quality_jpeg)) $quality_jpeg = (intval($quality_jpeg) < 0 || intval($quality_jpeg) > 100) ? 75 : intval($quality_jpeg);
 	$quality_png = Config::read('quality_png');
 	if (isset($quality_png)) $quality_png = (intval($quality_png) < 0 || intval($quality_png) > 9) ? 9 : intval($quality_png);
-	
+
 	switch ($itype) {
 		case 1:
 		case 'image/gif':

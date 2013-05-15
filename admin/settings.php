@@ -7,7 +7,7 @@
 ## @package       CMS Fapos                     ##
 ## @subpackege    Admin Panel module            ##
 ## @copyright     ©Andrey Brykin 2010-2013      ##
-## @last mod.     2013/04/05                    ##
+## @last mod.     2013/04/24                    ##
 ##################################################
 
 

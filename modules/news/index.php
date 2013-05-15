@@ -9,7 +9,7 @@
 | @Package       CMS Fapos                     |
 | @Subpackege    News Module                   |
 | @Copyright     ©Andrey Brykin 2010-2013      |
-| @Last mod      2013/03/31                    |
+| @Last mod      2013/04/24                    |
 |----------------------------------------------|
 |											   |
 | any partial or not partial extension         |
