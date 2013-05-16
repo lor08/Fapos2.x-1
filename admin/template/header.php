@@ -23,6 +23,14 @@
 		// $('div.side-menu').height(($('body').height() - 35));
 	});
 	</script>
+
+	<link type="text/css" rel="StyleSheet" href="template/css/fancy.css" />
+	<script type="text/javascript" src="js/jquery.fancybox.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$("a.gallery").fancybox();
+	});
+</script>
 </head> 
 <body>
 	<div id="wrapper">
@@ -81,6 +89,8 @@
 
 		['<?php echo __('Plugins'); ?>',
 		  [
+		  '<a href="/admin/install_plugins.php"><?php echo 'Установка плагинов'; ?></a>',
+		  'sep',
 		  '<a href="/admin/plugins.php"><?php echo __('List'); ?></a>'
 		  //'sep',
 		  //'<a href="/admin/chcreat.php?a=ed">Редактировать</a>'
