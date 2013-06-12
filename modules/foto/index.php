@@ -1002,13 +1002,13 @@ Class FotoModule extends Module {
 		}
 
 		if ($this->ACL->turn(array($this->module, 'up_materials'), false)) {
-			$moder_panel .= get_link('', $this->getModuleURL('upper/' . $id), array('class' => 'fps-up', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('upper/' . $id)."')}; return false")) . '&nbsp;';
+			$moder_panel .= get_link('', $this->getModuleURL('upper/' . $id), array('id' => 'fum'.$record->getId(), 'class' => 'fps-up', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('fum".$record->getId()."')}; return false")) . '&nbsp;';
 		}
 
 		if ($this->ACL->turn(array($this->module, 'delete_materials'), false)
 				|| (!empty($_SESSION['user']['id']) && $uid == $_SESSION['user']['id']
 				&& $this->ACL->turn(array($this->module, 'delete_mine_materials'), false))) {
-			$moder_panel .= get_link('', $this->getModuleURL('delete/' . $id), array('class' => 'fps-delete', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('delete/' . $id)."')}; return false")) . '&nbsp;';
+			$moder_panel .= get_link('', $this->getModuleURL('delete/' . $id), array('id' => 'fdm'.$record->getId(), 'class' => 'fps-delete', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('fdm".$record->getId()."')}; return false")) . '&nbsp;';
 		}
 		return $moder_panel;
 	}

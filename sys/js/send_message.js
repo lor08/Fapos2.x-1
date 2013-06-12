@@ -653,22 +653,98 @@ function setGroup(uid, formId) {
 	}
 }
 
-// Функция для отправки формы на сервер и открытия окошка со статусом выполненного действия
-function sendu(url) {
-    var idrand = 'fpswin_'+Math.round(Math.random()*9999);
-    var fpswin = createFpsWin('Информация', '<img src="/sys/img/ajaxload.gif" alt="loading">', '');
-    $('body').append('<div id="'+idrand+'">'+fpswin+'</div>');
+
+
+
+
+
+
+
+
+/* 
+ *
+ * aJax окошки 2.0
+ * 
+ * Документация по ним тут:
+ * https://github.com/modos189/Fapos2.x/wiki/Работа-с-aJax-окнами-2.0
+ * 
+ */
+
+//close - показывать (true) или скрывать (false) кнопку закрытия окна. По-умолчанию true
+//time - время в секундах, после которого окно закроется. По-умолчанию 0 (не закрывать)
+//align - задает выравнивание контента. По-умолчанию left
+//css - строка со стилями окна
+
+// Создаёт окно
+function fpsWnd(name, title, content, params) {
+    if (name && name.length > 0) {
+        var i = $("#"+name).length;
+        if (i>0) {
+            fpsWnd.content(name, content)
+            fpsWnd.show(name)
+            return false
+        }
+    }
+    
+    props = $.extend({
+        close: true,
+        time: 0,
+        align: 'left',
+        css: ''
+    }, params || {});
+
+    var win = '<div id="'+name+'" class="fps-fwin" style="'+props.css+'"> \
+        <div class="drag_window"> \
+        <div class="fps-title" onmousedown="drag_object(event, this.parentNode)">'+title+'</div>';
+        
+        if (props.close) {
+            win += '<div onClick="$(\'#'+name+'\').hide()" class="fps-close"></div>';
+        };
+
+        win += '<div class="fps-cont" style="text-align: '+props.align+'">'+content+'</div> \
+            </div> \
+            </div>';
+    $('body').append(win);
+
+    if (props.time>0) {
+        setTimeout(function() {
+            fpsWnd.hide(name);
+        }, props.time);
+    };
+
+}
+
+// Отправляет форму на сервер и открывыет окно со статусом выполненного действия
+function sendu(id, params) {
+    fpsWnd('fpsWin_'+id, 'Информация', '<img src="/sys/img/ajaxload.gif" alt="loading">', params)
 
     jQuery.ajax({
-        url:     url,
+        url:     $('#'+id).attr("action"),
         type:     "POST",
         dataType: "html",
-        data: jQuery("#sendForm").serialize(), 
+        data: jQuery("#"+id).serialize(), 
         success: function(response) {
-            $('#'+idrand+' .fps-cont').html(response);
+            fpsWnd.content('fpsWin_'+id ,response);
         },
         error: function(response) {
-            $('#'+idrand+' .fps-cont').html("Ошибка при отправке формы");
+            fpsWnd.content('fpsWin_'+id ,"Ошибка при отправке формы");
         }
     });
 }
+
+// Скрывает окно
+fpsWnd.hide = function (name) {
+    $("#"+name).css({ display: "none" })
+};
+// Показывает окно
+fpsWnd.show = function (name) {
+    $("#"+name).css({ display: "block" })
+};
+// Меняет заголовок окна
+fpsWnd.header = function (name, content) {
+    $('#'+name+' .fps-title').html(content);
+};
+// Меняет содержимое окна
+fpsWnd.content = function (name, content) {
+    $('#'+name+' .fps-cont').html(content);
+};

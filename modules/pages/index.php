@@ -277,13 +277,13 @@ Class PagesModule extends Module {
 			$moder_panel .= get_link('', '/' . $module . '/edit_form/' . $id, array('class' => 'fps-edit')) . '&nbsp;';
 		}
 		if ($this->ACL->turn(array($module, 'up_materials'), false)) {
-			$moder_panel .= get_link('', '/' . $module . '/upper/' . $id, array('class' => 'fps-up', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('/" . $module . "/upper/" . $id."')}; return false")) . '&nbsp;';
+			$moder_panel .= get_link('', '/' . $module . '/upper/' . $id, array('id' => 'fum'.$id, 'class' => 'fps-up', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('fum".$id."')}; return false")) . '&nbsp;';
 		}
 		if ($this->ACL->turn(array($module, 'on_home'), false)) {
-			$moder_panel .= get_link('', '/' . $module . '/off_home/' . $id, array('class' => 'fps-on', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('/" . $module . "/off_home/" . $id."')}; return false")) . '&nbsp;';
+			$moder_panel .= get_link('', '/' . $module . '/off_home/' . $id, array('id' => 'fom'.$id, 'class' => 'fps-on', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('fom".$id."')}; return false")) . '&nbsp;';
 		}
 		if ($this->ACL->turn(array($module, 'delete_materials'), false)) {
-			$moder_panel .= get_link('', '/' . $module . '/delete/' . $id, array('class' => 'fps-delete', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('/" . $module . "/delete/" . $id."')}; return false")) . '&nbsp;';
+			$moder_panel .= get_link('', '/' . $module . '/delete/' . $id, array('id' => 'fdm'.$id, 'class' => 'fps-delete', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('fdm".$id."')}; return false")) . '&nbsp;';
 		}
 
 		return $moder_panel;

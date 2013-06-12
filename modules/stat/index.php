@@ -1321,21 +1321,21 @@ Class StatModule extends Module {
 		}
 
 		if ($this->ACL->turn(array($this->module, 'up_materials'), false)) {
-			$moder_panel .= get_link('', $this->getModuleURL('fix_on_top/' . $id), array('class' => 'fps-star', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('fix_on_top/' . $id)."')}; return false")) . '&nbsp;';
-			$moder_panel .= get_link('', $this->getModuleURL('upper/' . $id), array('class' => 'fps-up', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('upper/' . $id)."')}; return false")) . '&nbsp;';
+			$moder_panel .= get_link('', $this->getModuleURL('fix_on_top/' . $id), array('id' => 'ffm'.$record->getId(), 'class' => 'fps-star', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('ffm".$record->getId()."')}; return false")) . '&nbsp;';
+			$moder_panel .= get_link('', $this->getModuleURL('upper/' . $id), array('id' => 'fum'.$record->getId(),'class' => 'fps-up', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('fum".$record->getId()."')}; return false")) . '&nbsp;';
 		}
 		if ($this->ACL->turn(array($this->module, 'on_home'), false)) {
 			if ($record->getView_on_home() == 1) {
-				$moder_panel .= get_link('', $this->getModuleURL('off_home/' . $id), array('class' => 'fps-on', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('off_home/' . $id)."')}; return false")) . '&nbsp;';
+				$moder_panel .= get_link('', $this->getModuleURL('off_home/' . $id), array('id' => 'fofm'.$record->getId(), 'class' => 'fps-on', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('fofm".$record->getId()."')}; return false")) . '&nbsp;';
 			} else {
-				$moder_panel .= get_link('', $this->getModuleURL('on_home/' . $id), array('class' => 'fps-off', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('on_home/' . $id)."')}; return false")) . '&nbsp;';
+				$moder_panel .= get_link('', $this->getModuleURL('on_home/' . $id), array('id' => 'fonm'.$record->getId(), 'class' => 'fps-off', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('fonm".$record->getId()."')}; return false")) . '&nbsp;';
 			}
 		}
 
 		if ($this->ACL->turn(array($this->module, 'delete_materials'), false)
 				|| (!empty($_SESSION['user']['id']) && $uid == $_SESSION['user']['id']
 				&& $this->ACL->turn(array($this->module, 'delete_mine_materials'), false))) {
-			$moder_panel .= get_link('', $this->getModuleURL('delete/' . $id), array('class' => 'fps-delete', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('delete/' . $id)."')}; return false")) . '&nbsp;';
+			$moder_panel .= get_link('', $this->getModuleURL('delete/' . $id), array('id' => 'fdm'.$record->getId(), 'class' => 'fps-delete', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('fdm".$record->getId()."'}; return false")) . '&nbsp;';
 		}
 		return $moder_panel;
 	}

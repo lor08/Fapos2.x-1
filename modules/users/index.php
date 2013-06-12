@@ -3081,7 +3081,7 @@ Class UsersModule extends Module {
 				$message->setUser($message->getTouser());
 			}
 
-			$message->setDelete(get_link(__('Delete'), $this->getModuleURL('delete_messages_user/' . $message->getUser()->getId()), array('onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('delete_messages_user/' . $message->getUser()->getId())."')}; return false")));
+			$message->setDelete(get_link(__('Delete'), $this->getModuleURL('delete_messages_user/' . $message->getUser()->getId()), array('id' => 'fdc'.$comment->getId(), 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('fdc".$comment->getId()."')}; return false")));
 		}
 
 		$source = $this->render('pm.html', array('messages' => $messages, 'context' => $markers));
@@ -3139,7 +3139,7 @@ Class UsersModule extends Module {
 				$message->setUser($message->getTouser());
 			}
 
-			$message->setDelete(get_link(__('Delete'), $this->getModuleURL('delete_message/' . $message->getId()), array('onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('".$this->getModuleURL('delete_message/' . $message->getId())."')}; return false")));
+			$message->setDelete(get_link(__('Delete'), $this->getModuleURL('delete_message/' . $message->getId()), array('id' => 'fdm'.$message->getId(), 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('fdm".$message->getId()."')}; return false")));
 		}
 
 		$source = $this->render('pm_view.html', array(
