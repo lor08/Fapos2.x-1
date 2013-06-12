@@ -1,4 +1,11 @@
 <?php
+/*-----------------------------------------------\
+|                                                |
+|  @Author:       Alexander Verenik (Wasja)      |
+|  @Version:      0.3                            |
+|  @Last mod.     2013/05/19                     |
+|                                                |
+\-----------------------------------------------*/
 
 function cmpTitle($a, $b) {
 	$a = isset($a['title']) ? $a['title'] : '';
@@ -65,12 +72,12 @@ if (isset($_POST['ac'])) {
 	}
 }
 
-$popups_content = '<div class="popup" id="addEditor" style="display: none;">
+$popups_content = '<div class="popup" id="addEditor">
 	<div class="top">
 		<div class="title">Добавление редактора</div>
-		<div class="close" onclick="closePopup(\'addEditor\');"></div>
+		<div class="close" onclick="closePopup(\'addEditor\'); document.addForm.reset();"></div>
 	</div>
-	<form method="POST" action="">
+	<form name="addForm" method="POST" action="">
 	<div class="items">
 		<div class="item">' . __('Title') . ':<br />
 			<input type="text" name="title" style="width:95%" />
@@ -129,9 +136,9 @@ if ($editor_set && is_array($editor_set) && count($editor_set)) {
 		$popups_content .= '<div class="popup" id="editEditor' . $index . '">
 	<div class="top">
 		<div class="title">Настройка редактора</div>
-		<div class="close" onclick="closePopup(\'editEditor' . $index . '\');"></div>
+		<div class="close" onclick="closePopup(\'editEditor' . $index . '\'); document.editForm' . $index . '.reset();"></div>
 	</div>
-	<form method="POST" action="">
+	<form name="editForm' . $index . '" method="POST" action="">
 	<div class="items">
 		<div class="item">' . __('Title') . ':<br />
 			<input type="text" name="title" value="' . (isset($editor['title']) ? htmlspecialchars($editor['title']) : '') . '" style="width:95%" />

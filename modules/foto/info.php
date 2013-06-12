@@ -109,6 +109,13 @@ $settingsInfo = array(
 	
 	
 	'Прочее' => 'Прочее',
+	'calc_count' => array(
+		'type' => 'checkbox',
+		'title' => 'Отображать количество материалов',
+		'checked' => '1',
+		'value' => '1',
+		'description' => 'в списке категорий',
+	),
 	'active' => array(
 		'type' => 'checkbox',
 		'title' => 'Статус',

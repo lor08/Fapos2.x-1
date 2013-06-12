@@ -155,6 +155,7 @@ class Document_Parser {
 		
 		$markers['fps_server_name'] = $_SERVER['SERVER_NAME'];
 		$markers['fps_wday'] = date("D");
+		$markers['fps_wday_n'] = date("w");
 		$markers['fps_date'] = date("d-m-Y");
 		$markers['fps_time'] = date("H:i");
 		$markers['fps_hour'] = date("G");

@@ -390,6 +390,10 @@ class Module {
             'fps_pagescnt' => (!empty($Register['pagescnt'])) ? intval($Register['pagescnt']) : 1,
             // 'fps_user' => (!empty($_SESSION['user'])) ? $_SESSION['user'] : array(),
         );
+		if (isset($this->Register['params']) && is_array($this->Register['params'])) {
+			$markers2['action'] = count($this->Register['params']) > 1 ? $this->Register['params'][1] : 'index';
+			$markers2['current_id'] = count($this->Register['params']) > 2 ? $this->Register['params'][2] : null;
+		}
 		$markers = array_merge($markers1, $markers2);
         return $markers;
     }
@@ -466,7 +470,37 @@ class Module {
 		return $cacheId;
 	}
 	
-
+	private function getCatChildren($cat_ids) {
+		if (!$cat_ids || (!is_array($cat_ids) && $cat_ids < 1)) return array();
+		
+		$conditions = array('parent_id IN (' . implode(',', (array)$cat_ids) . ')');
+		$cats = $this->DB->select($this->module . '_sections', DB_ALL, array('cond' => $conditions, 'fields' => array('id')));
+		
+		if ($cats && is_array($cats) && count($cats)) {
+			$new_ids = array();
+			foreach ($cats as $cat) {
+				if (isset($cat['id'])) $new_ids[] = intval($cat['id']);
+			}
+			$children_ids = $this->getCatChildren(array_unique($new_ids));
+			$cat_ids = array_unique(array_merge((array)$cat_ids, $children_ids));
+		}
+		return (array)$cat_ids;
+	}
+	
+	private function getEntriesCount($cat_id) {
+		$cat_id = intval($cat_id);
+		if ($cat_id < 1)  return 0;
+		
+		$cat_ids = $this->getCatChildren($cat_id);
+		if ($cat_ids && is_array($cat_ids) && count($cat_ids)) {
+			$entriesModel = $this->Register['ModManager']->getModelInstance($this->module);
+			$total = $entriesModel->getTotal(array('cond' => array('category_id IN (' . implode(',', $cat_ids) . ')')));
+			return ($total ? $total : 0);
+		} else {
+			return 0;
+		}
+	}
+	
 	/**
 	 * Build categories list ({CATEGORIES})
 	 *
@@ -507,18 +541,37 @@ class Module {
 			}
 		}
 		if (empty($cats)) {
-			$cats = $this->DB->select($this->module . '_sections', DB_ALL, array(
-				'cond' => array(
-					'`parent_id` = 0 OR `parent_id` IS NULL ',
-				),
-			));
+			if (!$id) {
+				$select = array(
+					'cond' => array(
+						'`parent_id` = 0 OR `parent_id` IS NULL ',
+					),
+				);
+			} else {
+				$select = array(
+					'joins' => array(
+						array(
+							'alias' => 'b',
+							'type' => 'LEFT',
+							'table' => $this->module . '_sections',
+							'cond' => 'a.`parent_id` = b.`parent_id`',
+						),
+					),
+					'fields' => array('b.*'),
+					'alias' => 'a',
+					'cond' => array('a.id' => intval($id)),
+				);
+			}
+			
+			$cats = $this->DB->select($this->module . '_sections', DB_ALL, $select);
 		}
 		
 		
+		$calc_count = $this->Register['Config']->read('calc_count', $this->module);
 		// Build list
 		if (count($cats) > 0) {
 			foreach ($cats as $cat) {
-				$output .= '<li>' . get_link(h($cat['title']), '/' . $this->module . '/category/' . $cat['id']) . '</li>';
+				$output .= '<li>' . ($id && $cat['id'] == $id ? '<b>' : '') . get_link(h($cat['title']), '/' . $this->module . '/category/' . $cat['id']) . ($id && $cat['id'] == $id ? '</b>' : '') . ($calc_count ? ' [' . $this->getEntriesCount($cat['id']) . ']' : '') . '</li>';
 			}
 		}
 		
