@@ -817,3 +817,12 @@ function pm_type_redirect($type) {
 		header('Location: ' . get_url($url), TRUE, $header);
 	}
 }
+
+// обход массива и применение trim() для элементов
+function atrim($old_array) {
+	$new_array = array();
+	foreach ($old_array as $element) {
+		array_push($new_array, trim($element));
+	}
+	return $new_array;
+}

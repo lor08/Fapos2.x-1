@@ -400,7 +400,7 @@ Class BlogModule extends Module {
 
 		$markers['mainText'] = $announce;
 		$entity->setAdd_markers($markers);
-		$entity->setTags(explode(',', $entity->getTags()));
+		$entity->setTags(atrim(explode(',', $entity->getTags())));
 		
 		
 		$this->setCacheTag(array(

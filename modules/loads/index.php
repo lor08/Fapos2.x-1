@@ -162,7 +162,7 @@ Class LoadsModule extends Module {
 			$markers['category_url'] = get_url($this->getModuleURL('category/' . $entity->getCategory_id()));
 			$markers['profile_url'] = getProfileUrl($entity->getAuthor_id());
 			if ($entity->getTags())
-				$entity->setTags(explode(',', $entity->getTags()));
+				$entity->setTags(atrim(explode(',', $entity->getTags())));
 
 
 			//set users_id that are on this page
@@ -309,7 +309,7 @@ Class LoadsModule extends Module {
 			$markers['category_url'] = get_url($this->getModuleURL('category/' . $entity->getCategory_id()));
 			$markers['profile_url'] = getProfileUrl($entity->getAuthor_id());
 			if ($entity->getTags())
-				$entity->setTags(explode(',', $entity->getTags()));
+				$entity->setTags(atrim(explode(',', $entity->getTags())));
 
 
 			//set users_id that are on this page
@@ -451,7 +451,7 @@ Class LoadsModule extends Module {
 		$markers['main_text'] = $markers['mainText'];
 		$entity->setAdd_markers($markers);
 		if ($entity->getTags())
-			$entity->setTags(explode(',', $entity->getTags()));
+			$entity->setTags(atrim(explode(',', $entity->getTags())));
 
 
 		$this->setCacheTag(array(
@@ -590,7 +590,7 @@ Class LoadsModule extends Module {
 			$markers['category_url'] = get_url($this->getModuleURL('category/' . $entity->getCategory_id()));
 			$markers['profile_url'] = getProfileUrl($entity->getAuthor_id());
 			if ($entity->getTags())
-				$entity->setTags(explode(',', $entity->getTags()));
+				$entity->setTags(atrim(explode(',', $entity->getTags())));
 
 
 			//set users_id that are on this page
