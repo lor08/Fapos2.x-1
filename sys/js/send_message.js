@@ -716,23 +716,14 @@ function fpsWnd(name, title, content, params) {
 
 // Отправляет форму на сервер и открывыет окно со статусом выполненного действия
 function sendu(id, params) {
-    fpsWnd('fpsWin_'+id, 'Информация', '<img src="/sys/img/ajaxload.gif" alt="loading">', params)
-
-    // костыль, чтобы визуальный редактор успел отправить сформированное сообщение в textarea
+    fpsWnd('fpsWinSendu', 'Информация', '<img src="/sys/img/ajaxload.gif" alt="loading">', params)
     setTimeout(function(){
-        jQuery.ajax({
-            url:     $('#'+id).attr("action"),
-            type:     "POST",
-            dataType: "html",
-            data: jQuery("#"+id).serialize(), 
-            success: function(response) {
-                fpsWnd.content('fpsWin_'+id ,response);
-            },
-            error: function(response) {
-                fpsWnd.content('fpsWin_'+id ,"Ошибка при отправке формы");
-            }
-        });
+        $('#sendForm').ajaxSubmit({success: sendu_response});
     }, 1);
+    // костыль, чтобы визуальный редактор успел отправить сформированное сообщение в textarea
+}
+function sendu_response(responseText, statusText, xhr, $form)  {
+    fpsWnd.content('fpsWinSendu', responseText);
 }
 
 // Скрывает окно
