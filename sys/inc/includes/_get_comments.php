@@ -8,7 +8,7 @@ if (empty($html) && $commentsModel) {
 	// $commentsModel->bindModel('Users');
 
 	/* pages nav */
-	$total = $commentsModel->getTotal(array('cond' => array('entity_id' => $id)));
+	$total = $commentsModel->getTotal(array('cond' => array('entity_id' => $id, 'module' => $this->module)));
 	$per_page = intval(Config::read('comment_per_page', $this->module));
 	if ($per_page < 1) $per_page = 10;
     list($pages, $page) = pagination($total, $per_page,  $this->getModuleURL('view/' . $id));
@@ -20,9 +20,8 @@ if (empty($html) && $commentsModel) {
 		'page'  => $page,
 		'limit' => $per_page,
 		'order' => 'date ' . $order_way,
-		'module' => $this->module,
 	);
-	$comments = $commentsModel->getCollection(array('entity_id' => $id), $params);
+	$comments = $commentsModel->getCollection(array('entity_id' => $id, 'module' => $this->module), $params);
 	if ($comments) {
 		foreach ($comments as $comment) {
 			if ($comment) {
