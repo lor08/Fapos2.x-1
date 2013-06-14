@@ -1581,7 +1581,7 @@ Class LoadsModule extends Module {
 			$path = md5(uniqid(rand(), true)) . '-' . date("YmdHis", time()) . $ext;
 		// Перемещаем файл из временной директории сервера в директорию files
 		if (move_uploaded_file($file['tmp_name'], ROOT . $this->getFilesPath($path))) {
-			chmod(ROOT . $this->getFilesPath($path, 0644));
+			chmod(ROOT . $this->getFilesPath($path), 0644);
 		}
 
 		return $path;

@@ -66,7 +66,7 @@ class BlogEntity extends FpsEntity
 	{ 
 		$Register = Register::getInstance();
 		$attachClass = $Register['ModManager']->getModelNameFromModule('blogAttaches');
-		$commentsClass = $Register['ModManager']->getModelNameFromModule('blogComments');
+		$commentsClass = $Register['ModManager']->getModelNameFromModule('Comments');
 		$addContentClass = $Register['ModManager']->getModelNameFromModule('blogAddContent');
 		
 		$attachesModel = new $attachClass;

@@ -718,7 +718,24 @@ function fpsWnd(name, title, content, params) {
 function sendu(id, params) {
     fpsWnd('fpsWinSendu', 'Информация', '<img src="/sys/img/ajaxload.gif" alt="loading">', params)
     setTimeout(function(){
-        $('#sendForm').ajaxSubmit({success: sendu_response});
+        if ($('#'+id).attr("action")) {
+            // если форма то отправлять с помощью библиотеки
+            $('#sendForm').ajaxSubmit({success: sendu_response});
+        } else {
+            // иначе старым способом
+            jQuery.ajax({
+                url:     $('#'+id).attr("href"),
+                type:     "POST",
+                dataType: "html",
+                data: jQuery("#"+id).serialize(), 
+                success: function(response) {
+                    fpsWnd.content('fpsWinSendu', response);
+                },
+                error: function(response) {
+                    fpsWnd.content('fpsWinSendu', "Ошибка при отправке формы");
+                }
+            }); 
+        };
     }, 1);
     // костыль, чтобы визуальный редактор успел отправить сформированное сообщение в textarea
 }
