@@ -123,7 +123,6 @@ $language = array(
 	'Empty field' 					=> 'не заполненно поле',
 	'Material editing' 				=> 'Редактирование материала',
 	'On home' 						=> 'На Главной',
-	'Can not find this page' 		=> 'Такой страницы не существует',
 	'Very small query'	 			=> 'Запрос должен быть не короче %d символов',
 	'No results'		 			=> 'Результатов нет!',
 	'Material has been deleted' 		=> 'Материал удален',

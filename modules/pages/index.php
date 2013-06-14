@@ -49,18 +49,18 @@ Class PagesModule extends Module {
 			if (is_numeric($id)) {
 				$id = intval($id);
 				if ($id < 2)
-					return $this->showInfoMessageFull(__('Can not find this page'), $this->getModuleURL());
+					redirect('/error.php?ac=404');
 
 				$page = $this->Model->getById($id);
 				if (!$page)
-					return $this->showInfoMessageFull(__('Can not find this page'), '/');
+					redirect('/error.php?ac=404');
 			} else {
 				if (!preg_match('#^[\da-z_\-.]+$#i', $id))
-					return $this->showInfoMessageFull(__('Can not find this page'), $this->getModuleURL());
+					redirect('/error.php?ac=404');
 
 				$page = $this->Model->getByUrl($id);
 				if (!$page)
-					return $this->showInfoMessageFull(__('Can not find this page'), $this->getModuleURL());
+					redirect('/error.php?ac=404');
 				$id = $page->getId();
 			}
 
