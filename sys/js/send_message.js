@@ -718,18 +718,21 @@ function fpsWnd(name, title, content, params) {
 function sendu(id, params) {
     fpsWnd('fpsWin_'+id, 'Информация', '<img src="/sys/img/ajaxload.gif" alt="loading">', params)
 
-    jQuery.ajax({
-        url:     $('#'+id).attr("action"),
-        type:     "POST",
-        dataType: "html",
-        data: jQuery("#"+id).serialize(), 
-        success: function(response) {
-            fpsWnd.content('fpsWin_'+id ,response);
-        },
-        error: function(response) {
-            fpsWnd.content('fpsWin_'+id ,"Ошибка при отправке формы");
-        }
-    });
+    // костыль, чтобы визуальный редактор успел отправить сформированное сообщение в textarea
+    setTimeout(function(){
+        jQuery.ajax({
+            url:     $('#'+id).attr("action"),
+            type:     "POST",
+            dataType: "html",
+            data: jQuery("#"+id).serialize(), 
+            success: function(response) {
+                fpsWnd.content('fpsWin_'+id ,response);
+            },
+            error: function(response) {
+                fpsWnd.content('fpsWin_'+id ,"Ошибка при отправке формы");
+            }
+        });
+    }, 1);
 }
 
 // Скрывает окно
