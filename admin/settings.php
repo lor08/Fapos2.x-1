@@ -53,6 +53,24 @@ if (!empty($templates)) {
 
 
 
+// Prepare langs select list
+$sourse = glob(ROOT . '/sys/settings/languages/*');
+if (!empty($sourse) && is_array($sourse)) {
+	$langs = array();
+	foreach ($sourse as $file) {
+		$langs[] = explode('.', basename($file))[0];
+	}
+}
+
+$langSelect = array();
+if (!empty($langs)) {
+	foreach ($langs as $value) {
+		$langSelect[$value] = ucfirst($value);
+	}
+}
+
+
+
 // Prepare fonts select list
 $fonts = glob(ROOT . '/sys/fonts/*.ttf');
 $fontSelect = array();

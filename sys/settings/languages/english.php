@@ -35,7 +35,7 @@ $language = array(
 	'To last' 						=> 'К последнему...',
 	'Post author' 					=> '<br />Сообщение от: ',
 	'To profile' 					=> 'К профайлу',
-	'Are you sure'				    => 'Are you sure?',
+	'Are you sure'				    => 'Вы уверены?',
 	'Can not find forum' 			=> 'Форум с таким ID не найден',
 	'New topic' 					=> 'Начать новую тему',
 	'No topics' 					=> '<h4>Тут пока нет тем :(</h4>',
@@ -51,8 +51,8 @@ $language = array(
 	'No new posts' 					=> 'Нет новых сообщений',
 	'Topic not found' 				=> 'Запрошенная тема не найдена',
 	'Answer' 						=> 'Ответить',
-	'Online' 						=> '<img src="/template/' . getTemplateName() . '/img/online.png" title="online" alt="online" />',
-	'Offline' 						=> '<img src="/template/' . getTemplateName() . '/img/offline.png" title="offline" alt="offline" />',
+	'Online' 						=> '<img src="/template/%s/img/online.png" title="online" alt="online" />',
+	'Offline' 						=> '<img src="/template/%s/img/offline.png" title="offline" alt="offline" />',
 	'Banned' 						=> '[Заблокирован]',
 	'Attachment' 					=> 'Прикрепление',
 	'Open file' 					=> 'Открыть файл',
@@ -89,7 +89,7 @@ $language = array(
 	'Theme is open' 				=> 'Тема открыта',
 	'Can not write in a closed theme' => 'Вы не можете добавить сообщение - тема заблокирована.',
 	'Dont have permission to write post' => 'У вас недостаточно прав для того что бы писать',
-	'Guests cant write posts' 		=> '<a href="' . get_url('/users/add_form/') . '">Зарегистрируйтесь</a> или <a href="' . get_url('/users/login_form/') . '">авторизуйтесь</a> что бы писать',
+	'Guests cant write posts' 		=> '<a href="%s">Зарегистрируйтесь</a> или <a href="%s">авторизуйтесь</a> что бы писать',
 	'Added' 						=> 'Добавлено',
 	'Your message has been added'	=> 'Ваше сообщение успешно добавлено',
 	'Edit message' 					=> 'Редактирование сообщения',
@@ -386,7 +386,8 @@ $language = array(
 	'Very small "poll_question"'    => 'вопрос для голосования слишком короткий',
 	'Few "poll_question"'           => 'должно быть указано не менее 2 возможных ответов',
 	'Many "poll_question"'          => 'должно быть указано не более 20 возможных ответов',
-	
+	'Unknown error'                 => 'Неизвестная ошибка',
+
 	
 	// Templates name
 	'Add form'  					=> 'Форма добавления',

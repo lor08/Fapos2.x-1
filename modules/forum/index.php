@@ -822,10 +822,10 @@ Class ForumModule extends Module {
 
 						// Если автор сообщения сейчас "на сайте"
 						if (checkUserOnline($post->getId_author())) {
-							$postAuthor->setStatus_on(__('Online'));
+							$postAuthor->setStatus_on(sprintf(__('Online'), getTemplateName()));
 							$postAuthor->setStatus_line('Online');
 						} else {
-							$postAuthor->setStatus_on(__('Offline'));
+							$postAuthor->setStatus_on(sprintf(__('Offline'), getTemplateName()));
 							$postAuthor->setStatus_line('Offline');
 						}
 
@@ -2253,7 +2253,7 @@ Class ForumModule extends Module {
 			if (isset($_SESSION['user']))
 				$html = '<div class="not-auth-mess">' . __('Dont have permission to write post') . '</div>';
 			else
-				$html = '<div class="not-auth-mess">' . __('Guests cant write posts') . '</div>';
+				$html = '<div class="not-auth-mess">' . sprintf(__('Guests cant write posts'), get_url('/users/add_form/'), get_url('/users/login_form/')) . '</div>';
 		}
 
 		return $html;

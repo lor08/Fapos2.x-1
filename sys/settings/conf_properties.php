@@ -61,6 +61,12 @@ $settingsInfo = array(
 			),
 			'input_sufix' => '&nbsp;<img id="screenshot" style="border:1px solid #A3BAE9;" width="200px" height="200px" src="' . getImgPath($config['template']) . '" />',
 		),
+		'language' => array(
+			'type' => 'select',
+			'title' => 'Язык сайта',
+			'description' => '',
+			'options' => $langSelect,
+		),
 		'site_title' => array(
 			'type' => 'text',
 			'title' => 'Название сайта',
