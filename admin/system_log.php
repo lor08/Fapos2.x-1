@@ -31,7 +31,7 @@ $ACL = $Register['ACL'];
 /* current page and cnt pages */
 $log_files = glob(ROOT . '/sys/logs/' . $Log->logDir . '/*.dat');
 $total_files = (!empty($log_files)) ? count($log_files) : 0;
-list($pages, $page) = pagination($total_files, 1, '/admin/system_log.php?');
+list($pages, $page) = pagination($total_files, 1, '/admin/system_log.php');
 
 
 
