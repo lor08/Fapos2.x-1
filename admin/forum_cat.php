@@ -486,7 +486,11 @@ function index(&$page_title) {
 					$issubforum = (!empty($cat['parent_forum_id'])) 
 					? '&nbsp;<span style="color:#0373FE;">' . __('Under forum with ID') . ' ' . $cat['parent_forum_id'] . '</span>' : '';
 					
-					
+					if (is_file(ROOT.'/sys/img/forum_icon_'.$cat['id'].'.jpg')) {
+						$img = get_url('/sys/img/forum_icon_'.$cat['id'].'.jpg');
+					} else {
+						$img = get_url('/template/'.getTemplateName().'/img/guest.png');
+					}
 					
 					$html .= '<div class="level2">
 								<div class="number">' . $cat['id'] . '</div>
