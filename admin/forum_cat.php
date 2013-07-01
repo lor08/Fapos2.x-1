@@ -494,6 +494,7 @@ function index(&$page_title) {
 					
 					$html .= '<div class="level2">
 								<div class="number">' . $cat['id'] . '</div>
+								<div class="title"><img src="'.$img.'"></div>
 								<div class="title">' . h($cat['title']) . ' ' . $issubforum . '</div>
 								<div class="buttons">
 									<a title="edit" href="javascript://" onClick="openPopup(\'editForum' . $cat['id'] . '\')" class="edit"></a>
