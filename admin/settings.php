@@ -58,7 +58,10 @@ $sourse = glob(ROOT . '/sys/settings/languages/*');
 if (!empty($sourse) && is_array($sourse)) {
 	$langs = array();
 	foreach ($sourse as $file) {
-		$langs[] = explode('.', basename($file))[0];
+		$q = explode('.', basename($file));
+		if (isset($q[0])) {
+			$langs[] = $q[0];
+		}
 	}
 }
 

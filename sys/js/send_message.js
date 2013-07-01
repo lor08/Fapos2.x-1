@@ -720,7 +720,7 @@ function sendu(id, params) {
     setTimeout(function(){
         if ($('#'+id).attr("action")) {
             // если форма то отправлять с помощью библиотеки
-            $('#sendForm').ajaxSubmit({success: sendu_response});
+            $('#'+id).ajaxSubmit({success: sendu_response});
         } else {
             // иначе старым способом
             jQuery.ajax({
