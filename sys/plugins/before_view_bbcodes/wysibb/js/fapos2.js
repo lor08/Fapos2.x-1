@@ -77,7 +77,7 @@ function quoteSelection(name) {
 	l_no_text_selected = "Выделите текст на странице и попробуйте еще раз";
 	
 	if (selection) {
-		$('#editor').execCommand('quote',{author:name,seltext:selection});
+		$('#editor').insertAtCursor('<div class="bbQuoteBlock"><div class="bbQuoteName"><b>'+name+' пишет:</b></div><div class="quoteMessage">'+selection+'</div></div>', false);
 		selection = '';
 		return; 
 	} else { 
