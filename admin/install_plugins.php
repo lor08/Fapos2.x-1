@@ -208,7 +208,7 @@ function download($url) {
     $headers = get_headers($url,1);
     $a = $headers['Content-Disposition'];
     preg_match('#filename="(.*)"#iU', $a, $matches);
-    $filename = $matches[1];
+    $filename = (isset($matches[1])) ? $matches[1] : basename($url);
     if (copy($url, ROOT . '/sys/tmp/'.$filename)) {
         return $filename;
     } else {
