@@ -814,7 +814,7 @@ function pm_type_redirect($type) {
 			default:
 				$url = '/users/in_msg_box/';
 		}
-		header('Location: ' . get_url($url), TRUE, $header);
+		header('Location: ' . get_url($url), TRUE, 301);
 	}
 }
 
