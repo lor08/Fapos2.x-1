@@ -10,7 +10,7 @@
 <table style="background:#F7F7F7; width:175px; margin:1px 1px 1px 1px; border: 1px solid #848484;font-family: Tahoma, Verdana, sans-serif; overflow:auto; -moz-border-radius: 3px; border-radius: 3px; -webkit-border-radius: 3px;"> 
 <tr>
 	<td><b><a href="{{ www_root }}/users/info/{{ message.user_id }}" target="_blank"><img src="{{ template_path }}/img/mprofile.png"></a> <a href="javascript:void('Ответить на сообщение')" onclick="parent.window.document.getElementById('chatModule').value+='[b]{{ message.name }}[/b], ';return false;" style="color:#9DC13F; font-size:13px; font-weight:bold; text-decoration: none;">{{ message.name }}</a></td>
-	<td valign="top" align="right"><span style="font-size:9px;color:#525252;vertical-align:top;">{{ message.date }}&nbsp;{{ message.time }}</span>{{ message.ip }}</td>
+	<td valign="top" align="right"><span style="font-size:9px;color:#525252;vertical-align:top;">{{ message.date }}&nbsp;{{ message.time }}</span>{{ message.ip }} {% if message.del %}<a href="{{ message.del }}">X</a>{% endif %}</td>
 </tr>
 <tr>
 	<td style="font-size:11px;color:#525252;" colspan="2">{{ message.message }}</td>

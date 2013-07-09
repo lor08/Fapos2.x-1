@@ -77,8 +77,10 @@ class ChatModule extends Module {
 					/* view ip adres if admin */
 					if ($this->ACL->turn(array($this->module, 'delete_materials'), false)) {
 						$record['ip'] = '<a target="_blank" href="https://apps.db.ripe.net/search/query.html?searchtext=' . $record['ip'] . '" class="fps-ip" title="IP: ' . $record['ip'] . '"></a>';
+						$record['del'] = get_url($this->getModuleURL('del/'.$key));
 					} else {
 						$record['ip'] = '';
+						$record['del'] = '';
 					}
 				}
 
@@ -231,5 +233,27 @@ class ChatModule extends Module {
 		return $source;
 	}
 
+
+	public function del($id = null) {
+		$this->ACL->turn(array($this->module, 'delete_materials'));
+
+		$id = intval($id);
+		if ($id < 0) return;
+
+		$chatDataPath = ROOT . $this->getTmpPath('messages.dat');
+		if (file_exists($chatDataPath)) {
+			$data = unserialize(file_get_contents($chatDataPath));
+			$data = array_reverse($data);
+			if (!empty($data) and !empty($data[$id])) {
+				unset($data[$id]);
+
+				$data = array_reverse($data);
+				$file = fopen($chatDataPath, 'w');
+				fwrite($file, serialize($data));
+				fclose($file);
+			}
+		}
+		redirect(get_url($this->getModuleURL('view_messages/')));
+	}
 }
 
