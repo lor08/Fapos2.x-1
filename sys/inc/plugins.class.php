@@ -39,8 +39,14 @@ class Plugins {
 			foreach ($plugins as $plugin) {
 				if (!is_dir($plugin)) continue;
 				
-				$pl_conf = file_get_contents($plugin . '/config.dat');
-				$pl_conf = unserialize($pl_conf);
+				if (file_exists($plugin . '/config.json')) {
+					$pl_conf = file_get_contents($plugin . '/config.json');
+					$pl_conf = json_decode($pl_conf, 1);
+				} else {
+					// для поддержки старого конфига плагинов
+					$pl_conf = file_get_contents($plugin . '/config.dat');
+					$pl_conf = unserialize($pl_conf);
+				}
 				if (empty($pl_conf['active'])) continue;
 				
 				

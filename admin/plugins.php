@@ -98,9 +98,17 @@ function index(&$page_title) {
 		$dir = strrchr($result, '/');
 		$dir = trim($dir, '/');
 		
-		if (file_exists($result . '/config.dat')) {
-			$params = unserialize(file_get_contents($result . '/config.dat'));
+		if (file_exists($result . '/config.json')) {
+			$params = file_get_contents($result . '/config.json');
+			$params = json_decode($params, 1);
+		} elseif (file_exists($result . '/config.dat')) {
+			// для поддержки старых плагинов
+			$params = file_get_contents($result . '/config.dat');
+			$params = unserialize($params);
+		} else {
+			continue;
 		}
+
 		if (empty($params)) $params = array();
 		
 		$name = (!empty($params['title'])) ? h($params['title']) : 'Unknown';
@@ -162,13 +170,45 @@ function editPlugin(&$page_title) {
 function onPlugin() {
 		if (empty($_GET['dir'])) redirect('/');
 		$dir = $_GET['dir'];
-	
 		$pach = ROOT . '/sys/plugins/' . $dir;
-		$conf_pach = $pach . '/config.dat';
-		$history = (file_exists($conf_pach)) ? unserialize(file_get_contents($conf_pach)) : array();
-		
-		$history['active'] = 1;
-		file_put_contents($conf_pach, serialize($history));
+	
+		if (file_exists($pach . '/config.json')) {
+			$conf_pach = $pach . '/config.json';
+			$config = json_decode(file_get_contents($conf_pach), 1);
+		} else {
+			// для поддержки старого конфига плагинов
+			$conf_pach = $pach . '/config.dat';
+			$config = unserialize(file_get_contents($conf_pach));
+		}
+		$config['active'] = 1;
+
+		if (!(isset($config['intalled']) and $config['intalled'] == 1)) {
+			include_once $pach . '/index.php';
+			$pl_obj = new $config['className'](array());
+			if (method_exists($pl_obj, 'install')) {
+				$response = $pl_obj->install();
+				$config['active'] = 0;
+				if (is_array($response) and isset($response['status'])) {
+					if ($response['status'] == True) {
+						$config['installed'] = 1;
+						$config['active'] = 1;
+					}
+
+					if (isset($response['message'])) {
+						$html = '<div class="warning"><a style="color: #96C703;" href="/admin/plugins.php">&#171; Вернуться к списку плагинов</a><hr>'.$response['message'].'</div>';
+					}
+				}
+			}
+		}
+
+		if (file_exists($pach . '/config.json')) {
+			file_put_contents($conf_pach, json_encode($config));
+		} else {
+			file_put_contents($conf_pach, serialize($config));
+		}
+
+		if (isset($html)) return $html;
+
 		redirect('../admin/plugins.php');
 }
 
@@ -177,13 +217,21 @@ function onPlugin() {
 function offPlugin() {
 		if (empty($_GET['dir'])) redirect('/');
 		$dir = $_GET['dir'];
-	
 		$pach = ROOT . '/sys/plugins/' . $dir;
-		$conf_pach = $pach . '/config.dat';
-		$history = (file_exists($conf_pach)) ? unserialize(file_get_contents($conf_pach)) : array();
-		
-		$history['active'] = 0;
-		file_put_contents($conf_pach, serialize($history));
+
+		if (file_exists($pach . '/config.json')) {
+			$conf_pach = $pach . '/config.json';
+			$config = json_decode(file_get_contents($conf_pach), 1);
+			$config['active'] = 0;
+			file_put_contents($conf_pach, json_encode($config));
+		} elseif (file_exists($pach . '/config.dat')) {
+			// для поддержки старого конфига плагинов
+			$conf_pach = $pach . '/config.dat';
+			$config = unserialize(file_get_contents($conf_pach));
+			$config['active'] = 0;
+			file_put_contents($conf_pach, serialize($config));
+		}
+
 		redirect('../admin/plugins.php');
 }
 
