@@ -5,7 +5,7 @@
 | @Version:      1.0                           |
 | @Project:      CMS                           |
 | @package       CMS Fapos                     |
-| @subpackege    Stat Model                    |
+| @subpackege    Question Model                    |
 | @copyright     ©Andrey Brykin 2010-2012      |
 | @last mod      2012/04/25                    |
 |----------------------------------------------|
@@ -24,9 +24,9 @@
 /**
  *
  */
-class StatModel extends FpsModel
+class QuestionModel extends FpsModel
 {
-	public $Table = 'stat';
+	public $Table = 'question';
 
     protected $RelatedEntities = array(
         'author' => array(
@@ -35,17 +35,17 @@ class StatModel extends FpsModel
             'foreignKey' => 'author_id',
       	),
         'category' => array(
-            'model' => 'StatSections',
+            'model' => 'QuestionSections',
             'type' => 'has_one',
             'foreignKey' => 'category_id',
         ),
         'comments_' => array(
-            'model' => 'StatComments',
+            'model' => 'QuestionComments',
             'type' => 'has_many',
             'foreignKey' => 'entity_id',
         ),
         'attaches' => array(
-            'model' => 'StatAttaches',
+            'model' => 'QuestionAttaches',
             'type' => 'has_many',
             'foreignKey' => 'entity_id',
         ),
@@ -60,7 +60,7 @@ class StatModel extends FpsModel
 					array(
 						'text' => 'Статей',
 						'count' => $result[0]['cnt'],
-						'url' => get_url('/stat/user/' . $user_id),
+						'url' => get_url('/question/user/' . $user_id),
 					),
 				);
 				return $res;

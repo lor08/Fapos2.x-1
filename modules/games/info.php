@@ -2,13 +2,13 @@
 
 
 $menuInfo = array(
-	'url' => 'settings.php?m=stat',
-	'ankor' => 'Статьи',
+	'url' => 'settings.php?m=games',
+	'ankor' => 'Игры',
 	'sub' => array(
-		'settings.php?m=stat' => 'Настройки',
-		'design.php?m=stat' => 'Дизайн',
-		'category.php?mod=stat' => 'Управление категориями',
-		'additional_fields.php?m=stat' => 'Дополнительные поля',
+		'settings.php?m=games' => 'Настройки',
+		'design.php?m=games' => 'Дизайн',
+		'category.php?mod=games' => 'Управление категориями',
+		'additional_fields.php?m=games' => 'Дополнительные поля',
 	),
 );
 

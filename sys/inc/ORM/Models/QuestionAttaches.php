@@ -5,7 +5,7 @@
 | @Version:      1.0                           |
 | @Project:      CMS                           |
 | @package       CMS Fapos                     |
-| @subpackege    StatAttaches Model            |
+| @subpackege    QuestionAttaches Model            |
 | @copyright     ©Andrey Brykin 2010-2012      |
 | @last mod      2012/04/25                    |
 |----------------------------------------------|
@@ -24,10 +24,10 @@
 /**
  *
  */
-class StatAttachesModel extends FpsModel
+class QuestionAttachesModel extends FpsModel
 {
 	
-    public $Table = 'stat_attaches';
+    public $Table = 'question_attaches';
 
 	
 	

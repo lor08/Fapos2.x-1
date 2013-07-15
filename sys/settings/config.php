@@ -94,6 +94,46 @@ $set = array (
     array (
     ),
   ),
+  'question' => 
+  array (
+    'title' => 'Каталог статей',
+    'description' => 'Только интересные статьи',
+    'max_lenght' => '10000',
+    'per_page' => '7',
+    'announce_lenght' => '1000',
+    'active' => '1',
+    'comment_active' => 1,
+    'comment_per_page' => '30',
+    'comment_lenght' => '500',
+    'max_attaches' => 10,
+    'max_attaches_size' => 5000000,
+    'img_size_x' => 150,
+    'img_size_y' => 200,
+    'use_preview' => 1,
+    'fields' => 
+    array (
+    ),
+  ),
+  'games' => 
+  array (
+    'title' => 'Каталог статей',
+    'description' => 'Только интересные статьи',
+    'max_lenght' => '10000',
+    'per_page' => '7',
+    'announce_lenght' => '1000',
+    'active' => '1',
+    'comment_active' => 1,
+    'comment_per_page' => '30',
+    'comment_lenght' => '500',
+    'max_attaches' => 10,
+    'max_attaches_size' => 5000000,
+    'img_size_x' => 150,
+    'img_size_y' => 200,
+    'use_preview' => 1,
+    'fields' => 
+    array (
+    ),
+  ),
   'pages' => 
   array (
     'active' => 1,

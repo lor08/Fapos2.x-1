@@ -5,7 +5,7 @@
 | @Version:      1.0                           |
 | @Project:      CMS                           |
 | @package       CMS Fapos                     |
-| @subpackege    Stat Model                    |
+| @subpackege    Games Model                    |
 | @copyright     ©Andrey Brykin 2010-2012      |
 | @last mod      2012/04/25                    |
 |----------------------------------------------|
@@ -24,9 +24,9 @@
 /**
  *
  */
-class StatModel extends FpsModel
+class GamesModel extends FpsModel
 {
-	public $Table = 'stat';
+	public $Table = 'games';
 
     protected $RelatedEntities = array(
         'author' => array(
@@ -35,17 +35,17 @@ class StatModel extends FpsModel
             'foreignKey' => 'author_id',
       	),
         'category' => array(
-            'model' => 'StatSections',
+            'model' => 'GamesSections',
             'type' => 'has_one',
             'foreignKey' => 'category_id',
         ),
         'comments_' => array(
-            'model' => 'StatComments',
+            'model' => 'GamesComments',
             'type' => 'has_many',
             'foreignKey' => 'entity_id',
         ),
         'attaches' => array(
-            'model' => 'StatAttaches',
+            'model' => 'GamesAttaches',
             'type' => 'has_many',
             'foreignKey' => 'entity_id',
         ),
@@ -58,9 +58,9 @@ class StatModel extends FpsModel
 			if (is_array($result) && count($result) > 0 && $result[0]['cnt'] > 0) {
 				$res = array(
 					array(
-						'text' => 'Статей',
+						'text' => 'Игр',
 						'count' => $result[0]['cnt'],
-						'url' => get_url('/stat/user/' . $user_id),
+						'url' => get_url('/games/user/' . $user_id),
 					),
 				);
 				return $res;

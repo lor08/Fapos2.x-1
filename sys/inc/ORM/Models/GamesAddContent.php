@@ -5,7 +5,7 @@
 | @Version:      1.0                           |
 | @Project:      CMS                           |
 | @package       CMS Fapos                     |
-| @subpackege    StatAddContent Model          |
+| @subpackege    GamesAddContent Model          |
 | @copyright     ©Andrey Brykin 2010-2012      |
 | @last mod      2012/04/25                    |
 |----------------------------------------------|
@@ -24,10 +24,10 @@
 /**
  *
  */
-class StatAddContentModel extends FpsModel
+class GamesAddContentModel extends FpsModel
 {
 	
-    public $Table = 'stat_add_content';
+    public $Table = 'games_add_content';
 
 
 }

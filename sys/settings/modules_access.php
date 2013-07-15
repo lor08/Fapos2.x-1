@@ -4,18 +4,24 @@ $FpsAllowModules = array(
 		'news', 
 		'stat', 
 		'users', 
-		'loads'
+		'loads',
+		'question',
+		'games'
 	),
 	'addFieldsTitles' => array(
 		'news' => 'Новости', 
 		'stat' => 'Статьи', 
 		'users' => 'Пользователи', 
-		'loads' => 'Файлы'
+		'loads' => 'Файлы',
+		'question' => 'Вопросы',
+		'games' => 'Игры'
 	),
 	'categories' => array(
 		'news', 
 		'loads', 
 		'stat', 
-		'foto'
+		'foto',
+		'question',
+		'games'
 	),
 );

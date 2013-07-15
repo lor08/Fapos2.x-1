@@ -26,22 +26,22 @@
 /**
  *
  */
-Class StatModule extends Module {
+Class GamesModule extends Module {
 
 	/**
 	 * @module_title  title of module
 	 */
-	public $module_title = 'Статьи';
+	public $module_title = 'Игры';
 
 	/**
 	 * @template  layout for module
 	 */
-	public $template = 'stat';
+	public $template = 'games';
 
 	/**
 	 * @module module indentifier
 	 */
-	public $module = 'stat';
+	public $module = 'games';
 
 	/**
 	 * default action ( show main page )

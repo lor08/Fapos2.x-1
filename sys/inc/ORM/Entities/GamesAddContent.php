@@ -5,7 +5,7 @@
 | @Version:      1.3                           |
 | @Project:      CMS                           |
 | @package       CMS Fapos                     |
-| @subpackege    StatAddContent Entity         |
+| @subpackege    GamesAddContent Entity         |
 | @copyright     ©Andrey Brykin 2010-2013      |
 | @last mod      2013/04/03                    |
 |----------------------------------------------|
@@ -24,7 +24,7 @@
 /**
  *
  */
-class StatAddContentEntity extends FpsEntity
+class GamesAddContentEntity extends FpsEntity
 {
 	
 	protected $id;
@@ -43,7 +43,7 @@ class StatAddContentEntity extends FpsEntity
 		);
 		if ($this->id) $params['id'] = $this->id;
 		$Register = Register::getInstance();
-		return ($Register['DB']->save('stat_add_content', $params));
+		return ($Register['DB']->save('games_add_content', $params));
 	}
 	
 	
@@ -51,7 +51,7 @@ class StatAddContentEntity extends FpsEntity
 	public function delete()
 	{
 		$Register = Register::getInstance();
-		$Register['DB']->delete('stat_add_content', array('id' => $this->id));
+		$Register['DB']->delete('games_add_content', array('id' => $this->id));
 	}
 
 }

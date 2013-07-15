@@ -5,7 +5,7 @@
 | @Version:      1.0                           |
 | @Project:      CMS                           |
 | @package       CMS Fapos                     |
-| @subpackege    StatAddFields Model           |
+| @subpackege    QuestionAddFields Model           |
 | @copyright     ©Andrey Brykin 2010-2012      |
 | @last mod      2012/04/25                    |
 |----------------------------------------------|
@@ -24,15 +24,15 @@
 /**
  *
  */
-class StatAddFieldsModel extends FpsModel
+class QuestionAddFieldsModel extends FpsModel
 {
 	
-    public $Table = 'stat_add_fields';
+    public $Table = 'question_add_fields';
 
 	
     protected $RelatedEntities = array(
         'content' => array(
-            'model' => 'StatAddContent',
+            'model' => 'QuestionAddContent',
             'type' => 'has_many',
             'foreignKey' => 'field_id',
       	),

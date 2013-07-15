@@ -2,13 +2,13 @@
 
 
 $menuInfo = array(
-	'url' => 'settings.php?m=stat',
-	'ankor' => 'Статьи',
+	'url' => 'settings.php?m=question',
+	'ankor' => 'Вопросы',
 	'sub' => array(
-		'settings.php?m=stat' => 'Настройки',
-		'design.php?m=stat' => 'Дизайн',
-		'category.php?mod=stat' => 'Управление категориями',
-		'additional_fields.php?m=stat' => 'Дополнительные поля',
+		'settings.php?m=question' => 'Настройки',
+		'design.php?m=question' => 'Дизайн',
+		'category.php?mod=question' => 'Управление категориями',
+		'additional_fields.php?m=question' => 'Дополнительные поля',
 	),
 );
 

@@ -5,7 +5,7 @@
 | @Version:      1.2                           |
 | @Project:      CMS                           |
 | @package       CMS Fapos                     |
-| @subpackege    Stat Entity                   |
+| @subpackege    Question Entity                   |
 | @copyright     ©Andrey Brykin 2010-2013      |
 | @last mod      2013/04/03                    |
 |----------------------------------------------|
@@ -24,7 +24,7 @@
 /**
  *
  */
-class StatEntity extends FpsEntity
+class QuestionEntity extends FpsEntity
 {
 	
 	protected $id;
@@ -74,7 +74,7 @@ class StatEntity extends FpsEntity
 		);
 		if ($this->id) $params['id'] = $this->id;
 		$Register = Register::getInstance();
-		return ($Register['DB']->save('stat', $params));
+		return ($Register['DB']->save('question', $params));
 	}
 	
 	
@@ -83,16 +83,16 @@ class StatEntity extends FpsEntity
 	{ 
 		$Register = Register::getInstance();
 		
-		$attachesModel = $Register['ModManager']->getModelInstance('StatAttaches');
+		$attachesModel = $Register['ModManager']->getModelInstance('QuestionAttaches');
 		$commentsModel = $Register['ModManager']->getModelInstance('Comments');
-		$addContentModel = $Register['ModManager']->getModelInstance('StatAddContent');
+		$addContentModel = $Register['ModManager']->getModelInstance('QuestionAddContent');
 		
 		$attachesModel->deleteByParentId($this->id);
 		$commentsModel->deleteByParentId($this->id);
 		$addContentModel->deleteByParentId($this->id);
 		
 
-		$Register['DB']->delete('stat', array('id' => $this->id));
+		$Register['DB']->delete('question', array('id' => $this->id));
 	}
 
 
@@ -191,10 +191,10 @@ class StatEntity extends FpsEntity
         if (!$this->checkProperty($this->category)) {
 			if (!$this->getCategory_id()) {
                 $Register = Register::getInstance();
-				$this->category = $Register['ModManager']->getEntityInstance('StatSections');
+				$this->category = $Register['ModManager']->getEntityInstance('QuestionSections');
 			} else {
                 $Register = Register::getInstance();
-				$catsModel = $Register['ModManager']->getModelInstance('StatSections');
+				$catsModel = $Register['ModManager']->getModelInstance('QuestionSections');
 				$this->category = $catsModel->getById($this->category_id);
 				// $Model = new StatModel('stat');
 				// $this->category = $Model->getCategoryByEntity($this);  // TODO (function is not exists)

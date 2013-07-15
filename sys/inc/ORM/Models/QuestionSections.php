@@ -5,7 +5,7 @@
 | @Version:      1.0                           |
 | @Project:      CMS                           |
 | @package       CMS Fapos                     |
-| @subpackege    Stat Sections Model           |
+| @subpackege    Question Sections Model           |
 | @copyright     ©Andrey Brykin 2010-2012      |
 | @last mod      2012/04/25                    |
 |----------------------------------------------|
@@ -24,10 +24,10 @@
 /**
  *
  */
-class StatSectionsModel extends FpsModel
+class QuestionSectionsModel extends FpsModel
 {
 	
-    public $Table = 'stat_sections';
+    public $Table = 'question_sections';
 	
 
 

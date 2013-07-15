@@ -195,6 +195,204 @@ $acl_rules = array (
       3 => 4,
     ),
   ),
+
+  'question' => 
+  array (
+    'view_list' => 
+    array (
+      0 => 1,
+      1 => 2,
+      2 => 3,
+      3 => 4,
+      4 => 0,
+    ),
+    'view_materials' => 
+    array (
+      0 => 1,
+      1 => 2,
+      2 => 3,
+      3 => 4,
+      4 => 0,
+    ),
+    'add_materials' => 
+    array (
+      0 => 1,
+      1 => 2,
+      3 => 4,
+      4 => 3,
+    ),
+    'need_check_materials' => 
+    array (
+      0 => 0,
+      1 => 1,
+      2 => 2,
+    ),
+    'edit_mine_materials' => 
+    array (
+      2 => 3,
+      3 => 4,
+    ),
+    'edit_materials' => 
+    array (
+      2 => 3,
+      3 => 4,
+    ),
+    'delete_mine_materials' => 
+    array (
+      2 => 3,
+      3 => 4,
+    ),
+    'delete_materials' => 
+    array (
+      2 => 3,
+      3 => 4,
+    ),
+    'up_materials' => 
+    array (
+      2 => 3,
+      3 => 4,
+    ),
+    'on_home' => 
+    array (
+      2 => 3,
+      3 => 4,
+    ),
+    'view_comments' => 
+    array (
+      2 => 3,
+      3 => 4,
+      4 => 1,
+      5 => 2,
+      6 => 0,
+    ),
+    'add_comments' => 
+    array (
+      2 => 3,
+      3 => 4,
+      4 => 1,
+      5 => 2,
+      6 => 0,
+    ),
+    'edit_comments' => 
+    array (
+      2 => 3,
+      3 => 4,
+    ),
+    'delete_comments' => 
+    array (
+      2 => 3,
+      3 => 4,
+    ),
+    'hide_material' => 
+    array (
+      2 => 3,
+      3 => 4,
+    ),
+    'record_comments_management' => 
+    array (
+      2 => 3,
+      3 => 4,
+    ),
+  ),
+  'games' => 
+  array (
+    'view_list' => 
+    array (
+      0 => 1,
+      1 => 2,
+      2 => 3,
+      3 => 4,
+      4 => 0,
+    ),
+    'view_materials' => 
+    array (
+      0 => 1,
+      1 => 2,
+      2 => 3,
+      3 => 4,
+      4 => 0,
+    ),
+    'add_materials' => 
+    array (
+      0 => 1,
+      1 => 2,
+      3 => 4,
+      4 => 3,
+    ),
+    'need_check_materials' => 
+    array (
+      0 => 0,
+      1 => 1,
+      2 => 2,
+    ),
+    'edit_mine_materials' => 
+    array (
+      2 => 3,
+      3 => 4,
+    ),
+    'edit_materials' => 
+    array (
+      2 => 3,
+      3 => 4,
+    ),
+    'delete_mine_materials' => 
+    array (
+      2 => 3,
+      3 => 4,
+    ),
+    'delete_materials' => 
+    array (
+      2 => 3,
+      3 => 4,
+    ),
+    'up_materials' => 
+    array (
+      2 => 3,
+      3 => 4,
+    ),
+    'on_home' => 
+    array (
+      2 => 3,
+      3 => 4,
+    ),
+    'view_comments' => 
+    array (
+      2 => 3,
+      3 => 4,
+      4 => 1,
+      5 => 2,
+      6 => 0,
+    ),
+    'add_comments' => 
+    array (
+      2 => 3,
+      3 => 4,
+      4 => 1,
+      5 => 2,
+      6 => 0,
+    ),
+    'edit_comments' => 
+    array (
+      2 => 3,
+      3 => 4,
+    ),
+    'delete_comments' => 
+    array (
+      2 => 3,
+      3 => 4,
+    ),
+    'hide_material' => 
+    array (
+      2 => 3,
+      3 => 4,
+    ),
+    'record_comments_management' => 
+    array (
+      2 => 3,
+      3 => 4,
+    ),
+  ),
+
   'loads' => 
   array (
     'view_list' => 

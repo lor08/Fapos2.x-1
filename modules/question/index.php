@@ -26,22 +26,22 @@
 /**
  *
  */
-Class StatModule extends Module {
+Class QuestionModule extends Module {
 
 	/**
 	 * @module_title  title of module
 	 */
-	public $module_title = 'Статьи';
+	public $module_title = 'Вопросы';
 
 	/**
 	 * @template  layout for module
 	 */
-	public $template = 'stat';
+	public $template = 'question';
 
 	/**
 	 * @module module indentifier
 	 */
-	public $module = 'stat';
+	public $module = 'question';
 
 	/**
 	 * default action ( show main page )

@@ -5,7 +5,7 @@
 | @Version:      1.0                           |
 | @Project:      CMS                           |
 | @package       CMS Fapos                     |
-| @subpackege    Stat Sections Model           |
+| @subpackege    Games Sections Model           |
 | @copyright     ©Andrey Brykin 2010-2012      |
 | @last mod      2012/04/25                    |
 |----------------------------------------------|
@@ -24,10 +24,10 @@
 /**
  *
  */
-class StatSectionsModel extends FpsModel
+class GamesSectionsModel extends FpsModel
 {
 	
-    public $Table = 'stat_sections';
+    public $Table = 'games_sections';
 	
 
 

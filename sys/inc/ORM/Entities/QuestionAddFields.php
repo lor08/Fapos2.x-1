@@ -5,7 +5,7 @@
 | @Version:      1.2                           |
 | @Project:      CMS                           |
 | @package       CMS Fapos                     |
-| @subpackege    StatAddFields Entity          |
+| @subpackege    QuestionAddFields Entity          |
 | @copyright     ©Andrey Brykin 2010-2013      |
 | @last mod      2013/04/03                    |
 |----------------------------------------------|
@@ -24,7 +24,7 @@
 /**
  *
  */
-class StatAddFieldsEntity extends FpsEntity
+class QuestionAddFieldsEntity extends FpsEntity
 {
 	
 	protected $id;
