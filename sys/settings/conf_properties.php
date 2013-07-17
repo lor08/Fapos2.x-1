@@ -344,6 +344,20 @@ $settingsInfo = array(
              'checked' => '1',
              'value' => '1',
        	),
+        'rss_question' => array(
+             'type' => 'checkbox',
+             'title' => 'Вопросы',
+             'description' => '',
+             'checked' => '1',
+             'value' => '1',
+       	),
+        'rss_games' => array(
+             'type' => 'checkbox',
+             'title' => 'Игры',
+             'description' => '',
+             'checked' => '1',
+             'value' => '1',
+       	),
         'rss_loads' => array(
              'type' => 'checkbox',
              'title' => 'Каталог файлов',
