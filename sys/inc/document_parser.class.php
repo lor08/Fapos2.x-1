@@ -264,27 +264,27 @@ class Document_Parser {
 	}
 	
 	
-	/**
-	* @return     list with RSS links
-	*/
-	public function getRss()
+    /**
+    * @return     list with RSS links
+    */
+    public function getRss()
     {
-		$rss = '';
-		if (Config::read('rss_news', 'common')) {
-			$rss .= get_img('/template/' . getTemplateName() . '/img/rss_icon_mini.png') . get_link(__('News RSS'), '/news/rss/') . '<br />';
-		}
-		if (Config::read('rss_stat', 'common')) {
-			$rss .= get_img('/template/' . getTemplateName() . '/img/rss_icon_mini.png') . get_link(__('Stat RSS'), '/stat/rss/') . '<br />';
-		}
-		if (Config::read('rss_loads', 'common')) {
-			$rss .= get_img('/template/' . getTemplateName() . '/img/rss_icon_mini.png') . get_link(__('Loads RSS'), '/loads/rss/') . '<br />';
-		}
-		if (Config::read('rss_foto', 'common')) {
-			$rss .= get_img('/template/' . getTemplateName() . '/img/rss_icon_mini.png') . get_link(__('Foto RSS'), '/foto/rss/') . '<br />';
-		}
-		
-		return $rss;
-	}
+        $rss = '';
+        $modules = glob(ROOT.'/modules/*');
+        foreach ($modules as $module):
+            if (is_dir($module)
+                and preg_match('#/(\w+)$#i', $module, $module_name)
+                and Config::read('active', $module_name[1])
+                and Config::read('rss_'.$module_name[1], 'common')):
+
+                $rss .= get_img('/template/' . getTemplateName() . '/img/rss_icon_mini.png') .
+                    get_link(__(ucfirst($module_name[1]) . ' RSS'), '/'.$module_name[1].'/rss/') .
+                    '<br />';
+
+            endif;
+        endforeach;
+        return $rss;
+    }
 	
 	
 	/** DEPRECATED
