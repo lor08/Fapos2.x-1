@@ -211,6 +211,8 @@ $language = array(
 	'Loads RSS'                     => 'Загрузки RSS',
 	'Foto RSS'                      => 'Фото RSS',
 	'Forum RSS'                     => 'Форум RSS',
+	'Question RSS'                  => 'Вопросы RSS',
+	'Games RSS'                     => 'Игры RSS',
 	'Needed fields are empty'        => 'Заполните все поля',
 	'Bb-spoiler open'   	        => '<input type="button" value="Нажмите что бы открыть" />',
 	'You have new warnings'  		=> 'Вам вынесено предупреждение',
