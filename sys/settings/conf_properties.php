@@ -181,6 +181,22 @@ $settingsInfo = array(
 			'value' => 'stat',
 			'fields' => 'latest_on_home',
 		),
+		'sub_question' => array(
+			'type' => 'checkbox',
+			'title' => 'Вопросы',
+			'description' => '',
+			'checked' => '1',
+			'value' => 'question',
+			'fields' => 'latest_on_home',
+		),
+		'sub_games' => array(
+			'type' => 'checkbox',
+			'title' => 'Игры',
+			'description' => '',
+			'checked' => '1',
+			'value' => 'games',
+			'fields' => 'latest_on_home',
+		),
 		'sub_loads' => array(
 			'type' => 'checkbox',
 			'title' => 'Загрузки',

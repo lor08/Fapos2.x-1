@@ -184,6 +184,18 @@ class PagesModel extends FpsModel
 				 . $Register['DB']->getFullTableName('stat') . "` "
 				 . "WHERE `view_on_home` = '1' AND `available` = '1') ";
 		}
+		if (in_array('question', $latest_on_home)) {
+			if (!empty($sql)) $sql .= 'UNION ';
+			$sql .= "(SELECT `title`, `main`, `date`, `on_home_top`, `id`, `comments`, `views`, `author_id`, (SELECT \"question\") AS skey  FROM `" 
+				 . $Register['DB']->getFullTableName('question') . "` "
+				 . "WHERE `view_on_home` = '1' AND `available` = '1') ";
+		}
+		if (in_array('games', $latest_on_home)) {
+			if (!empty($sql)) $sql .= 'UNION ';
+			$sql .= "(SELECT `title`, `main`, `date`, `on_home_top`, `id`, `comments`, `views`, `author_id`, (SELECT \"games\") AS skey  FROM `" 
+				 . $Register['DB']->getFullTableName('games') . "` "
+				 . "WHERE `view_on_home` = '1' AND `available` = '1') ";
+		}
 
 
 		if (!empty($sql)) {
@@ -199,6 +211,12 @@ class PagesModel extends FpsModel
                             break;
                         case 'stat':
                             $materials[$key] = new StatEntity($mat);
+                            break;
+                        case 'question':
+                            $materials[$key] = new QuestionEntity($mat);
+                            break;
+                        case 'games':
+                            $materials[$key] = new GamesEntity($mat);
                             break;
                         case 'loads':
                             $materials[$key] = new LoadsEntity($mat);
