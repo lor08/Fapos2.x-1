@@ -863,6 +863,7 @@ a.forum {
 	padding-left: 5px;
 	font-weight: bold;
 	text-transform:uppercase;
+	line-height: 29px;
 }
 .post-tb {
 	width: 100%;
@@ -1238,9 +1239,13 @@ background-image: -webkit-gradient(linear,left bottom,right bottom,color-stop(0,
 .fps-like {background-position:0px -192px;}
 .fps-unlike {background-position:0px -208px;}
 
-table.admin_bar {width:100%}
-table.admin_bar td+td {width:40px;text-align:right;}
-table.admin_bar input {width:100%;}
+#theme_modbar {text-transform: none;width: 150px;}
+#theme_modbar_list {position: absolute;display: none;list-style: none;box-shadow: 0 2px 3px #333;width: 150px;}
+#theme_modbar_list a {display: block;padding: 7px;background: #fff;}
+#theme_modbar_list li:hover a {background: #eee;}
+#theme_modbar_buttom {width: 30px;font-weight: bold;font-size: 200%;border-left: 1px solid #000;margin-left: 120px;}
+#theme_modbar_buttom:after {content: '≡';padding-left: 8px;}
+#theme_modbar:hover #theme_modbar_list {display: block;}
 
 .themeicon {max-width:19px; max-height:19px;}
 .eAttach {margin: 0; padding: 10px 0 0 30px; background: url('../img/file.gif') no-repeat 0px 0px; min-height:22px; vertical-align:middle;}

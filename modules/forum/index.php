@@ -702,11 +702,11 @@ Class ForumModule extends Module {
 			  }
 			 */
 			if ($admin_bar && is_array($admin_bar) && count($admin_bar) > 0) {
-				$markers['admin_bar'] = '<form name="admin_bar"><table class="admin_bar"><tr><td><select id="admin_bar_select"><option value="">' . __('Theme admin panel') . ':</option>';
+				$markers['admin_bar'] = '<div id="theme_modbar"><div id="theme_modbar_buttom"></div><ul id="theme_modbar_list">';
 				foreach ($admin_bar as $index => $command) {
-					$markers['admin_bar'] .= '<option value="' . $command['url'] . '">- ' . $command['title'] . '</option>';
+					$markers['admin_bar'] .= '<li><a href="' . $command['url'] . '">' . $command['title'] . '</a></li>';
 				}
-				$markers['admin_bar'] .= '</select></td><td><input type="button" value="OK" onclick="if (document.admin_bar.admin_bar_select.selectedIndex>0)location.href=document.admin_bar.admin_bar_select.value" /></td></tr></table></form>';
+				$markers['admin_bar'] .= '</ul></div>';
 			} else {
 				$markers['admin_bar'] = '';
 			}
