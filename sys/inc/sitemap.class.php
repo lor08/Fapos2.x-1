@@ -132,7 +132,7 @@ class FpsSitemapGen {
 		// news, stat, loads, foto
 		$hluex = Config::read('hlu_extention');
 		$hluactive = Config::read('hlu');
-		foreach (array('news', 'stat', 'loads', 'foto') as $mkey) {
+		foreach (array('news', 'stat', 'question', 'games', 'loads', 'foto') as $mkey) {
 			if (Config::read('active', $mkey)) {
 				$this->uniqUrl[] = $this->host . $mkey;
 				if ($mkey != 'foto') $this->uniqUrl[] = $this->host . $mkey . '/rss';
