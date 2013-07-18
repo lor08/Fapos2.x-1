@@ -82,9 +82,9 @@ class SearchModule extends Module {
 		$_SESSION['m'] = $modules;
 
 		if (isset($_POST['search']) || isset($_GET['search'])) {
-			$str = (isset($_POST['search'])) ? $_POST['search'] : '';
+			$str = (isset($_POST['search'])) ? h($_POST['search']) : '';
 			if (empty($str))
-				$str = (isset($_GET['search'])) ? $_GET['search'] : '';
+				$str = (isset($_GET['search'])) ? h($_GET['search']) : '';
 			if (!is_string($str))
 				$str = (string) $str;
 			$str = trim($str);
