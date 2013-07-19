@@ -52,7 +52,7 @@ function index(&$page_title) {
     global $FpsDB;
     $page_title = 'Установка плагинов';
 
-    $serv_list_plugs = json_decode(file_get_contents('https://github.com/modos189/FaposCMS-plugins/raw/master/list.json'), true);
+    $serv_list_plugs = json_decode(file_get_contents('https://raw.github.com/modos189/FaposCMS-plugins/master/list.json'), true);
 
     $content = '';
 
