@@ -2,9 +2,9 @@
 /**
  * @author      Brykin Andrey
  * @url         http://fapos.net
- * @version     1.0.0
+ * @version     1.1.0
  * @copyright   ©Andrey Brykin 2010 - 2013
- * @last mod.   2013/04/05
+ * @last mod.   2013/07/06
  *
  * Parse url path and get from him requested needed params
  * (module, action, etc.)
@@ -77,6 +77,10 @@ Class Pather {
 				return $pathParams;
 			}
 		} else {
+			if ($this->Register['Config']->read('start_mod') && $url === $this->Register['Config']->read('start_mod')) {
+				$this->Register['is_home_page'] = true;
+			}
+		
 			$pathParams = explode('/', $url);
 			foreach ($pathParams as $key => $value) {
 				if (empty($value)) unset($pathParams[$key]);
@@ -121,6 +125,13 @@ Class Pather {
 					redirect('/' . $pathParams[0] . '/' . $hlustr . ($page ? '?page=' . $page : ''));
 				}
 			}
+		// inserted URL for Pages module
+		} else if (count($pathParams) >= 1 && !file_exists(ROOT . '/modules/' . $pathParams[0])) {
+			$pathParams = array(
+				0 => 'pages',
+				1 => 'index',
+				2 => implode('/', $pathParams),
+			);
 		}
 
 

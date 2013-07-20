@@ -427,7 +427,7 @@ class PrintText {
 		return $str;
 	}
 	public function parseUrlBb($str) {
-		if (stripos($str, '[url') && stripos($str, '[/url]')) {
+		if (false !== (stripos($str, '[url')) && false !== (stripos($str, '[/url]'))) {
 			$noindex = Config::read('use_noindex');
 			$redirect = Config::read('redirect_active');
 			$url = $redirect ? get_url('redirect.php?url=') : '';
@@ -435,7 +435,7 @@ class PrintText {
 			$str = preg_replace("#\[url\](http[s]*://[\w\d\-_.]*\.\w{2,}[\w\d\-_\\/.\?=\#&;%]*)\[\/url\]#iuU", ($noindex ? '<noindex>' : '') . '<a href="' . $url . '\\1" target="_blank"' . ($noindex ? ' rel="nofollow"' : '') . '>\\1</a>' . ($noindex ? '</noindex>' : ''), $str);
 			$str = preg_replace("#\[url=(http[s]*://[\w\d\-_.]*\.\w{2,}[\w\d\-_\\/.\?=\#;&%]*)\]([^\[]*)\[/url\]#iuU", ($noindex ? '<noindex>' : '') . '<a href="' . $url . '\\1" target="_blank"' . ($noindex ? ' rel="nofollow"' : '') . '>\\2</a>' . ($noindex ? '</noindex>' : ''), $str);
 		}
-		if (stripos($str, '[gallery') && stripos($str, '[/gallery]')) {
+		if (false !== (stripos($str, '[gallery')) && false !== (stripos($str, '[/gallery]'))) {
 			$str = preg_replace("#\[gallery=([\w\d\-_\\/.\?=\#;&%+]*)\]([^\[]*)\[/gallery\]#iuU", '<a href="\\1" class="gallery">\\2</a>', $str);
 		}
 

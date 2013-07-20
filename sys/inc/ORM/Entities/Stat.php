@@ -88,7 +88,7 @@ class StatEntity extends FpsEntity
 		$addContentModel = $Register['ModManager']->getModelInstance('StatAddContent');
 		
 		$attachesModel->deleteByParentId($this->id);
-		$commentsModel->deleteByParentId($this->id);
+		$commentsModel->deleteByParentId($this->id, 'stat');
 		$addContentModel->deleteByParentId($this->id);
 		
 

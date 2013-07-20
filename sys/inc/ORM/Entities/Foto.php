@@ -65,6 +65,10 @@ class FotoEntity extends FpsEntity
 	public function delete()
 	{ 
 		$Register = Register::getInstance();
+		
+		$commentsModel = $Register['ModManager']->getModelInstance('Comments');
+		$commentsModel->deleteByParentId($this->id, 'foto');
+
 		$path = ROOT . '/sys/files/foto/full/' . $this->filename;
 		$path2 = ROOT . '/sys/files/foto/preview/' . $this->filename;
 		if (file_exists($path)) unlink($path);

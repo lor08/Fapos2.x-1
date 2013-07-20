@@ -46,13 +46,8 @@ class Fps_Viewer_Manager
 	{
 		$fileSource = $this->getTemplateFile($fileName);
 		
-		// TODO
-		$Register = Register::getInstance();
-		
 		// Maybe I need upgrade this code (TODO)
 		$fileSource = Plugins::intercept('before_view', $fileSource);
-		
-		$fileSource = $Register['DocParser']->parseSnippet($fileSource);
 		
 		$data = $this->parseTemplate($fileSource, $context);
 		
@@ -116,20 +111,17 @@ class Fps_Viewer_Manager
 	
 	public function parseTemplate($code, $context)
 	{
+		$Register = Register::getInstance();
+		$code = $Register['DocParser']->parseSnippet($code);
+		
 		$tokens = $this->getTokens($code);
-		//pr($tokens); //die();
 		$nodes = $this->getTreeFromTokens($tokens);
-		//pr(h($nodes)); //die();
 		$this->compileParser->clean();
 		$this->compileParser->setTmpClassName($this->getTmpClassName($code));
 		$this->compile($nodes);
 		$sourceCode = $this->compileParser->getOutput();
-		//pr(h($sourceCode)); //die();
-		
 
 		$output = $this->executeSource($sourceCode, $context);
-		//pr($sourceCode); 
-		//pr($context); die();
 		return $output;
 	}
 	

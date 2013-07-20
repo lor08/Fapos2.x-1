@@ -227,7 +227,7 @@ class ChatModule extends Module {
 		$View = new Fps_Viewer_Manager();
 		$View->setModuleTitle(ChatModule::$_module);
 		$View->setLayout(ChatModule::$_module);
-		$source = $View->view('addform.html', array('data' => $markers));
+		$source = $View->view('addform.html', array('data' => $markers, 'template_path' => get_url('/template/' . getTemplateName())));
 
 
 		return $source;

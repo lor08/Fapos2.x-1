@@ -129,12 +129,14 @@ class PagesAdminController {
 		if (!empty($parent)) {
 		
 			$path = ('.' === $parent->getPath()) ? null : $parent->getPath();
+			$template = ($parent->getTemplate()) ? $parent->getTemplate() : '';
 			
 			$data = array(
 				'path' => $path . $parent->getId() . '.',
 				'name' => $params['title'],
 				'visible' => '1',
 				'parent_id' => $params['id'],
+				'template' => $template,
 			);
 
 			$new_entity = new PagesEntity($data);
@@ -224,7 +226,7 @@ class PagesAdminController {
 			$lowest = false;
 			foreach ($pages as $pk => $pv) {
 				$path = $pv->getPath();
-				if (false === $lowest || substr_count($path, '.') < $lowest) {
+				if (false === $lowest || substr_count($path, '.') < substr_count($lowest, '.')) {
 					$lowest = $path;
 				}
 			}
@@ -425,8 +427,17 @@ include_once ROOT . '/admin/template/header.php';
 					<div class="clear"></div>
 				</div>
 				<div class="setting-item">
+					<div class="left">
+						Динамический тег <span class="comment">(для использования в шаблоне)</span>
+					</div>
+					<div class="right">
+						<input disabled="true" type="text" name="dinamic_tag" value="">
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="setting-item">
 					<div class="center">
-						<textarea style="min-height:300px;" id="mainTextarea" name="content"></textarea>
+						<textarea contenteditable="true" style="min-height:300px;" id="mainTextarea" name="content"></textarea>
 					</div>
 					<div class="clear"></div>
 				</div>
@@ -457,6 +468,8 @@ $(document).ready(function(){
 		autoclear: false, 
 		autoformat: false, 
 		convert_links: false, 
+		convertLinks: false, 
+		convertDivs: false, 
 		init_clear: false,
 		remove_styles: false,
 		remove_classes: false,
@@ -464,6 +477,10 @@ $(document).ready(function(){
 		imageUpload: '/img_uploader.php',
 		fileUpload: '/img_uploader.php',
 		autoresize: true,
+		deniedTags: [],
+		removeEmptyTags: false,
+		phpTags: true,
+		uploadCrossDomain: true
 	});
 	
 
@@ -480,31 +497,31 @@ $(document).ready(function(){
 			title: {
 				required: true,
 				chars: true,
-				maxlength: 50,
-				minlength: 3,
+				maxlength: 250,
+				minlength: 1,
 			},
 			url: {
 				chars: true,
-				maxlength: 30,
-				minlength: 2,
+				maxlength: 250,
+				minlength: 1,
 			},
 			meta_keywords: {
 				maxlength: 250,
-				minlength: 5,
+				minlength: 1,
 			},
 			meta_description: {
 				maxlength: 250,
-				minlength: 5,
+				minlength: 1,
 				chars: true
 			},
 			template: {
-				maxlength: 30,
-				minlength: 3,
+				maxlength: 50,
+				minlength: 1,
 				chars: true
 			},
 			content: {
-				required: true,
-				minlength: 10
+				maxlength: 50000,
+				minlength: 1
 			},
 		}
 	});
@@ -753,8 +770,16 @@ function fillForm(id){
 		$(form).find('input[name="meta_keywords"]').val(data.meta_keywords);
 		$(form).find('input[name="meta_description"]').val(data.meta_description);
 		$(form).find('input[name="template"]').val(data.template);
-		$(form).find('textarea[name="content"]').val(data.content);
-		$('div.redactor_editor').html(data.content); 
+		$(form).find('input[name="dinamic_tag"]').val('[~ '+data.id+' ~]');
+		if (data.content.match(/<script[^>]*>[\S\s]*<\/script>/gi)) {
+			//$('#mainTextarea').data("redactor").opts;
+			if ($('#mainTextarea').data("redactor").opts.visual)
+				$('#mainTextarea').data("redactor").toggle();
+			$(form).find('textarea[name="content"]').val(data.content);
+		} else {
+			$(form).find('textarea[name="content"]').val(data.content);
+			$('div.redactor_editor').html(data.content);
+		}
 		FpsLib.hideLoader();
 	});
 }

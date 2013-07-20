@@ -32,7 +32,8 @@ function setChMod($path, $mode = 0766, $recursive = true) {
 function checkWriteablePerms($path, $recursive = true) {
 	if (file_exists($path) && is_dir($path) && $recursive === true) {
 		$child = glob($path . '/*');
-
+		
+		$flag = true;
 		if (!empty($child)) {
 			//recursive
 			foreach ($child as $row) {
