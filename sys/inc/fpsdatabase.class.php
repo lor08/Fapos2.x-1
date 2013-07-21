@@ -138,7 +138,7 @@ class FpsDataBase {
 			$redirect = false;
 		}
 		if (!$data) {
-			showErrorMessage('Произошла ошибка при запросе к базе данных!', 
+			showErrorMessage('Произошла ошибка при запросе к базе данных!<br>'. 
 			mysql_error() . '<br /><br />' . $query, $redirect, '/');
 			die();
 		}
