@@ -130,6 +130,7 @@ $array[] = "CREATE TABLE `{$set['db']['prefix']}loads` (
   `available` ENUM( '0', '1' ) DEFAULT '1' NOT NULL,
   `view_on_home` ENUM( '0', '1' ) DEFAULT '1' NOT NULL,
   `on_home_top` ENUM( '0', '1' ) DEFAULT '0' NOT NULL,
+  `premoder` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'confirmed',
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci";
 #####################################################################
@@ -192,6 +193,7 @@ $array[] = "CREATE TABLE `{$set['db']['prefix']}news` (
   `available` ENUM( '0', '1' ) DEFAULT '1' NOT NULL,
   `view_on_home` ENUM( '0', '1' ) DEFAULT '1' NOT NULL,
   `on_home_top` ENUM( '0', '1' ) DEFAULT '0' NOT NULL,
+  `premoder` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'confirmed',
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci";
 $array[] = "INSERT INTO `{$set['db']['prefix']}news` VALUES (1, 'Моя первая новость', 'Теперь сайт установлен и вы можете приступать его настройке. По любым вопросам обращайтесь на официальный сайт Fapos.net', 0, NOW(), 1, 1, 0, '', '', '', '', '', '1', '1', '1', '0')";
@@ -252,6 +254,7 @@ $array[] = "CREATE TABLE `{$set['db']['prefix']}stat` (
   `available` ENUM( '0', '1' ) DEFAULT '1' NOT NULL,
   `view_on_home` ENUM( '0', '1' ) DEFAULT '1' NOT NULL,
   `on_home_top` ENUM( '0', '1' ) DEFAULT '0' NOT NULL,
+  `premoder` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'confirmed',
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci";
 #####################################################################
