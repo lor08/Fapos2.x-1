@@ -1,4 +1,4 @@
-var opens=[];
+﻿var opens=[];
 var isSel=0;
 var bbtags   = new Array();
 var myAgent   = navigator.userAgent.toLowerCase();

@@ -56,9 +56,9 @@
 					$user_url = get_url('users/info/' . $_SESSION['user']['id']);
 				}
 				@ini_set('default_socket_timeout', 5);
-				$new_ver = @file_get_contents('http://fapos.wasja.info/we/site.php?host=' . $_SERVER['HTTP_HOST']);
+				$new_ver = @file_get_contents('http://fapos.modostroi.ru/last.php?host=' . $_SERVER['HTTP_HOST']);
 				$new_ver = (!empty($new_ver) && $new_ver != FPS_VERSION) 
-				? '<a href="https://github.com/wasja1982/Fapos2.x/" title="Last version">' . h($new_ver) . '</a>' 
+				? '<a href="https://github.com/modos189/Fapos2.x/" title="Last version">' . h($new_ver) . '</a>' 
 				: '';
 				?>
 				<div class="ava"><img src="<?php echo $ava_path; ?>" alt="user ava" title="user ava" /></div>
@@ -139,7 +139,7 @@
 		['<?php echo __('Additional'); ?>',
 		  [
 		  '<a href="settings.php?m=hlu"><?php echo __('SEO settings'); ?></a>',
-		  '<a href="settings.php?m=common"><?php echo __('RSS settings'); ?></a>',
+		  '<a href="settings.php?m=rss"><?php echo __('RSS settings'); ?></a>',
 		  '<a href="settings.php?m=sitemap"><?php echo __('Sitemap settings'); ?></a>',
 		  '<a href="settings.php?m=watermark"><?php echo __('Watermark settings'); ?></a>',
 		  '<a href="settings.php?m=autotags"><?php echo __('Auto tags settings'); ?></a>',

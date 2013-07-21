@@ -61,10 +61,13 @@ $pageNavr = '<a href="plugins.php">Список Плагинов</a>';
 
 $dp = new Document_Parser;
 
+$content = $content;
 include_once ROOT . '/admin/template/header.php';
 echo $content;
 include_once ROOT . '/admin/template/footer.php';
 
+	
+	
 	
 function index(&$page_title) {
 	global $FpsDB;
@@ -133,7 +136,8 @@ function index(&$page_title) {
 			<td colspan=\"2\">
 				<a class=\"edit\" href='plugins.php?ac=edit&dir={$dir}'></a>&nbsp;";
 			if (!empty($params['active'])) {
-				$content .= "<a class=\"off\" href='plugins.php?ac=off&dir={$dir}'></a>";
+				$content .= "<a class=\"off\" href='plugins.php?ac=off&dir={$dir}'></a>
+				</td>";
 			} else {
 				$content .= "<a class=\"on\" href='plugins.php?ac=on&dir={$dir}'>";
 

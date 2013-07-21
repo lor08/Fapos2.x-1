@@ -637,6 +637,11 @@ $acl_rules = array (
       2 => 2,
       5 => 1,
     ),
+    'can_premoder' => 
+    array (
+      0 => 4,
+      1 => 5,
+    ),
   ),
   'chat' => 
   array (

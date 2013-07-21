@@ -180,7 +180,7 @@ include_once ROOT . '/admin/template/header.php';
 			<td><?php echo h(substr(strrchr($dump, '/'), 1, 16)) ?></td>
 			<td><?php echo round((filesize($dump) / 1024), 1) ?> Kb</td>
 			
-			<td width="50px">
+			<td width="40px">
 				<a class="undo" onClick="return confirm('Are you sure?')" title="<?php echo __('Restore') ?>" href="dump.php?ac=restore&id=<?php echo $dump ?>"></a>
 				<a class="delete" onClick="return confirm('Are you sure?')" title="<?php echo __('Delete') ?>" href="dump.php?ac=delete&id=<?php echo $dump ?>"></a>
 			</td>

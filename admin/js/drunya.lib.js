@@ -4,7 +4,14 @@ var wStep = 10;
 var winTimeout = 50;
 var openedWindows = new Array();
 //var wObj = document.getElementById('test');
-
+function resizeWrapper(id) {
+	var nheight = $(id).height();
+	var wrapheight = $('#content-wrapper').height();
+	
+	if (nheight > wrapheight) {
+		$('#content-wrapper').height(nheight);
+	}
+}
 
 function selectAclTab(id) {
 	$('div.acl-perms-collection').each(function(){
@@ -16,6 +23,8 @@ function selectAclTab(id) {
 
 
 function openPopup(id) {
+	resizeWrapper($('#'+id));
+
 	$('#' + id).fadeIn(1000);
 	
 	if (!$('div#overlay').is(':visible')) {
@@ -58,6 +67,8 @@ function subMenu(id) {
 	} else {
 		$('#'+id).slideUp();
 	}
+	
+	
 }
 
 
@@ -89,7 +100,7 @@ function showHelpWin(text, title) {
 	helpWin.innerHTML = '<div class="popup" id="help-window" style="display:block;">' +
 		'<div class="top">' +
 			'<div class="title">' + title + '</div>' +
-			'<div class="close" onClick="closePopup(\'help-window\')"></div>' +
+			'<div class="close" onClick="closeHelpPopup(\'help-window\')"></div>' +
 		'</div>' +
 		'<div class="items text">' +
 			text +
@@ -97,6 +108,12 @@ function showHelpWin(text, title) {
 	'</div>';
 	
 	$('#content-wrapper').append(helpWin);
+}
+
+function closeHelpPopup(id) {
+	$('#'+id).fadeOut(400, function(){
+		$('#'+id).remove();
+	})
 }
 
 

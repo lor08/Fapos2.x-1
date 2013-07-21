@@ -1,6 +1,5 @@
 <?php
-
-if (!isset($_GET['url'])) die();
+if (empty($_GET['url'])) die();
 $url = $_GET['url'];
 
 function siteInList($site, $list) {

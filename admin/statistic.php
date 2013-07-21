@@ -188,8 +188,8 @@ include_once ROOT . '/admin/template/header.php';
 		<tr>
 			<td colspan="2">
 		<link type="text/css" rel="StyleSheet" href="template/css/tcal.css" />
-		<script type="text/javascript" src="js/graphlib.js"></script>
-		<script type="text/javascript" src="js/tcal.js"></script>
+		<script type="text/javascript" src="../sys/js/graphlib.js"></script>
+		<script type="text/javascript" src="../sys/js/tcal.js"></script>
 		<script type="text/javascript">
 		$(document).ready(function(){
 			var data = '<?php echo $json_data; ?>';

@@ -18,6 +18,10 @@ if (!function_exists('chmod')) {
 }
 
 
+if (!function_exists('getImageSize')) {
+	$out .= '<span style="color:#FF0000">getImageSize()</span> - Необходимо для обработки изображений<br />';
+}
+
 if (!function_exists('imageCreateFromString')) {
 	$out .= '<span style="color:#FF0000">imageCreateFromString()</span> - Необходимо для обработки изображений<br />';
 }

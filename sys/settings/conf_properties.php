@@ -282,7 +282,7 @@ $settingsInfo = array(
 		'system_log' => array(
 			'type' => 'checkbox',
 			'title' => 'Лог действий',
-			'description' => 'Вести ли лог действий пользователей.',
+			'description' => 'Вести ли лог действий пользователей:',
 			'checked' => '1',
 			'value' => '1',
 		),

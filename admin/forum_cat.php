@@ -206,7 +206,7 @@ function index(&$page_title) {
 		
 			$popups_content .= '<div id="addForum' . $result['id'] . '" class="popup">
 					<div class="top">
-						<div class="title">Добавление форума</div>
+						<div class="title">Добавление категории</div>
 						<div onClick="closePopup(\'addForum' . $result['id'] . '\');" class="close"></div>
 					</div>
 					<form action="forum_cat.php?ac=add" method="POST" enctype="multipart/form-data">

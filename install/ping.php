@@ -13,10 +13,10 @@ if ($_GET['type'] === true) {
 
 function checkUpdate() {
 	@$b = file_get_contents('http://home.develdo.com/cdn/versions.txt');
-	@$w = file_get_contents('http://fapos.wasja.info/version.txt');
-	if ($b || $w) {
-		if ($w && preg_match('#[^></]+#i', $w)) {
-			echo '<a href="https://github.com/wasja1982/Fapos2.x/">Последняя модифицированная версия ' . trim($w) . '</a>';
+	@$m = file_get_contents('http://fapos.modostroi.ru/last.php?host=' . $_SERVER['HTTP_HOST']);
+	if ($b || $m) {
+		if ($m && preg_match('#[^></]+#i', $m)) {
+			echo '<a href="https://github.com/modos189/Fapos2.x/">Последняя модифицированная версия ' . trim($m) . '</a>';
 		}
 		if ($b && preg_match('#[^></]+#i', $b)) {
 			if ($w) echo '<br />';
@@ -29,6 +29,6 @@ function checkUpdate() {
 
 function checkRequest() {
 	@$b = file_get_contents('http://home.develdo.com/check.php?v=2.2RC1&d=' . $_SERVER['HTTP_HOST']);
-	@$w = file_get_contents('http://fapos.wasja.info/we/site.php?host=' . $_SERVER['HTTP_HOST']);
+	@$w = file_get_contents('http://fapos.modostroi.ru/last.php?host=' . $_SERVER['HTTP_HOST']);
 }
 ?>

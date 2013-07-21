@@ -543,7 +543,7 @@ $("#pageTree")
 			"theme" : "classic",
 			"dots" : true,
 			"icons" : true,
-			"url" : "template/img/jstree/themes/classic/style.css"
+			"url" : "../sys/js/jstree/themes/classic/style.css"
 		},
 		"plugins" : [ 
 			"themes","json_data","ui","crrm","cookies","dnd","search","types","contextmenu" 
@@ -602,7 +602,7 @@ $("#pageTree")
 					//"valid_children" : "none",
 					// If we specify an icon for the default type it WILL OVERRIDE the theme icons
 					"icon" : {
-						"image" : "template/img/jstree/file.png"
+						"image" : "../sys/js/jstree/img/file.png"
 					}
 				},
 				// The `folder` type
@@ -610,7 +610,7 @@ $("#pageTree")
 					// can have files and other folders inside of it, but NOT `drive` nodes
 					"valid_children" : [ "default", "folder" ],
 					"icon" : {
-						"image" : "template/img/jstree/folder.png"
+						"image" : "../sys/js/jstree/img/folder.png"
 					}
 				},
 				// The `drive` nodes 
@@ -618,7 +618,7 @@ $("#pageTree")
 					// can have files and folders inside, but NOT other `drive` nodes
 					"valid_children" : [ "default", "folder" ],
 					"icon" : {
-						"image" : "template/img/jstree/root.png"
+						"image" : "../sys/js/jstree/img/root.png"
 					},
 					// those prevent the functions with the same name to be used on `drive` nodes
 					// internally the `before` event is used
@@ -771,6 +771,8 @@ function fillForm(id){
 		$(form).find('input[name="meta_description"]').val(data.meta_description);
 		$(form).find('input[name="template"]').val(data.template);
 		$(form).find('input[name="dinamic_tag"]').val('[~ '+data.id+' ~]');
+		
+		
 		if (data.content.match(/<script[^>]*>[\S\s]*<\/script>/gi)) {
 			//$('#mainTextarea').data("redactor").opts;
 			if ($('#mainTextarea').data("redactor").opts.visual)
@@ -780,6 +782,8 @@ function fillForm(id){
 			$(form).find('textarea[name="content"]').val(data.content);
 			$('div.redactor_editor').html(data.content);
 		}
+		
+		 
 		FpsLib.hideLoader();
 	});
 }
@@ -820,7 +824,7 @@ endif;
 ?>
 
 
-
+<div class="clear"></div>
 <ul class="markers">
 	<li><div class="global-marks">{{ content }}</div> - Основной контент страницы</li>
 	<li><div class="global-marks">{{ title }}</div> - Заголовок страницы</li>
