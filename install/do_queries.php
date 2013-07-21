@@ -100,6 +100,7 @@ $array[] = "CREATE TABLE `{$set['db']['prefix']}pages` (
   `parent_id` int(11) default 0  NOT NULL,
   `path` varchar(255) default '1.'  NOT NULL,
   `visible` enum('1','0') default '1'  NOT NULL,
+  `publish` enum('1','0') default '1'  NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci";
 $array[] = "INSERT INTO `{$set['db']['prefix']}pages` (`id`,`name`,`path`,`content`) VALUES ('1', 'root', '.', '')";

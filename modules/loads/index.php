@@ -806,7 +806,7 @@ Class LoadsModule extends Module {
 				'sourse_site' => null, 'download_url' => null, 'download_url_size' => null, 'commented' => $commented, 'available' => $available), $_POST);
 			$_SESSION['FpsForm']['error'] = '<p class="errorMsg">' . __('Some error in form') . '</p>'
 					. "\n" . '<ul class="errorMsg">' . "\n" . $error . '</ul>' . "\n";
-			$this->showInfoMessage($_SESSION['FpsForm']['error'], $this->getModuleURL('add_form/' . $id));
+			$this->showInfoMessage($_SESSION['FpsForm']['error'], $this->getModuleURL('add_form/'));
 		}
 
 

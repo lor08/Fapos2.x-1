@@ -8,6 +8,7 @@ $set = array (
   'open_reg' => '1',
   'debug_mode' => '0',
   'max_file_size' => '15000000',
+  'IEC60027-2' => 1,
   'min_password_lenght' => '6',
   'admin_email' => 'test@email.cms',
   'redirect' => '',
