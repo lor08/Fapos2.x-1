@@ -43,6 +43,8 @@ Class LoadsModule extends Module {
 	 */
 	public $module = 'loads';
 
+	public $premoder_types = array('rejected', 'confirmed');
+
 	/**
 	 * @module module indentifier
 	 */
@@ -78,7 +80,8 @@ Class LoadsModule extends Module {
 			$tag = mysql_real_escape_string($tag);
 			$where[] = "`tags` LIKE '%{$tag}%'";
 		}
-
+		if (!$this->ACL->turn(array('other', 'can_premoder'), false))
+			$where['premoder'] = 'confirmed';
 
 		$total = $this->Model->getTotal(array('cond' => $where));
 		$perPage = intval($this->Register['Config']->read('per_page', $this->module));
@@ -227,6 +230,8 @@ Class LoadsModule extends Module {
 		if (!$this->ACL->turn(array('other', 'can_see_hidden'), false)) {
 			$where['available'] = 1;
 		}
+		if (!$this->ACL->turn(array('other', 'can_premoder'), false))
+			$where['premoder'] = 1;
 
 
 		$total = $this->Model->getTotal(array('cond' => $where));
@@ -357,7 +362,8 @@ Class LoadsModule extends Module {
 			return $this->showInfoMessageFull(__('Permission denied'), $this->getModuleURL());
 		if (!$this->ACL->checkCategoryAccess($entity->getCategory()->getNo_access()))
 			return $this->showInfoMessageFull(__('Permission denied'), $this->getModuleURL());
-
+		if (!$this->ACL->turn(array('other', 'can_premoder'), false) && in_array($entity->getPremoder(), array('rejected', 'nochecked')))
+			return $this->showInfoMessageFull(__('Permission denied'), $this->getModuleURL());
 
 		// Some gemor with add fields
 		if (is_object($this->AddFields)) {
@@ -856,7 +862,10 @@ Class LoadsModule extends Module {
 			'commented' => $commented,
 			'available' => $available,
 			'view_on_home' => $category->getView_on_home(),
+			'premoder'      => 'confirmed',
 		);
+		if ($this->ACL->turn(array($this->module, 'materials_require_premoder'), false))
+			$res['premoder'] = 'nochecked';
 		if (!empty($file)) {
 			$data['download'] = $file;
 			$data['filename'] = $filename;
@@ -1533,6 +1542,28 @@ Class LoadsModule extends Module {
 	}
 
 	/**
+	 * @param int $id - record ID
+	 *
+	 * fix or unfix record on top on home page
+	 */
+	public function premoder($id, $type)
+		{
+		$this->ACL->turn(array('other', 'can_premoder'));
+		$id = (int)$id;
+		if ($id < 1) redirect('/' . $this->module . '/');
+		
+		if (!in_array((string)$type, $this->premoder_types)) 
+		  return $this->showInfoMessage(__('Some error occurred'), '/' . $this->module . '/');
+
+		$target = $this->Model->getById($id);
+		if (!$target) redirect('/');
+		
+		$target->setPremoder((string)$type);
+		$target->save();
+		return $this->showInfoMessage(__('Operation is successful'), '/' . $this->module . '/');
+	}
+
+	/**
 	 * @param array $record - assoc record array
 	 * @return string - admin buttons
 	 *
@@ -1544,6 +1575,28 @@ Class LoadsModule extends Module {
 		$uid = $record->getAuthor_id();
 		if (!$uid)
 			$uid = 0;
+
+		if ($this->ACL->turn(array('other', 'can_premoder'), false) && 'nochecked' == $record->getPremoder()) {
+			$moder_panel .= get_link('', '/' . $this->module . '/premoder/' . $id . '/confirmed',
+				array(
+					'class' => 'fps-premoder-confirm', 
+					'title' => 'Confirm', 
+					'onClick' => "return confirm('" . __('Are you sure') . "')",
+				)) . '&nbsp;';
+			$moder_panel .= get_link('', '/' . $this->module . '/premoder/' . $id . '/rejected',
+				array(
+					'class' => 'fps-premoder-reject', 
+					'title' => 'Reject', 
+					'onClick' => "return confirm('" . __('Are you sure') . "')",
+				)) . '&nbsp;';
+		} else if ($this->ACL->turn(array('other', 'can_premoder'), false) && 'rejected' == $record->getPremoder()) {
+			$moder_panel .= get_link('', '/' . $this->module . '/premoder/' . $id . '/confirmed',
+				array(
+					'class' => 'fps-premoder-confirm', 
+					'title' => 'Confirm', 
+					'onClick' => "return confirm('" . __('Are you sure') . "')",
+				)) . '&nbsp;';
+		}
 
 		if ($this->ACL->turn(array($this->module, 'edit_materials'), false)
 				|| (!empty($_SESSION['user']['id']) && $uid == $_SESSION['user']['id']
