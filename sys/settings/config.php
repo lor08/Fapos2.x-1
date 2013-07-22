@@ -162,7 +162,7 @@ $set = array (
   'chat' => 
   array (
     'title' => 'Чат',
-    'max_lenght' => '200',
+    'max_lenght' => '500',
     'active' => 1,
     'description' => '',
   ),
