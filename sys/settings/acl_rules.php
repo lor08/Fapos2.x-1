@@ -221,6 +221,7 @@ $acl_rules = array (
       2 => 3,
       3 => 4,
       4 => 5,
+      5 => 0,
     ),
     'add_materials' => 
     array (

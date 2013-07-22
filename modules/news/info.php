@@ -8,6 +8,7 @@ $menuInfo = array(
 		'design.php?m=news' => 'Дизайн',
 		'category.php?mod=news' => 'Управление категориями',
 		'additional_fields.php?m=news' => 'Дополнительные поля',
+		'premoder.php?m=news' => 'Премодерация',
 	),
 );
 

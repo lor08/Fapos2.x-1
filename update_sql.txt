@@ -1,10 +1,14 @@
 Здесь буду писать все запросы к БД, которые нужно выполнить при обновлении до новой версии движка. При новой установке они выполнятся автоматически.
 
->>> 21 июня 2013
-ALTER TABLE `pages` ADD `publish` ENUM( '1', '0' ) NOT NULL DEFAULT '1';
-ALTER TABLE `news` ADD `premoder` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'confirmed';
-ALTER TABLE `stat` ADD `premoder` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'confirmed';
-ALTER TABLE `loads` ADD `premoder` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'confirmed';
+>>> 22 июня 2013
+ALTER TABLE `news` ADD `premoder` ENUM( 'nochecked', 'rejected', 'confirmed' ) NOT NULL DEFAULT 'confirmed';
+ALTER TABLE `stat` ADD `premoder` ENUM( 'nochecked', 'rejected', 'confirmed' ) NOT NULL DEFAULT 'confirmed';
+ALTER TABLE `loads` ADD `premoder` ENUM( 'nochecked', 'rejected', 'confirmed' ) NOT NULL DEFAULT 'confirmed';
+ALTER TABLE `pages` ADD `meta_title` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `url`;
+ALTER TABLE `pages` ADD `title` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL AFTER `name`;
+ALTER TABLE `pages` ADD `publish` ENUM( '0', '1' ) NOT NULL DEFAULT '1';
+ALTER TABLE `pages` ADD `position` INT( 11 ) NOT NULL AFTER `visible`;
+
 
 >>> May 14, 2013
 CREATE TABLE `comments` (
