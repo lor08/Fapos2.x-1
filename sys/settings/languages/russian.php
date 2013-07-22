@@ -477,7 +477,9 @@ $language = array(
 	'Unknown error'                 => 'Неизвестная ошибка',
 	'Saved' 						=> 'Настройки сохранены',
 	'Module not found'				=> 'Модуль "%s" не найден!',
-	
+	'Confirm'						=> 'Подтвердить',
+	'Reject'						=> 'Отвергнуть',
+
 	
 	// Templates name
 	'Add form'  					=> 'Форма добавления',

@@ -1355,23 +1355,23 @@ Class StatModule extends Module {
 			$moder_panel .= get_link('', '/' . $this->module . '/premoder/' . $id . '/confirmed',
 				array(
 					'class' => 'fps-premoder-confirm', 
-					'title' => 'Confirm', 
+					'title' => __('Confirm'), 
 					'onClick' => "return confirm('" . __('Are you sure') . "')",
 				)) . '&nbsp;';
 			$moder_panel .= get_link('', '/' . $this->module . '/premoder/' . $id . '/rejected',
 				array(
 					'class' => 'fps-premoder-reject', 
-					'title' => 'Reject', 
+					'title' => __('Reject'), 
 					'onClick' => "return confirm('" . __('Are you sure') . "')",
 				)) . '&nbsp;';
 		} else if ($this->ACL->turn(array('other', 'can_premoder'), false) && 'rejected' == $record->getPremoder()) {
 			$moder_panel .= get_link('', '/' . $this->module . '/premoder/' . $id . '/confirmed',
 				array(
 					'class' => 'fps-premoder-confirm', 
-					'title' => 'Confirm', 
+					'title' => __('Confirm'), 
 					'onClick' => "return confirm('" . __('Are you sure') . "')",
 				)) . '&nbsp;';
-		} 
+		}
 
 		if ($this->ACL->turn(array($this->module, 'edit_materials'), false)
 				|| (!empty($_SESSION['user']['id']) && $uid == $_SESSION['user']['id']
