@@ -6,7 +6,7 @@ if (isset($_SESSION['db_querys'])) unset($_SESSION['db_querys']);
 /**
  * Current version of engine
  */
-define('FPS_VERSION', '2.3.0 modos189 (21.07.13)');
+define('FPS_VERSION', '2.3.1 modos189 (21.07.13)');
 
 /**
  * Path constants
