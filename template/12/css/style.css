@@ -1223,7 +1223,7 @@ background-image: -ms-linear-gradient(left , rgb(0,170,43) 0%, rgb(0,255,0) 100%
 background-image: -webkit-gradient(linear,left bottom,right bottom,color-stop(0, rgb(0,170,43)),color-stop(1, rgb(0,255,0))); box-shadow: 0 0 3px #4FFF4F; -moz-box-shadow: 0 0 3px #4FFF4F; -webkit-box-shadow: 0 0 3px #4FFF4F;}
 
 
-.fps-edit, .fps-delete, .fps-add, .fps-up, .fps-down, .fps-star, .fps-ip, .fps-on, .fps-off, .fps-close, .fps-open, .fps-like, .fps-unlike, .fps-fix, .fps-unfix, .fps-premoder-confirm, .fps-premoder-reject {width:14px; height:14px; display:block; float:left; margin:0px 1px; background:url('../img/fps-icons-sprite.png') no-repeat;}
+.fps-edit, .fps-delete, .fps-add, .fps-up, .fps-down, .fps-star, .fps-ip, .fps-on, .fps-off, .fps-close, .fps-open, .fps-like, .fps-unlike, .fps-fix, .fps-unfix, .fps-premoder-confirm, .fps-premoder-reject, .fps-user {width:14px; height:14px; display:block; float:left; margin:0px 1px; background:url('../img/fps-icons-sprite.png') no-repeat;}
 .fps-delete {background-position:0px 0px;}
 .fps-down {background-position:0px -14px;}
 .fps-up {background-position:0px -28px;}
@@ -1239,7 +1239,8 @@ background-image: -webkit-gradient(linear,left bottom,right bottom,color-stop(0,
 .fps-like {background-position:0px -168px;}
 .fps-unlike {background-position:0px -182px;}
 .fps-premoder-confirm {background-position:0px -210px;}
-.fps-premoder-reject {background-position:0px -196px;} 
+.fps-premoder-reject {background-position:0px -196px;}
+.fps-user {background-position:-14px 0;}
 
 #theme_modbar {text-transform: none;width: 150px;}
 #theme_modbar_list {position: absolute;display: none;list-style: none;box-shadow: 0 2px 3px #333;width: 150px;}

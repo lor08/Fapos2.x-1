@@ -1,22 +1,32 @@
 <html>
 <head>
 <style type="text/css">
-.fps-ip {width:16px; height:16px; display:block; float:right; margin: 0 2px; background:url('{{ template_path }}/img/fps-icons-sprite.png') no-repeat; background-position:0px -176px;}
+body {padding-right: 6px;}
+.block {width:100%; font-family: Arial,sans-serif; overflow:auto; font-size: 13px; background: #f5f5f5; border: 1px solid #ddd; margin-bottom: 3px; padding: 3px}
+.block:hover {background: #eee;}
+.fps-ip, .fps-del, .fps-user {width:14px; height:14px; display:block; float:left; margin: 0 2px; background:url('{{ template_path }}/img/fps-icons-sprite.png') no-repeat;}
+.fps-user {background-position:-14px 0;}
+.fps-ip {background-position:0px -154px;}
+.fps-del {background-position:0px 0px;}
+.name {color:#9DC13F; font-weight:bold; text-decoration: none;}
+.mess {font-size:11px;color:#525252;padding-top: 3px}
 </style>
 </head>
 <body>
 {% if messages %}
 {% for message in messages %}
-<table style="background:#F7F7F7; width:175px; margin:1px 1px 1px 1px; border: 1px solid #848484;font-family: Tahoma, Verdana, sans-serif; overflow:auto; -moz-border-radius: 3px; border-radius: 3px; -webkit-border-radius: 3px;"> 
-<tr>
-	<td><b><a href="{{ www_root }}/users/info/{{ message.user_id }}" target="_blank"><img src="{{ template_path }}/img/mprofile.png"></a> <a href="javascript:void('Ответить на сообщение')" onclick="parent.window.document.getElementById('chatModule').value+='[b]{{ message.name }}[/b], ';return false;" style="color:#9DC13F; font-size:13px; font-weight:bold; text-decoration: none;">{{ message.name }}</a></td>
-	<td valign="top" align="right"><span style="font-size:9px;color:#525252;vertical-align:top;">{{ message.date }}&nbsp;{{ message.time }}</span>{{ message.ip }} {% if message.del %}<a href="{{ message.del }}">X</a>{% endif %}</td>
-</tr>
-<tr>
-	<td style="font-size:11px;color:#525252;" colspan="2">{{ message.message }}</td>
-</tr>
 
-</table>
+
+<div class="block">
+
+<div style="float: right"><a href="{{ www_root }}/users/info/{{ message.user_id }}" target="_blank"><div class="fps-user"></div></a> {{ message.ip }} {% if message.del %}<a href="{{ message.del }}"><div class="fps-del"></div></a>{% endif %}</div>
+
+({{ message.time }}) <a href="javascript:void('Ответить на сообщение')" onclick="parent.window.document.getElementById('chatModule').value+='[b]{{ message.name }}[/b], ';return false;" class="name">{{ message.name }}</a>:
+<div class="mess">{{ message.message }}</div>
+
+</div>
+
+
 {% endfor %}
 {% endif %}
 </body>
