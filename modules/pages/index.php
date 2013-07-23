@@ -237,6 +237,9 @@ Class PagesModule extends Module {
 
 						$markers['profile_url'] = getProfileUrl($result->getAuthor_id());
 
+						$markers['category_url'] = get_url($result->getSkey().'/category/'.$result->getCategory_id());
+						$markers['module_name'] = $result->getSkey();
+
 						$markers['module_title'] = $this->Register['Config']->read('title', $result->getSkey());
 						$result->setAdd_markers($markers);
 
