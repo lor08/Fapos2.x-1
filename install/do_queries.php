@@ -196,7 +196,7 @@ $array[] = "CREATE TABLE `{$set['db']['prefix']}news` (
   `premoder` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'confirmed',
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci";
-$array[] = "INSERT INTO `{$set['db']['prefix']}news` VALUES (1, 'Моя первая новость', 'Теперь сайт установлен и вы можете приступать его настройке. По любым вопросам обращайтесь на официальный сайт Fapos.net', 0, NOW(), 1, 1, 0, '', '', '', '', '', '1', '1', '1', '0')";
+$array[] = "INSERT INTO `{$set['db']['prefix']}news` VALUES (1, 'Моя первая новость', 'Теперь сайт установлен и вы можете приступать его настройке. По любым вопросам обращайтесь на официальный сайт Fapos.net', 0, NOW(), 1, 1, 0, '', '', '', '', '', '1', '1', '1', '0', 'confirmed')";
 #####################################################################
 $array[] = "DROP TABLE IF EXISTS `{$set['db']['prefix']}news_sections`";
 $array[] = "CREATE TABLE `{$set['db']['prefix']}news_sections` (
