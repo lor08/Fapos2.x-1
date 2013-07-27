@@ -60,7 +60,7 @@ if (empty($html) && $commentsModel) {
 				$markers['message'] = $this->Textarier->print_page($comment->getMessage());
 
 				if ($comment->getEditdate()!='0000-00-00 00:00:00') {
-					$markers['editdate'] = 'Комментарий был изменён '.$comment->getEditdate();
+					$markers['editdate'] = $comment->getEditdate();
 				} else {
 					$markers['editdate'] = '';
 				}

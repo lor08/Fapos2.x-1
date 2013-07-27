@@ -54,6 +54,7 @@ $this->DB->cleanSqlCache();
 
 // Update comment
 $comment->setMessage($message);
+$comment->setEditdate(new Expr('NOW()'));
 if ($name) $comment->setName($name);
 $comment->save();
 
