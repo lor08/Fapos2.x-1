@@ -1379,12 +1379,6 @@ Class StatModule extends Module {
 			$moder_panel .= get_link('', $this->getModuleURL('edit_form/' . $id), array('class' => 'fps-edit')) . '&nbsp;';
 		}
 
-		if ($this->ACL->turn(array($this->module, 'edit_materials'), false)
-				|| (!empty($_SESSION['user']['id']) && $uid == $_SESSION['user']['id']
-				&& $this->ACL->turn(array($this->module, 'edit_mine_materials'), false))) {
-			$moder_panel .= get_link('', $this->getModuleURL('edit_form/' . $id), array('class' => 'fps-edit')) . '&nbsp;';
-		}
-
 		if ($this->ACL->turn(array($this->module, 'up_materials'), false)) {
 			$moder_panel .= get_link('', $this->getModuleURL('fix_on_top/' . $id), array('id' => 'ffm'.$record->getId(), 'class' => 'fps-star', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('ffm".$record->getId()."')}; return false")) . '&nbsp;';
 			$moder_panel .= get_link('', $this->getModuleURL('upper/' . $id), array('id' => 'fum'.$record->getId(),'class' => 'fps-up', 'onClick' => "if (confirm('" . __('Are you sure') . "')) {sendu('fum".$record->getId()."')}; return false")) . '&nbsp;';
