@@ -309,7 +309,8 @@ $language = array(
 	'Guest'         	            => 'Гость',
 	'User materials'           		=> 'Материалы пользователя %s',
 	'User comments'                 => 'Комментарии пользователя',
-	'All comments'                  => 'Комментарии пользователей', 
+	'All comments'                  => 'Комментарии пользователей',
+	'Registration'					=> 'Регистрация',
 
 	// BACKEND
 	
